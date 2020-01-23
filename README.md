@@ -18,6 +18,7 @@ Date|Status
 05.09.2019|System.Drawing.Common (windows) replaced with another X-Plat Drawing Engine, refactoring to MSS.Core.Graphics
 04.11.2019|v0.2.0 event sync with FB
 08.11.2019|v0.3.0 backend and API improvements for Tracks (track database online) 
+05.01.2020|v0.9.0 migrate to asp net core 3.1
 
 ## TODO 
 
