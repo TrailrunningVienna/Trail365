@@ -135,6 +135,19 @@ namespace Trail365.Services
                 ListAccess = storyDto.ListAccess,
             };
             Story resultStory = storyDto.ToStoryWithoutBlocks();
+
+            var withOrdering = storyDto.StoryBlocks.Where(sb => sb.SortOrder != 0).ToArray();
+
+            if (withOrdering.Length == 0)
+            {
+                //use the ordering coming from dtoModel.
+                int ordering = 0;
+                storyDto.StoryBlocks.ForEach(sb =>
+               {
+                   sb.SortOrder = ordering;
+                   ordering += 1;
+               });
+            }
             foreach (var block in storyDto.StoryBlocks)
             {
                 StoryBlock sp = block.ToStoryBlockWithoutImage(resultStory);

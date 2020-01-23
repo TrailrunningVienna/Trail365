@@ -57,7 +57,7 @@ namespace Trail365.Web.Api.Controllers
         [Route("seedstories")]
         public IActionResult SeedStories([FromServices] TrailContext context, [FromServices]BlobService blobService)
         {
-            context.SeedStories(StoryDtoProvider.RealisticStories(), blobService, this.Url, StoryStatus.Default);
+            context.SeedStories(StoryDtoProvider.UniqueStories(), blobService, this.Url, StoryStatus.Default);
             return base.Ok(new { Status = "Ok", Comment ="Completed" });
         }
 

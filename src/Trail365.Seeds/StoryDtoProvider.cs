@@ -34,21 +34,26 @@ namespace Trail365.Seeds
             return dto;
         }
 
-        public static StoryDto CreatePicturestory()
+        public static StoryDto CreateUniquePicturestory()
         {
             StoryDto dto = new StoryDto
             {
-                ID = new Guid("F7E95A0B-D5F9-4B68-8F2F-79B2A7838EC4"),
-                Name = "Name: Fotostory",
+                ID = Guid.NewGuid(),
+                Name = $"Seeded Story {System.DateTime.UtcNow.ToString()}",
                 ListAccess = AccessLevel.Public,
             };
+            dto.AppendTitle("This should be the Title (without image)");
+            dto.AppendExcerpt("This should be the excerpt");
+            dto.AppendText($"This is flowing text with {Environment.NewLine}some word wrap and multiline behavior.");
+            var image1 = dto.AppendImage(ImageDtoProvider.CreateTGHoch().AssignNewID());
+            image1.RawContent = "image1: this should be the image caption (bottom text)";
 
-            dto.AppendExcerpt("Excerpt:Nur Name und Excerpt, kein Text aber viele Bilder");
-            dto.AppendImage(ImageDtoProvider.CreateTGHoch().AssignNewID());
-            dto.AppendImage(ImageDtoProvider.CreateTGQuer1().AssignNewID());
-            dto.AppendImage(ImageDtoProvider.CreateTGQuer2().AssignNewID());
-            dto.AppendImage(ImageDtoProvider.CreateKahlenberg().AssignNewID());
-            dto.AppendImage(ImageDtoProvider.CreateLindkogel().AssignNewID());
+            var image2 = dto.AppendImage(ImageDtoProvider.CreateTGQuer1().AssignNewID());
+            image2.RawContent = "image2_caption";
+
+            var image3 = dto.AppendImage(ImageDtoProvider.CreateTGQuer2().AssignNewID());
+            image3.RawContent = "image3_caption";
+
             return dto;
         }
 
@@ -77,12 +82,17 @@ namespace Trail365.Seeds
         public static StoryDtoProvider RealisticStories()
         {
             return CreateFromStoryDtos(
-                CreateStoryToterGrundWithAllBlockTypesAnd3Pictures()
-                , CreateExcerptandTextStoryWithoutTitleAndImages()
-                , CreatePicturestory()
-                );
+                  CreateStoryToterGrundWithAllBlockTypesAnd3Pictures(),
+                  CreateExcerptandTextStoryWithoutTitleAndImages()
+                  );
         }
 
+        public static StoryDtoProvider UniqueStories()
+        {
+            return CreateFromStoryDtos(
+                  CreateUniquePicturestory()
+                );
+        }
         public StoryDto[] All { get; private set; }
     }
 }

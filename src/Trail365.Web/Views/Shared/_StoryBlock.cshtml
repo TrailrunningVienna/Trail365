@@ -41,6 +41,17 @@
         }
     }
 
+    @if (currentItem.BlockType == StoryBlockType.Excerpt)
+    {
+        if (string.IsNullOrEmpty(currentItem.Content) == false)
+        {
+            <div class="row">
+                <div class="col-12 mt-3 mb-3">
+                    @Html.Raw(currentItem.GetTextRenderingHtml())
+                </div>
+            </div>
+        }
+    }
     @if (currentItem.BlockType == StoryBlockType.Text)
     {
         if (string.IsNullOrEmpty(currentItem.Content) == false)

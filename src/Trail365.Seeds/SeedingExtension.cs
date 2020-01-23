@@ -70,6 +70,10 @@ namespace Trail365.Seeds
                 if (status.HasValue)
                 {
                     result.Item1.Status = status.Value;
+                    if (status.Value == StoryStatus.Default)
+                    {
+                        result.Item1.PublishedUtc = DateTime.UtcNow;
+                    }
                 }
                 batch.Add(result.Item1);
             }
