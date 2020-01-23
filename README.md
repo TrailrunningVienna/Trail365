@@ -67,4 +67,4 @@ There are 3 Version parts that can be defined by the development team (following
 
 We use and support pre-release versions.
 For pre-releases set the property "PreReleaseLabel" to something different then empty (suggested: "preview" or "prev").
-On pre-releases we automatically add a build-number, provided by TeamCity (Environment Variable "BUILD_NUMBER").
+On pre-releases we automatically add a build-number.
