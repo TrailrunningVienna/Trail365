@@ -1,6 +1,10 @@
-# Trail 365
+# Trail 365 
+
+## Issues
+Issues currently are managed in this [Github repository](https://github.com/TrailrunningVienna/Trail365-Home)
 
 ## Books, Ideas, Sources
+
 ### General
 - [Solution Architecture](https://github.com/ardalis/CleanArchitecture)
 - [eShopWeb](https://github.com/dotnet-architecture/eShopOnWeb)
