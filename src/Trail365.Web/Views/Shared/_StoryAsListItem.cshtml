@@ -1,0 +1,45 @@
+@model Trail365.ViewModels.StoryViewModel
+@{
+    var divID = $"{Model.ID}-Default";
+    var detailsUrl = Url.Action("Index", "Story", new { ID = Model.ID, NoConsent = false });
+    var externalDetails = false;
+}
+<div id="@divID">
+
+    <div class="row">
+        <div class="col-8">
+            <h4>@Model.Name</h4>
+        </div>
+        <div class="col-4">
+            @if (Model.Login.IsModeratorOrHigher)
+            {
+                <p>
+                    <a class="fg-link" asp-area="" asp-controller="StoryEditor" asp-action="Edit" asp-route-Id="@this.Model.ID">[Edit]</a>&nbsp;<a class="fg-link" asp-area="" asp-controller="StoryDetails" asp-action="Index" asp-route-Id="@this.Model.ID">[Details]</a>
+                </p>
+            }
+            else
+            {
+                <span>&nbsp;</span>
+            }
+        </div>
+    </div>
+
+    <a href="@detailsUrl" @Html.Raw(externalDetails ? "target='_blank'" : string.Empty) class="deal-link d-block">
+
+        @if (string.IsNullOrEmpty(Model.Excerpt))
+        {
+            @Html.Raw(Model.GetPreviewGridHtml())
+        }
+        else
+        {
+            <div class="row">
+                <div class="col-6">
+                    <p class="story-description-preview">@Model.Excerpt</p>
+                </div>
+                <div class="col-6">
+                    @Html.Raw(Model.GetPreviewGridHtml())
+                </div>
+            </div>
+        }
+    </a>
+</div>

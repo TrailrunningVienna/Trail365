@@ -1,0 +1,60 @@
+@model Trail365.ViewModels.DiagnosticsViewModel
+@{
+    ViewData["Title"] = "Diagnostics";
+    ViewData["BodyCssClass"] = "NoSidebar";
+}
+<h1>Diagnostics</h1>
+<p>Timestamp: @DateTime.Now.ToLongTimeString()</p>
+<h3>AuthenticateResult</h3>
+<dl>
+    <dt>None</dt>
+    <dd>@Model.AuthenticateResult.None</dd>
+
+    <dt>Succeeded</dt>
+    <dd>@Model.AuthenticateResult.Succeeded</dd>
+    @if (@Model.AuthenticateResult.Failure != null)
+    {
+        <dt>Failure Exception</dt>
+        <dd>@Model.AuthenticateResult.Failure</dd>
+    }
+</dl>
+<h3>Claims</h3>
+<dl>
+
+    @if (Model.AuthenticateResult.Principal != null)
+    {
+        @foreach (var claim in Model.AuthenticateResult.Principal.Claims)
+        {
+            <dt>@claim.Type</dt>
+            <dd>@claim.Value</dd>
+        }
+    }
+</dl>
+<h3>Properties</h3>
+<dl>
+    @if (Model.AuthenticateResult.Properties != null)
+    {
+        @foreach (var prop in Model.AuthenticateResult.Properties.Items)
+        {
+            <dt>@prop.Key</dt>
+            <dd>@prop.Value</dd>
+        }
+    }
+</dl>
+<h3>Ticket</h3>
+<dl>
+    @if (Model.AuthenticateResult.Ticket != null)
+    {
+        <dt>AuthenticationScheme</dt>
+        <dd>@Model.AuthenticateResult.Ticket.AuthenticationScheme</dd>
+    }
+</dl>
+
+<h3>Schemes (configured)</h3>
+<dl>
+    @foreach (var prop in Model.GetSchemes())
+    {
+        <dt>Scheme:</dt>
+        <dd>@prop</dd>
+    }
+</dl>

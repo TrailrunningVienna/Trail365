@@ -1,0 +1,42 @@
+@model Trail365.ViewModels.CreateTrailViewModel
+@{
+    ViewData["Title"] = "Trail upload (single file)";
+    ViewData["BodyCssClass"] = "seller";
+    ViewData["UnreadMessages"] = 0;
+}
+
+<div class="row mt-4 mb-2 d-none d-lg-flex">
+    <div class="col-12">
+        <h3 class="d-inline-block">@ViewData["Title"]</h3>
+    </div>
+</div>
+<div class="row d-none d-lg-flex mb-2">
+    <div class="col-12 pl-0">
+        <hr class="m-0 border-top" />
+    </div>
+</div>
+
+<div class="row d-lg-none">
+    <div class="col-12">
+        <h2 class="headline">@ViewData["Title"]</h2>
+    </div>
+</div>
+
+<form asp-action="SaveGpx" enctype="multipart/form-data">
+    <partial name="_TrailUpload" />
+    <div class="row">
+        <div class="col-12">
+            <input asp-for="Name" class="w-100" placeholder="Name" />
+            <input type="hidden" asp-for="ID" />
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12">
+            <button type="submit" class="w-100 bg-red">Trail speichern<i class="fa fa-arrow-red">&nbsp;</i></button>
+        </div>
+    </div>
+</form>
+
+@*@section Sidebar
+    {
+    }*@

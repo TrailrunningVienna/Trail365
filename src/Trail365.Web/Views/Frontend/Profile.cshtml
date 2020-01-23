@@ -1,0 +1,42 @@
+@inject Microsoft.Extensions.Options.IOptionsMonitor<AppSettings> _settings
+
+@using Trail365.Configuration
+@model Trail365.ViewModels.ProfileSettingsViewModel
+
+@{
+    ViewData["Title"] = "Profil";
+    ViewData["UnreadMessages"] = Model.UnreadMessages;
+}
+
+<div class="row">
+    <div class="col-12">
+        <h2 class="headline">@Model.Name</h2>
+        <div class="w-50 m-auto avatar-container">
+            <img class="rounded-circle d-block avatar" src="@(string.IsNullOrWhiteSpace(Model.AvatarUrl) ? "/img/avatar.png" : Model.AvatarUrl)?v=@Guid.NewGuid()" />
+        </div>
+    </div>
+</div>
+
+<div class="row" id="filter-summary">
+    <div class="col-12">
+        @foreach (var rl in this.Model.Login.GetAssignedRoleNames())
+        {
+            <a class="filter">
+                @rl
+            </a>
+        }
+    </div>
+</div>
+
+@{await Html.RenderPartialAsync("_ProfilePartial"); }
+
+@if (_settings.CurrentValue.Features.UserProfile)
+{
+    <div class="row">
+        <div class="col-12">
+            <a class="btn btn-lg btn-secondary w-100" asp-controller="Frontend" asp-action="ProfileSettings">
+                <i class="fa fa-settings">&nbsp;</i>Meine Profileinstellungen
+            </a>
+        </div>
+    </div>
+}

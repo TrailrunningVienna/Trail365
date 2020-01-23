@@ -1,0 +1,134 @@
+@using Trail365
+@using Trail365.Configuration
+@model Trail365.ViewModels.TrailViewModel
+
+@inject Microsoft.Extensions.Options.IOptionsMonitor<AppSettings> _settings
+@{
+    ViewData["Title"] = Model.Name;
+    ViewData["Description"] = Model.Description;
+    //ViewData["UnreadMessages"] = Model.UnreadMessages;
+    ViewData["HideHeader"] = false;
+    ViewData["OpenGraphTags"] = Model.CreateOpenGraphTags(this.Url, new System.Drawing.Size(800, 600), _settings.CurrentValue.FacebookSettings?.AppId);
+    //ViewData["GapAfterImpressum"] = true;
+    ViewData["NoConsent"] = Model.NoConsent;
+    System.Drawing.Size frameSquareSize = new System.Drawing.Size(300, 300);
+    var allPictures = Model.GetTrailPictures();
+
+    if (allPictures.Length == 0)
+    {
+        allPictures = new string[] { this.Url.GetDefaultEmptyImageUrl() };
+    }
+    this.ViewBag.HideIdentifierRow = true; //_TrailMetadata behavior
+}
+
+<div class="row">
+    <div class="col-12 pt-1 pb-1">
+        <h4 class="headline mb-0 text-truncate">@Model.Name</h4>
+    </div>
+</div>
+
+@HtmlHelperExtension.EmptyRow(this.Html)
+
+<div class="row">
+    @*full row that should be layouted in two columns*@
+    <div class="col-6">
+        @*one column: contains map preview picture*@
+        <div class="trail-preview-wrapper">
+            <img src="@(allPictures[0])" class="img-fluid" style="width:50%" />
+        </div>
+    </div>
+    <div class="col-6">
+        @*another column: layouted in multiple rows (and colums) with detail content - not sure if it may better span columns over more rows instead of cascading grids*@
+
+        <div class="row">
+            <div class="col-12">
+                <div class="trail-preview-wrapper">
+                    <img src="@(Model.GetChallengeElevationProfileUrlOrDefault(Model.Challenge))" class="img-fluid" />
+                </div>
+            </div>
+        </div>
+        @*<partial name="_TrailMeasures" model="@(Model)" />*@
+    </div>
+</div>
+
+<partial name="_TrailMetadata" model="@(Model)" />
+
+
+@HtmlHelperExtension.DisplayMultilineMarkdownAsRow(this.Html, Model.Excerpt)
+
+@HtmlHelperExtension.DisplayMultilineMarkdownAsRow(this.Html, Model.Description)
+
+@if (allPictures.Length > 1)
+{
+<div class="row">
+
+    @foreach (var imageUrl in allPictures.Skip(1).Take(12))
+        {
+    <div class="col">
+        <div class="trail-preview-wrapper">
+            <img src="@(imageUrl)" class="img-fluid" />
+        </div>
+    </div>
+        }
+</div>
+}
+
+@HtmlHelperExtension.EmptyRow(this.Html)
+
+@if (_settings.CurrentValue.Features.TrailAnalyzer)
+{
+<div class="row mt-2">
+    <div class="col-12">
+        <a class="btn btn-lg btn-primary w-100" href="@Model.GetTrailAnalyzerUrl(this.Url)" target="_blank">
+            Trail-Analyse
+        </a>
+    </div>
+</div>
+}
+
+@if (this.Model.CanDownload())
+{
+<div class="row mt-2">
+    <div class="col-12">
+        <a class="btn btn-lg btn-primary w-100" href="@Model.GpxUrl" target="_blank">
+            Gpx-Download
+        </a>
+    </div>
+</div>
+}
+
+@if (this.Model.CanEdit())
+{
+<div class="row mt-2">
+    <div class="col-12">
+        <a class="btn btn-lg w-100 btn-primary" asp-area="Backend" asp-controller="Trails" asp-action="Edit" asp-route-ID="@Model.ID">
+            <i class="fa fa-arrow-transparent">&nbsp;</i>
+            Bearbeiten
+        </a>
+    </div>
+</div>
+
+<div class="row mt-2">
+    <div class="col-12">
+        <a class="btn btn-lg btn-primary" asp-area="" asp-controller="TrailPreview" asp-action="CalculateTrailPreview" asp-route-ID="@Model.ID">
+            Vorschau berechnen
+        </a>
+    </div>
+</div>
+}
+
+@if (_settings.CurrentValue.Features.ShareOnFacebook && !Model.Scraping)
+{
+<div class="row">
+    <div class="col-12">
+        <p class="text-center fg-grey font-weight-bold">Trail teilen</p>
+        <p class="text-center">
+            <a href="@this.Url.GetFacebookHRefUrlForTrailShare(Model.ID)"><img src="~/img/share/facebook.png" /></a>
+        </p>
+    </div>
+</div>
+}
+
+@*@section Sidebar
+    {
+    }*@

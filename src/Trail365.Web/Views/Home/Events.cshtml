@@ -1,0 +1,14 @@
+@model Trail365.ViewModels.EventCollectionViewModel
+@{
+    ViewData["Title"] = "Veranstaltungen";
+    ViewData["UnreadMessages"] = 0;
+}
+
+<div class="row mt-4 mt-lg-2 mb-1">
+    <div class="col-12">
+        @*<h3>Trails</h3>*@
+        &nbsp;
+    </div>
+</div>
+
+<partial name="_EventCollection" model="@Model" />

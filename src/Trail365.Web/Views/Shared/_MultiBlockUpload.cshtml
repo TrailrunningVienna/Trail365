@@ -1,0 +1,68 @@
+@model Trail365.ViewModels.StoryCreationViewModel
+
+@{
+    int i = 0;
+}
+<div id="block-wrapper">
+    <div class="row">
+        @foreach (var fileInfo in Model.FileInfos)
+        {
+            <div class="col-4">
+
+                <div class="file-preview">
+                    <i class="@fileInfo.GetFileTypeCssClass()"></i>
+                    <span class="remove-image-icon" onclick="removeImage('block-wrapper', '@Url.Action("RemoveBlock", "StoryEditor" , new { id=fileInfo.ID, storyid=this.Model.ID})')">&#10006;</span>
+                </div>
+
+                @*<div class="square">
+                    <img src="~/img/icons/gpx.png" class="trail-preview" />
+                    <span class="remove-image-icon" onclick="removeImage('block-wrapper', '@Url.Action("RemoveGpx", "Frontend" , new { ID=fileInfo.ID })')">&#10006;</span>
+                    </div>*@
+
+                <input type="hidden" name="FileInfos[@(i)].ID" value="@fileInfo.ID" />
+                <input type="hidden" name="FileInfos[@(i)].FileName" value="@fileInfo.FileName" />
+                <input type="hidden" name="FileInfos[@(i)].Name" value="@fileInfo.Name" />
+                <input type="hidden" name="FileInfos[@(i++)].AbsoluteUrl" value="@fileInfo.AbsoluteUrl" />
+            </div>
+        }
+        <div id="loader" class="col-4 d-none">
+            <div class="loader"></div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12">
+            <div class="input-file-container">
+                <input class="input-file" id="my-file" type="file" multiple>
+                <label tabindex="0" for="my-file" class="input-file-trigger w-100 bg-red btn">Medien Dateien uploaden<i class="fa fa-upload">&nbsp;</i></label>
+            </div>
+            <p class="file-return text-center"></p>
+        </div>
+    </div>
+    <script type="text/javascript">
+
+        var existingFiles = @(Json.Serialize(Model.FileInfos));
+
+        document.querySelector("html").classList.add('js');
+
+        var fileInput = document.querySelector(".input-file"),
+            button = document.querySelector(".input-file-trigger"),
+            the_return = document.querySelector(".file-return");
+
+        button.addEventListener("keydown",
+            function (event) {
+                if (event.keyCode === 13 || event.keyCode === 32) {
+                    fileInput.focus();
+                }
+            });
+        button.addEventListener("click",
+            function (event) {
+                fileInput.focus();
+                return false;
+            });
+        fileInput.addEventListener("change",
+            function (event) {
+                document.getElementById('loader').classList.remove('d-none');
+                uploadFiles('block-wrapper', '@Url.Action("UploadBlocks", "StoryUpload", new {id=this.Model.ID })', this.files, '@(Json.Serialize(Model.FileInfos))');
+            });
+    </script>
+</div>

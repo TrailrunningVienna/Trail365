@@ -1,0 +1,80 @@
+@model Trail365.ViewModels.EventViewModel
+@{
+    string col_left = "col-3";
+    string col_right = "col-6";
+    string col_right1 = "col-3";
+    if (!this.Model.HasEnabledPlaceEditLink())
+    {
+        col_right = "col-9";
+    }
+    string row = "row no-gutters";
+}
+
+<div class="@row">
+    <div class="@col_left">
+        Wann:
+    </div>
+    <div class="@col_right">
+        @Model.GetHumanizedStartEndTime()
+    </div>
+</div>
+
+<div class="@row">
+    <div class="@col_left">
+        Start:
+    </div>
+
+    <div class="@col_right">
+        @Model.GetHumanizedPlaceOrDefault()
+    </div>
+
+    @if ((this.Model.Place != null) && (this.Model.Place.ShowEditLink) && (this.Model.Login.IsModeratorOrHigher))
+    {
+        <div class="@col_right1">
+            <a class="fg-link" asp-area="Backend" asp-controller="Places" asp-action="Edit" asp-route-Id="@this.Model.Place.ID">
+                [Edit]
+            </a>
+        </div>
+    }
+</div>
+
+@if (string.IsNullOrEmpty(this.Model.GetMeetingPointOrDefault()) == false)
+{
+    <div class="@row">
+        <div class="@col_left d-none d-sm-block">Treffpunkt:</div>
+        <div class="@col_left d-block d-sm-none">TP:</div>
+        <div class="@col_right">
+            @Model.GetMeetingPointOrDefault()
+        </div>
+    </div>
+}
+
+@if (this.Model.EndPlace != null)
+{
+    <div class="@row">
+        <div class="@col_left">
+            Ende:
+        </div>
+        @if (this.Model.IsCircle)
+        {
+            <div class="@col_right">
+                (Rundkurs)
+            </div>
+        }
+        else
+        {
+            <div class="@col_right">
+                @Model.EndPlace.GetHumanizedName()
+            </div>
+        }
+
+        @if ((!this.Model.IsCircle) && (this.Model.EndPlace.ShowEditLink) && (this.Model.Login.IsModeratorOrHigher))
+        {
+            <div class="@col_right1">
+                <a class="fg-link" asp-area="Backend" asp-controller="Places" asp-action="Edit" asp-route-Id="@this.Model.EndPlace.ID">
+                    [Edit]
+                </a>
+            </div>
+        }
+    </div>
+}

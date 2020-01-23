@@ -1,0 +1,38 @@
+@model Trail365.ViewModels.CreateTrailViewModel
+
+<div id="trail-wrapper">
+
+    <div class="w-50 m-auto avatar-container">
+        <img class="square d-block avatar" src="@(string.IsNullOrWhiteSpace(Model.FileUrl) ? "/img/icons/gpx.png" : Model.FileUrl)?v=@Guid.NewGuid()" />
+    </div>
+
+    <div class="input-file-container">
+        <input class="input-file" id="my-file" type="file">
+        <label tabindex="0" for="my-file" class="input-file-trigger w-100 bg-red btn">GPX-File uploaden<i class="fa fa-upload">&nbsp;</i></label>
+    </div>
+
+    <p class="file-return text-center"></p>
+
+    <script type="text/javascript">
+
+        document.querySelector("html").classList.add('js');
+
+        var fileInput = document.querySelector(".input-file"),
+            button = document.querySelector(".input-file-trigger"),
+            the_return = document.querySelector(".file-return");
+
+        button.addEventListener("keydown", function (event) {
+            if (event.keyCode === 13 || event.keyCode === 32) {
+                fileInput.focus();
+            }
+        });
+        button.addEventListener("click", function (event) {
+            fileInput.focus();
+            return false;
+        });
+        fileInput.addEventListener("change",
+            function (event) {
+            uploadFile('trail-wrapper', '@Url.Action("UploadGpx", "Trail", new { id = Model.ID })', this.files[0]);
+        });
+    </script>
+</div>

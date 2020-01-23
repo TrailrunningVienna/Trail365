@@ -1,0 +1,32 @@
+@using Microsoft.AspNetCore.Authentication
+@using Trail365.Configuration
+@inject IAuthenticationSchemeProvider SchemeProvider
+@inject Microsoft.Extensions.Options.IOptionsMonitor<AppSettings> _settings
+
+@{
+
+    ViewBag.Title = "Login";
+    ViewData["BodyCssClass"] = "NoSidebar";
+}
+
+<div class="row">
+    <div class="col-8 m-auto">
+        <h2 class="align-center headline">@ViewData["Title"]</h2>
+    </div>
+</div>
+
+@if (_settings.CurrentValue.Features.Login)
+{
+    @foreach (var provider in (await SchemeProvider.GetRequestHandlerSchemesAsync()).OrderBy(o => o.Name))
+    {
+        <div class="row">
+            <div class="col-6 m-auto">
+                <a class="btn btn-lg bg-@provider.Name.ToLower()" asp-controller="Auth" asp-action="SignIn"
+                   asp-route-returnUrl="@Context.Request.Query["returnUrl"]" asp-route-provider="@provider.Name">
+                    @provider.Name
+                    <i class="fab fa-@provider.Name.ToLower()">&nbsp;</i>
+                </a>
+            </div>
+        </div>
+    }
+}

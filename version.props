@@ -1,0 +1,13 @@
+<Project>
+  <PropertyGroup>
+    <MajorVersion>0</MajorVersion>
+    <MinorVersion>11</MinorVersion>
+    <PatchVersion>5</PatchVersion>
+    <PreReleaseLabel></PreReleaseLabel>
+    <VersionPrefix>$(MajorVersion).$(MinorVersion).$(PatchVersion)</VersionPrefix>
+    <VersionSuffix Condition="'$(PreReleaseLabel)' == ''"></VersionSuffix>
+    <VersionSuffix Condition="'$(PreReleaseLabel)' != ''">-$(PreReleaseLabel)</VersionSuffix>
+    <InformationalVersion>$(VersionPrefix)$(VersionSuffix)</InformationalVersion>
+    <Version>$(VersionPrefix)$(VersionSuffix)</Version>
+  </PropertyGroup>
+</Project>

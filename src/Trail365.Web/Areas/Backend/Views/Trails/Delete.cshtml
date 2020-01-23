@@ -1,0 +1,64 @@
+@model Trail365.ViewModels.TrailBackendViewModel
+
+@{
+    ViewData["Title"] = $"Anzeige '{Model.Name}' löschen?";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row">
+    <div class="col-12">
+        <h4 class="headline mb-1">@ViewData["Title"]</h4>
+    </div>
+</div>
+<div class="row">
+    <div class="col-12">
+        <hr class="border-top" />
+    </div>
+</div>
+
+<div>
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Name)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Excerpt)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Created)
+        </dt>
+        <dd class="col-sm-10">
+            @if (Model.Created.HasValue)
+            {
+                <span>@(Model.Created.Value.ToString("dd.MM.yyyy HH:mm"))</span>
+            }
+            else
+            {
+                <small><em>(leer)</em></small>
+            }
+        </dd>
+    </dl>
+</div>
+<div class="row">
+    <div class="col-12">
+        <hr class="border-top" />
+    </div>
+</div>
+<form asp-action="Delete">
+    <div class="row">
+        <div class="col-4">
+            <input type="hidden" asp-for="ID" />
+            <button type="submit" class="btn btn-lg btn-primary d-block w-100">
+                <i class="fa fa-arrow-red">&nbsp;</i>
+                Trail löschen
+            </button>
+        </div>
+        <div class="col-4"></div>
+        <div class="col-4">
+            <a asp-controller="Trails" asp-action="Index" class="btn btn-primary d-block w-100">
+                <i class="fa fa-arrow-red">&nbsp;</i>
+                Zurück
+            </a>
+        </div>
+    </div>
+</form>

@@ -1,0 +1,8 @@
+@using Trail365
+@model Trail365.ViewModels.TrailCollectionViewModel
+
+@if (Model.Items.Any())
+{
+    @HtmlHelperExtension.EmptyRow(this.Html)
+    <partial name="_TrailCollection" model="@Model" />
+}

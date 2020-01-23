@@ -1,0 +1,88 @@
+@using Trail365
+@model Trail365.ViewModels.StoriesBackendIndexViewModel
+
+@{
+    ViewData["Title"] = "Stories";
+}
+
+<form asp-area="Backend" asp-controller="Stories" asp-action="Index" method="get" id="form">
+    <div class="row">
+        <div class="col-12">
+            <h4 class="headline">@ViewData["Title"]</h4>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div id="datatable_filter" class="dataTables_filter" style="text-align: right;">
+
+                <label class="d-inline-block w-100">
+                    STATUSLABEL
+
+                    <select name="status" asp-items="ViewBag.FilterStatus as SelectList" class="w-25 d-inline-block" style="margin: 8px 0 8px auto;" onchange="$('#form').submit();" id="status">
+                        <option value="">(Status)</option>
+                    </select>
+                </label>
+
+                <label class="d-inline-block w-100">
+                    SEARCHTEXTLABEL
+                    <input type="text" class="w-25 d-inline-block" placeholder="Name" aria-controls="datatable" style="margin: 8px 0 8px auto;" name="searchtext" id="searchtext" onchange="$('#form').submit();" value="@Model.SearchText" />
+                </label>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <partial name="_Pager" model="@Model" />
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Stories[0].Name)
+                        </th>
+
+                        <th>
+                            @Html.DisplayNameFor(model => model.Stories[0].Status)
+                        </th>
+                        <th data-orderable="false">leer33</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.Stories)
+                    {
+                        <tr>
+                            <td>
+                                <a asp-area="" asp-controller="StoryDetails" asp-action="Index" asp-route-id="@item.ID" asp-route-NoConsent="true">@item.Name</a>
+                            </td>
+
+                            <td>
+                                @Html.Raw($"{item.Status.ToDescription()}")
+                            </td>
+
+                            <td>
+                                <a class="btn btn-primary d-block p-1 mb-1" asp-area="" asp-controller="StoryDetails" asp-action="Index" asp-route-id="@item.ID">Details</a>
+                                <a class="btn btn-primary d-block p-1 mb-1" asp-area="" asp-controller="StoryEditor" asp-action="Edit" asp-route-id="@item.ID">Bearbeiten</a>
+                                <a class="btn btn-primary d-block p-1" asp-area="" asp-controller="StoryEditor" asp-action="Delete" asp-route-id="@item.ID" asp-route-redirectto="@this.Url.GetBackendStoriesIndexUrl()">Löschen</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-4">
+            <a asp-controller="Home" asp-action="Index" class="btn btn-primary d-block w-100">
+                <i class="fa fa-arrow-transparent">&nbsp;</i>
+                Zurück
+            </a>
+        </div>
+    </div>
+</form>

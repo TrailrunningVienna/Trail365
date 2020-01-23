@@ -1,0 +1,77 @@
+@model Trail365.ViewModels.DatapagerViewModel
+
+@if (Model.EnablePaging)
+{
+    <div id="pager" class="float-lg-right mt-2">
+
+        <a asp-controller="@Model.PageController" asp-action="@Model.PageAction" asp-route-page="@(Model.Page - 1)"
+           class="pager-item @(Model.IsFirstPage ? "disabled" : string.Empty) icon"><img src="/img/arrow-left.png" alt="zurück" /></a>
+
+        @if (Model.LastPage != 1)
+        {
+            <a asp-controller="@Model.PageController" asp-action="@Model.PageAction" asp-route-page="@(1)"
+               class="pager-item @(Model.IsFirstPage ? "active" : string.Empty)">1</a>
+        }
+        @if (Model.IsFirstPage && !Model.IsLastPage)
+        {
+            if (Model.LastPage > 2)
+            {
+                <a asp-controller="@Model.PageController" asp-action="@Model.PageAction" asp-route-page="@(2)"
+                   class="pager-item">2</a>
+            }
+            if (Model.LastPage > 3)
+            {
+                <a asp-controller="@Model.PageController" asp-action="@Model.PageAction" asp-route-page="@(3)"
+                   class="pager-item">3</a>
+            }
+        }
+        @if (Model.Page > 3)
+        {
+            <a asp-controller="@Model.PageController" asp-action="@Model.PageAction"
+               class="pager-item disabled">…</a>
+        }
+
+        @if (!Model.IsFirstPage && !Model.IsLastPage)
+        {
+            if (Model.Page > 2)
+            {
+                <a asp-controller="@Model.PageController" asp-action="@Model.PageAction" asp-route-page="@(Model.Page - 1)"
+                   class="pager-item">@(Model.Page - 1)</a>
+            }
+
+            <a asp-controller="@Model.PageController" asp-action="@Model.PageAction" asp-route-page="@(Model.Page)"
+               class="pager-item active">@(Model.Page)</a>
+
+            if (Model.Page < Model.LastPage - 1)
+            {
+                <a asp-controller="@Model.PageController" asp-action="@Model.PageAction" asp-route-page="@(Model.Page + 1)"
+                   class="pager-item">@(Model.Page + 1)</a>
+            }
+        }
+
+        @if (Model.Page < Model.LastPage - 2)
+        {
+            <a asp-controller="@Model.PageController" asp-action="@Model.PageAction"
+               class="pager-item disabled">…</a>
+        }
+        @if (Model.IsLastPage && !Model.IsFirstPage)
+        {
+            if (Model.LastPage > 3)
+            {
+                <a asp-controller="@Model.PageController" asp-action="@Model.PageAction" asp-route-page="@(Model.LastPage - 2)"
+                   class="pager-item">@(Model.LastPage - 2)</a>
+            }
+            if (Model.LastPage > 2)
+            {
+                <a asp-controller="@Model.PageController" asp-action="@Model.PageAction" asp-route-page="@(Model.LastPage - 1)"
+                   class="pager-item">@(Model.LastPage - 1)</a>
+            }
+        }
+
+        <a asp-controller="@Model.PageController" asp-action="@Model.PageAction" asp-route-page="@(Model.LastPage)"
+           class="pager-item @(Model.IsLastPage ? "active" : string.Empty) last">@(Model.LastPage)</a>
+
+        <a asp-controller="@Model.PageController" asp-action="@Model.PageAction" asp-route-page="@(Model.Page + 1)"
+           class="pager-item @(Model.IsLastPage ? "disabled" : string.Empty) icon"><img src="/img/arrow-right.png" alt="weiter" /></a>
+    </div>
+}

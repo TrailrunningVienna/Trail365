@@ -1,0 +1,44 @@
+@using Trail365
+@model Trail365.ViewModels.NewsViewModel
+@{
+    var divID = $"{Model.ID}-Default";
+    var externalDetails = false;
+    var imageUrl = this.Model.ImageUrl;
+
+    if (string.IsNullOrEmpty(imageUrl))
+    {
+        imageUrl = this.Url.GetDefaultEmptyNewsImageUrl();
+    }
+    string col_left = "col-3";
+    string col_right = "col-9";
+    string row = "row no-gutters";
+}
+
+<div id="@divID">
+    <a href="@Model.DetailsUrl" @Html.Raw(externalDetails ? "target='_blank'" : string.Empty) class="deal-link d-block">
+        <div class="row pl-4">
+            <div class="col-3 pr-0">
+                <div class="news-preview-wrapper">
+                    <img src="@(imageUrl)" class="img-fluid rounded d-block avatar" style="object-fit:cover" />
+                </div>
+            </div>
+
+            <div class="col-9 pr-0 pl-1">
+                @if (this.Model.EventItem != null)
+                {
+                    <partial name="_EventMetadata" model="@Model.EventItem" />
+
+                    @if (this.Model.EventItem.Trail != null)
+                    {
+                        <div class="@row">
+                            <div class="@col_left d-none d-sm-block">Challenge:</div>
+                            <div class="@col_left d-block d-sm-none">CH:</div>
+                            <div class="@col_right">@Model.EventItem.Trail.Challenge</div>
+                        </div>
+                    }
+                }
+            </div>
+        </div>
+    </a>
+    @HtmlHelperExtension.EmptyRow(this.Html, 4)
+</div>

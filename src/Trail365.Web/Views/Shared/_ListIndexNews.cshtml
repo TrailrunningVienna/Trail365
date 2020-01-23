@@ -1,0 +1,12 @@
+@using Trail365
+@model Trail365.ViewModels.NewsCollectionViewModel
+
+@if (Model.News.Any())
+{
+    @HtmlHelperExtension.EmptyRow(this.Html)
+
+    @foreach (var item in Model.News)
+    {
+        <partial name="_NewsPreview" model="@(item)" />
+    }
+}

@@ -1,0 +1,81 @@
+@using Trail365
+@model Trail365.ViewModels.StoryBackendViewModel
+
+@{
+    ViewData["Title"] = "Story Details: " + this.Model.Name;
+}
+
+<form asp-area="" asp-controller="StoryDetails" asp-action="Index" method="get" id="form">
+    <div class="row">
+        <div class="col-12">
+            <h4 class="headline">@ViewData["Title"]</h4>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>
+                            Typ
+                        </th>
+                        <th>
+                            Image
+                        </th>
+                        <th>
+                            Text
+                        </th>
+                        <th data-orderable="false"></th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                    @foreach (var item in Model.Blocks)
+                    {
+                        <tr>
+                            <td>
+                                <a asp-controller="StoryDetailEditor" asp-action="Edit" asp-route-id="@item.ID">
+                                    <p>@item.BlockType</p>
+                                    <p>@item.SortOrder</p>
+                                </a>
+                            </td>
+
+                            <td>
+                                @Html.GetImageRenderingHtml(item.BlockType, item.Url, string.Empty, true)
+                            </td>
+                            <td>
+                                <span class="d-inline-block text-truncate" style="max-width:60px">@item.Content</span>
+                            </td>
+                            <td>
+                                <a class="btn btn-primary d-block p-1 mb-1" asp-controller="StoryDetailEditor" asp-action="Edit" asp-route-id="@item.ID">Bearbeiten</a>
+                                <a class="btn btn-primary d-block p-1 mb-1" asp-controller="StoryDetailEditor" asp-action="Delete" asp-route-id="@item.ID">Löschen</a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                            </td>
+
+                            <td>
+                            </td>
+                            <td>
+                            </td>
+                            <td>
+                                <a class="btn btn-primary d-block p-1 mb-1" asp-controller="StoryDetailEditor" asp-action="Insert" asp-route-relative="@InsertMode.After.ToString()" asp-route-relativeid="@item.ID">Insert here...</a>
+                            </td>
+                        </tr>
+
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-4">
+            <a asp-controller="Home" asp-action="Index" class="btn btn-primary d-block w-100">
+                <i class="fa fa-arrow-transparent">&nbsp;</i>
+                Zurück
+            </a>
+        </div>
+    </div>
+</form>

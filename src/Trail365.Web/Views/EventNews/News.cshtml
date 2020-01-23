@@ -1,0 +1,34 @@
+@inject Microsoft.Extensions.Options.IOptionsMonitor<AppSettings> _settings
+
+@using Trail365
+@using Trail365.Configuration
+@model Trail365.ViewModels.NewsCollectionViewModel
+@{
+    ViewData["Title"] = "Events";
+    ViewData["UnreadMessages"] = 0;
+    ViewData["OpenGraphTags"] = Model.CreateOpenGraphTags(this.Url, _settings.CurrentValue.FacebookSettings?.AppId);
+    ViewData["NoConsent"] = Model.NoConsent;
+
+}
+
+@if (this.Model.News.Count > 0)
+{
+    <div class="row mt-4 mt-lg-2 mb-1">
+        <div class="col-12">
+            <h2>Events</h2>
+        </div>
+    </div>
+    <partial name="_ListIndexNews" model="@Model" />
+}
+
+@if ((_settings.CurrentValue.Features.ShareOnFacebook) && (!this.Model.Scraping))
+{
+    <div class="row">
+        <div class="col-12">
+            <p class="text-center fg-grey font-weight-bold">Teilen</p>
+            <p class="text-center">
+                <a href="@this.Url.GetFacebookHRefUrlForNewsShare()"><img src="~/img/share/facebook.png" /></a>
+            </p>
+        </div>
+    </div>
+}

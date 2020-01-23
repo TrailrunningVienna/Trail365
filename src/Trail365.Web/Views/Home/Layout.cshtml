@@ -1,0 +1,251 @@
+@using Trail365
+@model Trail365.ViewModels.LayoutViewModel
+@{
+    ViewData["Title"] = "Layout";
+    ViewData["UnreadMessages"] = 0;
+}
+
+@if (this.Model.Key == "empty")
+{
+    return;
+}
+
+@HtmlHelperExtension.EmptyRow(this.Html, 5)
+
+@if (this.Model.Key == "table")
+{
+    <div class="row">
+
+        <div class="col-2">
+            <span>&nbsp;</span>
+        </div>
+
+        <div class="col-2">
+            <span>langertextohneumbruchimspan</span>
+        </div>
+        <div class="col-2">
+            <span>langer text mit umbruch im span</span>
+        </div>
+        <div class="col-2">
+            <p>langertextohneumbruchimparagraph</p>
+        </div>
+        <div class="col-2">
+            <p>langer text mit umbruch im paragraph</p>
+        </div>
+        <div class="col-2">
+            langertextohneumbruchundohnetag
+        </div>
+    </div>
+}
+
+@if (this.Model.Key == "edit")
+{
+    <div class="row">
+
+        <div class="col-3 text-right">
+            <label asp-for="TextValue" class="d-block pt-3"></label>
+        </div>
+
+        <div class="col-9">
+            <input asp-for="TextValue" class="w-100" />
+        </div>
+    </div>
+
+    <div class="row">
+
+        <div class="col-3">
+            <span></span>
+        </div>
+
+        <div class="col-9">
+            <span asp-validation-for="TextValue" class="text-danger pt-3 d-block"></span>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-3 text-right">
+            <label asp-for="MultiLineTextValue" class="d-block pt-3"></label>
+        </div>
+        <div class="col-9">
+            <textarea asp-for="MultiLineTextValue" class="w-100" rows="4"></textarea>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-3 text-right">
+            <span></span>
+        </div>
+        <div class="col-9">
+            <span asp-validation-for="MultiLineTextValue" class="text-danger pt-3 d-block"></span>
+        </div>
+    </div>
+
+    @HtmlHelperExtension.EmptyRow(this.Html, 5)
+
+    <div class="row">
+        <div class="col-9">
+            <span> ZWEI zu ZEHN</span>
+        </div>
+    </div>
+
+    <div class="row">
+
+        <div class="col-2 text-right">
+            <label class="d-block pt-3">Label1</label>
+        </div>
+
+        <div class="col-10">
+            <input class="w-100" />
+        </div>
+    </div>
+
+    <div class="row">
+
+        <div class="col-2">
+            <span></span>
+        </div>
+
+        <div class="col-10">
+            <span class="text-danger pt-3 d-block">validation text</span>
+        </div>
+    </div>
+
+}
+
+@if (this.Model.Key == "default")
+{
+
+    <div class="row">
+        <div class="col-6">
+            <h1>H1 headline</h1>
+        </div>
+        <div class="col-6">
+            <p>NOT USED</p>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-6">
+            <h2>H2 headline</h2>
+        </div>
+        <div class="col-6">
+            <p>View Header</p>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-6">
+            <h3>H3 headline</h3>
+        </div>
+        <div class="col-6">
+            <p>View-Section-Header</p>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-6">
+            <h4>H4 headline</h4>
+        </div>
+        <div class="col-6">
+            <p>Item Header</p>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-6">
+            <h5>H5 headline</h5>
+        </div>
+        <div class="col-6">
+            <p>H5 not used</p>
+        </div>
+    </div>
+
+    @HtmlHelperExtension.EmptyRow(this.Html, 5)
+
+    <div class="row">
+
+        <div class="col-12">
+            <p>P without any class</p>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <p class="trail-preview-title">P trail-preview-title</p>
+        </div>
+    </div>
+
+    <div class="row">
+
+        <div class="col-12">
+            <p class="trail-description">P trail-description</p>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <p class="trail-preview">P trail-preview</p>
+        </div>
+    </div>
+
+    @HtmlHelperExtension.EmptyRow(this.Html, 5)
+
+    <div class="row">
+        <div class="col-12">
+
+            <div class="row">
+                <div class="col-12">
+                    <p>Button-Styles</p>
+                </div>
+            </div>
+
+            <div class="row">
+
+                <div class="col-4">
+                    <p>primary large/small</p>
+                </div>
+
+                <div class="col-4 mt-4">
+                    <a class="btn btn-lg btn-primary w-100">
+                        <i class="fa fa-logout">&nbsp;</i>feature
+                    </a>
+                </div>
+
+                <div class="col-4 mt-4">
+                    <a class="btn btn-sm btn-primary w-100">
+                        <i class="fa fa-logout">&nbsp;</i>feature
+                    </a>
+                </div>
+            </div>
+
+            <div class="row">
+
+                <div class="col-4">
+                    <p>secondary large/small</p>
+                </div>
+
+                <div class="col-4 mt-4">
+                    <a class="btn btn-lg btn-secondary w-100">
+                        <i class="fa fa-logout">&nbsp;</i>feature
+                    </a>
+                </div>
+
+                <div class="col-4 mt-4">
+                    <a class="btn btn-sm btn-secondary w-100">
+                        <i class="fa fa-logout">&nbsp;</i>feature
+                    </a>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-4">
+                    <p>link created from markdown:</p>
+                </div>
+
+                <div class="col-4 mt-4">
+                    <p class="text-wrap"><a class="fg-link" href="https://www.ultratrail.si/en/">Veranstalterhomepage-Demo</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+}

@@ -1,0 +1,361 @@
+@using Microsoft.AspNetCore.Http.Extensions
+@using Trail365
+@using Trail365.Configuration
+@using Trail365.ViewModels
+@using Trail365.Web
+@inject Microsoft.Extensions.Options.IOptionsMonitor<AppSettings> _settings
+
+@{
+    Dictionary<string, string>
+    openGraphTags = ViewData["OpenGraphTags"] as Dictionary<string, string> ?? new Dictionary<string, string>();
+    var hideHeader = (ViewData["HideHeader"] as bool?) ?? false;
+    var hideImpressum = (ViewData["HideImpressum"] as bool?) ?? false;
+    var gapAfterImpressum = (ViewData["GapAfterImpressum"] as bool?) ?? false;
+    var unreadMessages = (ViewData["UnreadMessages"] as int?) ?? 0;
+    var area = (ViewContext.RouteData.Values["area"] ?? string.Empty);
+    LoginViewModel login = (ViewData["Login"] as LoginViewModel) ?? LoginViewModel.CreateFromClaimsPrincipalOrDefault(this.User);
+    string returnUrl = this.Url.ActionContext.HttpContext.Request.GetEncodedPathAndQuery();
+
+    string tempInfoMessage = $"{this.TempData["Info"]}".Trim();
+    string infoMessage = $"{ViewBag.Info}".Trim();
+    if (string.IsNullOrEmpty(tempInfoMessage) == false)
+    {
+        if (string.IsNullOrEmpty(infoMessage))
+        {
+            infoMessage = tempInfoMessage;
+        }
+    }
+
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+
+    @if (!_settings.CurrentValue.AllowRobots)
+    {
+        <meta name="robots" content="noindex, nofollow">
+    }
+
+    <!-- Chrome, Firefox OS and Opera MUSS der selbe Wert sein wie im Manifest file -->
+    <title>@ViewData["Title"] - Trail365</title>
+    @if (!string.IsNullOrWhiteSpace($"{ViewData["Description"]}"))
+    {
+        <meta name="description" content="@ViewData[" Description"]" />
+    }
+
+    @foreach (string tagProperty in openGraphTags.Keys)
+    {
+        <meta property="@tagProperty" content="@openGraphTags[tagProperty]" />
+    }
+    @*https://www.netguru.com/codestories/few-tips-that-will-make-your-pwa-on-ios-feel-like-native*@
+
+    <link rel="manifest" href="/manifest.webmanifest">
+    <link rel="icon" type="image/png" sizes="512x512" href="/icon-512x512.png">
+
+    <link rel="apple-touch-icon" sizes="57x57" href="/apple-icon-57x57.png">
+    <link rel="apple-touch-icon" sizes="60x60" href="/apple-icon-60x60.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="/apple-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="76x76" href="/apple-icon-76x76.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="/apple-icon-114x114.png">
+    <link rel="apple-touch-icon" sizes="120x120" href="/apple-icon-120x120.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="/apple-icon-144x144.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="/apple-icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-icon-180x180.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="/android-icon-192x192.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <meta name="msapplication-TileColor" content="#ffffff">
+    <meta name="msapplication-TileImage" content="/ms-icon-144x144.png">
+    <meta name="theme-color" content="#ffffff">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.2/css/all.min.css">
+
+    <link href="https://fonts.googleapis.com/css?family=Roboto:100,100i,300,300i,400,400i,500,500i,700,700i,900,900i&display=swap" rel="stylesheet">
+
+    <environment include="Development">
+        <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" asp-append-version="true" />
+        <link rel="stylesheet" href="~/css/datatables.css" asp-append-version="true" />
+        <link rel="stylesheet" href="~/css/flag-icon.css" asp-append-version="true" />
+    </environment>
+
+    <environment exclude="Development">
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+              asp-fallback-href="~/lib/bootstrap/dist/css/bootstrap.min.css"
+              asp-fallback-test-class="sr-only" asp-fallback-test-property="position" asp-fallback-test-value="absolute"
+              crossorigin="anonymous"
+              integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+              asp-append-version="true" />
+        <link rel="stylesheet" href="~/css/datatables.min.css" asp-append-version="true" />
+        <link rel="stylesheet" href="~/css/flag-icon.min.css" asp-append-version="true" />
+    </environment>
+
+    <link rel="stylesheet" href="~/css/ion.rangeSlider.min.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+
+    @if (_settings.CurrentValue.HasInstrumentationKey())
+    {
+        <script type="text/javascript">
+
+            var appInsights = window.appInsights || function (a) {
+                function b(a) { c[a] = function () { var b = arguments; c.queue.push(function () { c[a].apply(c, b) }) } } var c = { config: a }, d = document, e = window; setTimeout(function () { var b = d.createElement("script"); b.src = a.url || "https://az416426.vo.msecnd.net/scripts/a/ai.0.js", d.getElementsByTagName("script")[0].parentNode.appendChild(b) }); try { c.cookie = d.cookie } catch (a) { } c.queue = []; for (var f = ["Event", "Exception", "Metric", "PageView", "Trace", "Dependency"]; f.length;)b("track" + f.pop()); if (b("setAuthenticatedUserContext"), b("clearAuthenticatedUserContext"), b("startTrackEvent"), b("stopTrackEvent"), b("startTrackPage"), b("stopTrackPage"), b("flush"), !a.disableExceptionTracking) { f = "onerror", b("_" + f); var g = e[f]; e[f] = function (a, b, d, e, h) { var i = g && g(a, b, d, e, h); return !0 !== i && c["_" + f](a, b, d, e, h), i } } return c
+            }({
+                instrumentationKey: "@_settings.CurrentValue.APPINSIGHTS_INSTRUMENTATIONKEY"
+            });
+            window.appInsights = appInsights, appInsights.queue && 0 === appInsights.queue.length && appInsights.trackPageView();
+        </script>
+    }
+</head>
+
+<body class="@ViewData["BodyCssClass"] @area">
+
+    <header class="@(hideHeader ? "d-none" : string.Empty) d-lg-block">
+
+        @*<div class="container @(this.User.Identity.IsAuthenticated ? " align-left" : "align-center" ) bg-menuarea position-relative">*@
+        <div class="container bg-menuarea position-relative align-left">
+
+            @*logo section acts like the "Home" button on the mobile layout  *@
+
+            <a asp-area="" asp-controller="Home" asp-action="Index" class="d-inline-block">
+                <img src="~/img/logo_header.png" alt="Trail365 Logo" class="logo" />
+            </a>
+
+            @*ATTENTION layouted from right to left (inverted order)*@
+
+            @if (_settings.CurrentValue.Features.Login)
+            {
+                @if (this.User.Identity.IsAuthenticated)
+                {
+                    <a asp-area="" asp-controller="Frontend" asp-action="Profile" asp-route-returnUrl="@returnUrl" class="d-none d-lg-block float-lg-right menu-item">
+                        <span class="icon profile">Profil</span>
+                    </a>
+                }
+                else
+                {
+                    <a asp-area="" asp-controller="Auth" asp-action="SignIn" asp-route-returnUrl="@returnUrl" class="d-none d-lg-block float-lg-right menu-item">
+                        <span class="icon profile">Anmelden</span>
+                    </a>
+                }
+            }
+            else
+            {
+                <div class="d-none d-lg-block float-lg-right menu-item">
+                </div>
+            }
+
+            <div class="d-none d-lg-block float-lg-right menu-item">
+                <span>&nbsp;</span>
+            </div>
+
+            <div class="d-none d-lg-block float-lg-right menu-item">
+                <span>&nbsp;</span>
+            </div>
+
+            @if (_settings.CurrentValue.Features.Stories)
+            {
+                <a asp-area="" asp-controller="StoryNews" asp-action="Index" class="d-none d-lg-block float-lg-right menu-item">
+                    <span class="icon stories">Stories</span>
+                </a>
+
+            }
+            else
+            {
+                <div class="d-none d-lg-block float-lg-right menu-item">
+                    <span>&nbsp;</span>
+                </div>
+            }
+
+            @if (_settings.CurrentValue.Features.Trails)
+            {
+                <a asp-area="" asp-controller="Trail" asp-action="Index" class="d-none d-lg-block float-lg-right menu-item">
+                    <span class="icon trails">Trails</span>
+                </a>
+            }
+            else
+            {
+                <div class="d-none d-lg-block float-lg-right menu-item">
+                    <span>&nbsp;</span>
+                </div>
+            }
+
+            @if (_settings.CurrentValue.Features.Events)
+            {
+                <a asp-area="" asp-controller="EventNews" asp-action="Index" class="d-none d-lg-block float-lg-right menu-item">
+                    <span class="icon events position-relative">
+                        Events
+                    </span>
+                </a>
+            }
+            else
+            {
+                <div class="d-none d-lg-block float-lg-right menu-item">
+                    <span>&nbsp;</span>
+                </div>
+            }
+        </div>
+    </header>
+
+    <div class="clearfix"></div>
+
+    <div class="container">
+
+        @if (!string.IsNullOrWhiteSpace(ViewBag.Error))
+        {
+            <div class="alert alert-danger">
+                <strong>Fehler!</strong> @ViewBag.Error
+                @if (!string.IsNullOrWhiteSpace(ViewBag.ErrorLink) && !string.IsNullOrWhiteSpace(ViewBag.ErrorLinkText))
+                {
+                    <span>&nbsp;</span><a href="@ViewBag.ErrorLink" class="text-underline">@ViewBag.ErrorLinkText</a>
+                }
+            </div>
+        }
+        @if (!string.IsNullOrWhiteSpace(ViewBag.Warning))
+        {
+            <div class="alert alert-warning">
+                <strong>Warnung!</strong> @ViewBag.Warning
+            </div>
+        }
+        @if (!string.IsNullOrWhiteSpace(infoMessage))
+        {
+            <div class="alert alert-success">
+                <strong>Erfolg!</strong> @infoMessage
+            </div>
+        }
+        <partial name="_CookieConsentPartial" />
+        <main role="main">
+            <div class="row">
+                <div class="col-lg-4" id="sidebar">
+                    @RenderSection("Sidebar", required: false)
+                </div>
+                <div class="col-lg-8" id="mainarea">
+                    @RenderBody()
+                    <div class="row mt-4 @(hideImpressum ? "d-none" : string.Empty) d-lg-flex">
+                        <div class="col-12">
+                            <p class="text-center">
+                                <a class="fg-link text-underline" href="@this.Url.GetImpressumLink()" target="_blank">Impressum</a> und <a class="fg-link text-underline" href="@this.Url.GetDatenschutzLink()" target="_blank">Datenschutz</a><br />@Helper.GetProductLabel()
+                            </p>
+                        </div>
+                    </div>
+                    @if (gapAfterImpressum)
+                    {
+                        <div class="row d-lg-none">
+                            <div class="col-12" style="height: 55px;">
+                                &nbsp;
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <footer class="d-lg-none">
+        <div class="container bg-menuarea">
+            <div class="row pt-2">
+
+                <div class="col-2 align-center menu-item">
+                    @if (_settings.CurrentValue.Features.Events)
+                    {
+                        <a asp-area="" asp-controller="EventNews" asp-action="Index" class="d-inline-block">
+                            <span class="icon events position-relative">
+                                Events
+                            </span>
+                        </a>
+                    }
+                    else
+                    {
+                        <span>&nbsp;</span>
+                    }
+                </div>
+
+                <div class="col-2 align-center menu-item">
+                    @if (_settings.CurrentValue.Features.Trails)
+                    {
+                        <a asp-area="" asp-controller="Trail" asp-action="Index" class="d-inline-block">
+                            <span class="icon trails">Trails</span>
+                        </a>
+                    }
+                    else
+                    {
+                        <span>&nbsp;</span>
+                    }
+                </div>
+
+                <div class="col-2 align-center menu-item">
+                    @if (_settings.CurrentValue.Features.Stories)
+                    {
+                        <a asp-area="" asp-controller="StoryNews" asp-action="Index" class="d-inline-block">
+                            <span class="icon stories position-relative">
+                                Stories
+                            </span>
+                        </a>
+                    }
+                    else
+                    {
+                        <span>&nbsp;</span>
+                    }
+                </div>
+
+                <div class="col-2 align-center menu-item">
+                    <span>&nbsp;</span>
+                </div>
+
+                <div class="col-2 align-center menu-item">
+                    <span>&nbsp;</span>
+                </div>
+
+                <div class="col-2 align-center menu-item">
+                    @if (_settings.CurrentValue.Features.Login)
+                    {
+
+                        @if (this.User.Identity.IsAuthenticated)
+                        {
+                            <a asp-area="" asp-controller="Frontend" asp-action="Profile" asp-route-returnUrl="@returnUrl" class="d-inline-block">
+                                <span class="icon profile">Profil</span>
+                            </a>
+                        }
+                        else
+                        {
+
+                            <a asp-area="" asp-controller="Auth" asp-action="SignIn" asp-route-returnUrl="@returnUrl" class="d-inline-block">
+                                <span class="icon profile">Anmelden</span>
+                            </a>
+                        }
+                    }
+                    else
+                    {
+                        <span>&nbsp;</span>
+                    }
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <environment include="Development">
+        <script src="~/lib/jquery/dist/jquery.js"></script>
+        <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.js"></script>
+    </environment>
+    <environment exclude="Development">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"
+                asp-fallback-src="~/lib/jquery/dist/jquery.min.js"
+                asp-fallback-test="window.jQuery"
+                crossorigin="anonymous"
+                integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=">
+        </script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.bundle.min.js"
+                asp-fallback-src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"
+                asp-fallback-test="window.jQuery && window.jQuery.fn && window.jQuery.fn.modal"
+                crossorigin="anonymous"
+                integrity="sha384-xrRywqdh3PHs8keKZN+8zzc5TX0GRTLCcmivcbNJWm2rs5C8PRhcEn3czEjhAO9o">
+        </script>
+    </environment>
+    <script src="~/js/datatables.min.js" asp-append-version="true"></script>
+    <script src="~/js/ion.rangeSlider.min.js" asp-append-version="true"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+
+    @RenderSection("Scripts", required: false)
+</body>
+</html>

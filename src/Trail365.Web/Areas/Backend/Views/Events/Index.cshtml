@@ -1,0 +1,115 @@
+@using Trail365
+@model Trail365.ViewModels.EventBackendIndexViewModel
+
+@{
+    ViewData["Title"] = "Events";
+}
+
+<form asp-area="Backend" asp-controller="Events" asp-action="Index" method="get" id="form">
+    <div class="row">
+        <div class="col-12">
+            <h4 class="headline">@ViewData["Title"]</h4>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div id="datatable_filter" class="dataTables_filter" style="text-align: right;">
+                <label class="d-inline-block w-100">
+
+                    <select name="status" asp-items="ViewBag.FilterStatus as SelectList" class="w-25 d-inline-block" style="margin: 8px 0 8px auto;" onchange="$('#form').submit();" id="status">
+                        <option value="">(Status)</option>
+                    </select>
+
+                    <input type="text" class="w-25 d-inline-block" placeholder="Suchen" aria-controls="datatable" style="margin: 8px 0 8px auto;" name="searchtext" id="searchtext" onchange="$('#form').submit();" value="@Model.SearchText" />
+                </label>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <partial name="_Pager" model="@Model" />
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Events[0].Name)
+                        </th>
+
+                        <th>
+                            @Html.DisplayNameFor(model => model.Events[0].StartTime)
+                        </th>
+
+                        <th>
+                            @Html.DisplayNameFor(model => model.Events[0].CountryTwoLetterISOCode)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Events[0].City)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Events[0].Status)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Events[0].ExternalSource)
+                        </th>
+                        <th data-orderable="false"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.Events)//.OrderByDescending(o => o.FreigabeZeitpunktUtc))
+                    {
+                        <tr>
+                            <td>
+                                <a asp-action="Edit" asp-route-id="@item.ID">@item.Name</a>
+                            </td>
+                            <td>
+                                @Html.Raw(item.StartTime?.ToLocalTime().ToLongDateString() ?? "<em>(nicht definiert)</em>")
+                            </td>
+                            <td>
+                                @if (string.IsNullOrEmpty(item.CountryTwoLetterISOCode))
+                                {
+                                    <span></span>
+                                }
+                                else
+                                {
+                                    <span class="flag-icon flag-icon-@item.CountryTwoLetterISOCode.ToLowerInvariant()"></span>
+                                }
+                            </td>
+
+                            <td>
+                                @Html.Raw($"{item.City}")
+                            </td>
+                            <td>
+                                @Html.Raw($"{item.Status.ToDescription()}")
+                            </td>
+
+                            <td>
+                                @Html.DisplayFor(m => item.ExternalSource)<br />@Html.DisplayFor(m => item.ExternalID)
+                            </td>
+                            <td>
+                                <a class="btn btn-primary d-block p-1 mb-1" asp-action="Edit" asp-route-id="@item.ID">Bearbeiten</a>
+                                <a class="btn btn-primary d-block p-1" asp-action="Delete" asp-route-id="@item.ID">Löschen</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="row">
+        @*<div class="col-8"><p class="fg-grey pt-3">Anzeigen können nicht angelegt werden, sondern müssen durch Benutzer erstellt werden.</p></div>*@
+        <div class="col-4">
+            <a asp-controller="Home" asp-action="Index" class="btn btn-primary d-block w-100">
+                <i class="fa fa-arrow-transparent">&nbsp;</i>
+                Zurück
+            </a>
+        </div>
+    </div>
+</form>

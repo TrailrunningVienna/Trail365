@@ -1,0 +1,467 @@
+@using System.Globalization
+@model Trail365.ViewModels.TrailBackendViewModel
+
+@{
+    ViewData["Title"] = $"Trail '{Model.Name}' bearbeiten";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row">
+    <div class="col-12">
+        <h4 class="headline mb-1">@ViewData["Title"]</h4>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <hr class="border-top" />
+    </div>
+</div>
+
+<form asp-action="Edit">
+
+    <div class="row">
+        <div class="col-12">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="ID" />
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-3 text-right">
+            <label asp-for="Name" class="d-block pt-3"></label>
+        </div>
+        <div class="col-9">
+            <input asp-for="Name" class="w-100" />
+        </div>
+    </div>
+
+    <div class="row">
+
+        <div class="col-3">
+            <span></span>
+        </div>
+
+        <div class="col-9">
+            <span asp-validation-for="Name" class="text-danger pt-3 d-block"></span>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-3 text-right">
+            <label asp-for="Excerpt" class="d-block pt-3"></label>
+        </div>
+
+        <div class="col-9">
+            <textarea asp-for="Excerpt" class="w-100" rows="4"></textarea>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-3">
+            <span></span>
+        </div>
+        <div class="col-9">
+            <span asp-validation-for="Excerpt" class="text-danger pt-3 d-block"></span>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-3 text-right">
+            <label asp-for="Description" class="d-block pt-3"></label>
+        </div>
+        <div class="col-9">
+            <textarea asp-for="Description" class="w-100" rows="6"></textarea>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-3">
+            <span></span>
+        </div>
+
+        <div class="col-9">
+            <span asp-validation-for="Description" class="text-danger pt-3 d-block"></span>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-3 text-right">
+            <label asp-for="InternalDescription" class="d-block pt-3"></label>
+        </div>
+        <div class="col-9">
+            <textarea asp-for="InternalDescription" class="w-100" rows="6"></textarea>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-3">
+            <span></span>
+        </div>
+
+        <div class="col-9">
+            <span asp-validation-for="InternalDescription" class="text-danger pt-3 d-block"></span>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-3 text-right">
+            <label asp-for="ReadAccess" class="d-block pt-3"></label>
+        </div>
+        <div class="col-9">
+            <select asp-for="ReadAccess" asp-items="ViewBag.ReadAccess" class="w-100"></select>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-3">
+            <span></span>
+        </div>
+        <div class="col-9">
+            <span asp-validation-for="ReadAccess" class="text-danger pt-3 d-block"></span>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-3 text-right">
+            <label asp-for="DownloadAccess" class="d-block pt-3"></label>
+        </div>
+        <div class="col-9">
+            <select asp-for="DownloadAccess" asp-items="ViewBag.DownloadAccess" class="w-100"></select>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-3">
+            <span></span>
+        </div>
+        <div class="col-9">
+            <span asp-validation-for="DownloadAccess" class="text-danger pt-3 d-block"></span>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-3 text-right">
+            <label asp-for="GpxUrl" class="d-block pt-3"></label>
+        </div>
+        <div class="col-9">
+            <input asp-for="GpxUrl" class="w-100" readonly="readonly">
+        </div>
+    </div>
+
+
+
+
+    <div class="row">
+        <div class="col-3 text-right">
+            <label asp-for="Created" class="d-block pt-3"></label>
+        </div>
+        <div class="col-9">
+            <input asp-for="Created" type="text" value="@(Model.Created.HasValue ? Model.Created.Value.ToString(CultureInfo.CurrentCulture) : string.Empty)" class="w-100" readonly="readonly" />
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-3">
+            <span></span>
+        </div>
+
+        <div class="col-9">
+            <span asp-validation-for="Created" class="text-danger pt-3 d-block"></span>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-3 text-right">
+            <label asp-for="DistanceMeters" class="d-block pt-3"></label>
+        </div>
+        <div class="col-9">
+            <textarea asp-for="DistanceMeters" class="w-100" rows="1"></textarea>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-3">
+            <span></span>
+        </div>
+
+        <div class="col-9">
+            <span asp-validation-for="DistanceMeters" class="text-danger pt-3 d-block"></span>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-3 text-right">
+            <label asp-for="AscentMeters" class="d-block pt-3"></label>
+        </div>
+        <div class="col-9">
+            <textarea asp-for="AscentMeters" class="w-100" rows="1"></textarea>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-3">
+            <span></span>
+        </div>
+
+        <div class="col-9">
+            <span asp-validation-for="AscentMeters" class="text-danger pt-3 d-block"></span>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-3 text-right">
+            <label asp-for="DescentMeters" class="d-block pt-3"></label>
+        </div>
+        <div class="col-9">
+            <textarea asp-for="DescentMeters" class="w-100" rows="1"></textarea>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-3">
+            <span></span>
+        </div>
+
+        <div class="col-9">
+            <span asp-validation-for="DescentMeters" class="text-danger pt-3 d-block"></span>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-3 text-right">
+            <label asp-for="PreviewUrl" class="d-block pt-3"></label>
+        </div>
+        <div class="col-9">
+            <input asp-for="PreviewUrl" class="w-100" readonly="readonly">
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-3">
+            <span></span>
+        </div>
+
+        <div class="col-9">
+            <span asp-validation-for="PreviewUrl" class="text-danger pt-3 d-block"></span>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-3 text-right">
+            <label asp-for="SmallPreviewUrl" class="d-block pt-3"></label>
+        </div>
+        <div class="col-9">
+            <input asp-for="SmallPreviewUrl" class="w-100" readonly="readonly">
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-3">
+            <span></span>
+        </div>
+
+        <div class="col-9">
+            <span asp-validation-for="SmallPreviewUrl" class="text-danger pt-3 d-block"></span>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-3 text-right">
+            <label asp-for="MediumPreviewUrl" class="d-block pt-3"></label>
+        </div>
+        <div class="col-9">
+            <input asp-for="MediumPreviewUrl" class="w-100" readonly="readonly">
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-3">
+            <span></span>
+        </div>
+
+        <div class="col-9">
+            <span asp-validation-for="MediumPreviewUrl" class="text-danger pt-3 d-block"></span>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-3 text-right">
+            <label asp-for="ElevationProfileUrl" class="d-block pt-3"></label>
+        </div>
+        <div class="col-9">
+            <input asp-for="ElevationProfileUrl" class="w-100" readonly="readonly">
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-3">
+            <span></span>
+        </div>
+
+        <div class="col-9">
+            <span asp-validation-for="ElevationProfileUrl" class="text-danger pt-3 d-block"></span>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-3 text-right">
+            <label asp-for="ElevationProfile_Basic_Url" class="d-block pt-3"></label>
+        </div>
+        <div class="col-9">
+            <input asp-for="ElevationProfile_Basic_Url" class="w-100" readonly="readonly">
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-3">
+            <span></span>
+        </div>
+
+        <div class="col-9">
+            <span asp-validation-for="ElevationProfile_Basic_Url" class="text-danger pt-3 d-block"></span>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-3 text-right">
+            <label asp-for="ElevationProfile_Intermediate_Url" class="d-block pt-3"></label>
+        </div>
+        <div class="col-9">
+            <input asp-for="ElevationProfile_Intermediate_Url" class="w-100" readonly="readonly">
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-3">
+            <span></span>
+        </div>
+
+        <div class="col-9">
+            <span asp-validation-for="ElevationProfile_Intermediate_Url" class="text-danger pt-3 d-block"></span>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-3 text-right">
+            <label asp-for="ElevationProfile_Advanced_Url" class="d-block pt-3"></label>
+        </div>
+        <div class="col-9">
+            <input asp-for="ElevationProfile_Advanced_Url" class="w-100" readonly="readonly">
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-3">
+            <span></span>
+        </div>
+
+        <div class="col-9">
+            <span asp-validation-for="ElevationProfile_Advanced_Url" class="text-danger pt-3 d-block"></span>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-3 text-right">
+            <label asp-for="ElevationProfile_Proficiency_Url" class="d-block pt-3"></label>
+        </div>
+        <div class="col-9">
+            <input asp-for="ElevationProfile_Proficiency_Url" class="w-100" readonly="readonly">
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-3">
+            <span></span>
+        </div>
+
+        <div class="col-9">
+            <span asp-validation-for="ElevationProfile_Proficiency_Url" class="text-danger pt-3 d-block"></span>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-3 text-right">
+            <label asp-for="ExternalSource" class="d-block pt-3"></label>
+        </div>
+        <div class="col-9">
+            <input asp-for="ExternalSource" class="w-100" readonly="readonly">
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-3">
+            <span></span>
+        </div>
+
+        <div class="col-9">
+            <span asp-validation-for="ExternalSource" class="text-danger pt-3 d-block"></span>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-3 text-right">
+            <label asp-for="ExternalID" class="d-block pt-3"></label>
+        </div>
+        <div class="col-9">
+            <input asp-for="ExternalID" class="w-100" readonly="readonly">
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-3">
+            <span></span>
+        </div>
+
+        <div class="col-9">
+            <span asp-validation-for="ExternalID" class="text-danger pt-3 d-block"></span>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-3 text-right">
+            <label asp-for="StartPlaceID" class="d-block pt-3"></label>
+        </div>
+        <div class="col-9">
+            <select asp-for="StartPlaceID" asp-items="ViewBag.StartPlaceID" class="w-100"></select>
+        </div>
+    </div>
+
+    @*<div class="row">
+            <div class="col-3">
+                <span></span>
+            </div>
+            <div class="col-9">
+                <span asp-validation-for="StartPlaceID" class="text-danger pt-3 d-block"></span>
+            </div>
+        </div>*@
+
+    <div class="row">
+        <div class="col-3 text-right">
+            <label asp-for="EndPlaceID" class="d-block pt-3"></label>
+        </div>
+        <div class="col-9">
+            <select asp-for="EndPlaceID" asp-items="ViewBag.EndPlaceID" class="w-100"></select>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-4">
+            <button type="submit" class="btn btn-primary d-block w-100">
+                <i class="fa fa-arrow-transparent">&nbsp;</i>
+                Trail speichern
+            </button>
+        </div>
+        <div class="col-4"></div>
+        <div class="col-4">
+            <a asp-controller="Trails" asp-action="Index" class="btn btn-primary d-block w-100">
+                <i class="fa fa-arrow-transparent">&nbsp;</i>
+                Zurück
+            </a>
+        </div>
+    </div>
+</form>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

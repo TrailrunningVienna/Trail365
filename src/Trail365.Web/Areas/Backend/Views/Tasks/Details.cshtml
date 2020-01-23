@@ -1,0 +1,69 @@
+@model Trail365.Entities.TaskLogItem
+
+@{
+    ViewData["Title"] = $"Log Item anzeigen";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    string col_left = "col-3 text-right";
+    string col_right = "col-9";
+}
+
+<div class="row">
+    <div class="col-12">
+        <h4 class="headline mb-1">@ViewData["Title"]</h4>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <hr class="border-top" />
+    </div>
+</div>
+
+<div class="row">
+    <div class="@col_left">
+        <label asp-for="TimestampUtc" class="d-block pt-3"></label>
+    </div>
+    <div class="@col_right">
+        <input asp-for="TimestampUtc" class="w-100" readonly="readonly" />
+    </div>
+</div>
+
+<div class="row">
+    <div class="@col_left">
+        <label asp-for="Category" class="d-block pt-3"></label>
+    </div>
+    <div class="@col_right">
+        <input asp-for="Category" class="w-100" readonly="readonly" />
+    </div>
+</div>
+
+<div class="row">
+    <div class="@col_left">
+        <label asp-for="Level" class="d-block pt-3"></label>
+    </div>
+    <div class="@col_right">
+        <input asp-for="Level" class="w-100" readonly="readonly" />
+    </div>
+</div>
+
+<div class="row">
+    <div class="@col_left">
+        <label asp-for="LogMessage" class="d-block pt-3"></label>
+    </div>
+    <div class="@col_right">
+        <input asp-for="LogMessage" class="w-100" readonly="readonly" />
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-4"></div>
+
+    <div class="col-4"></div>
+
+    <div class="col-4">
+        <a asp-controller="Tasks" asp-action="Index" class="btn btn-primary d-block w-100">
+            <i class="fa fa-arrow-transparent">&nbsp;</i>
+            Zurück
+        </a>
+    </div>
+</div>

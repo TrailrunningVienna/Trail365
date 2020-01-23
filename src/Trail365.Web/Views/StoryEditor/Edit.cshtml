@@ -1,0 +1,137 @@
+@model Trail365.ViewModels.StoryBackendViewModel
+
+@{
+    ViewData["Title"] = $"Story '{this.Model.Name}' bearbeiten";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    string col_left = "col-3 text-right";
+    string col_right = "col-9";
+
+}
+
+<div class="row">
+    <div class="col-12">
+        <h4 class="headline mb-1">@ViewData["Title"]</h4>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <hr class="border-top" />
+    </div>
+</div>
+
+<form asp-action="Edit" asp-route-redirectto="@ViewBag.RedirectTo" >
+
+    <div class="row">
+        <div class="col-12">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="ID" />
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="@col_left">
+            <label asp-for="Name" class="d-block pt-3"></label>
+        </div>
+        <div class="@col_right">
+            <input asp-for="Name" class="w-100" />
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="@col_left">
+            <span></span>
+        </div>
+        <div class="@col_right">
+            <span asp-validation-for="Name" class="text-danger pt-3 d-block"></span>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="@col_left">
+            <label asp-for="Status" class="d-block pt-3"></label>
+        </div>
+        <div class="@col_right">
+            <select asp-for="Status" asp-items="ViewBag.Status" class="w-100"></select>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="@col_left">
+            <span></span>
+        </div>
+        <div class="@col_right">
+            <span asp-validation-for="Status" class="text-danger pt-3 d-block"></span>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="@col_left">
+            <label asp-for="ListAccess" class="d-block pt-3"></label>
+        </div>
+        <div class="@col_right">
+            <select asp-for="ListAccess" asp-items="ViewBag.ListAccess" class="w-100"></select>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="@col_left">
+            <label asp-for="Created" class="d-block pt-3"></label>
+        </div>
+        <div class="@col_right">
+            <input asp-for="Created" type="text" value="@Model.Created.ToString()" class="w-100" readonly="readonly" />
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="@col_left">
+            <label asp-for="Modified" class="d-block pt-3"></label>
+        </div>
+        <div class="@col_right">
+            <input asp-for="Modified" type="text" value="@(Model.Modified.HasValue ? Model.Modified.Value.ToString() : string.Empty)" class="w-100" readonly="readonly" />
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="@col_left">
+            <label asp-for="Published" class="d-block pt-3"></label>
+        </div>
+        <div class="@col_right">
+            <input asp-for="Published" type="text" value="@(Model.Published.HasValue ? Model.Published.Value.ToString() : string.Empty)" class="w-100" readonly="readonly" />
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-4">
+            <button type="submit" class="btn btn-primary d-block w-100">
+                <i class="fa fa-arrow-transparent">&nbsp;</i>
+                speichern
+            </button>
+        </div>
+
+        <div class="col-4">
+            @if (this.Model.Login.BackendAvailable)
+            {
+                <a asp-area="Backend" asp-controller="Stories" asp-action="Index" class="btn btn-primary d-block w-100">
+                    Liste
+                </a>
+            }
+            else
+            {
+                <span>&nbsp;</span>
+            }
+        </div>
+
+        <div class="col-4">
+            <a href="@ViewBag.RedirectTo" class="btn btn-primary d-block w-100">
+                <i class="fa fa-arrow-transparent">&nbsp;</i>
+                Zurück
+            </a>
+        </div>
+    </div>
+</form>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

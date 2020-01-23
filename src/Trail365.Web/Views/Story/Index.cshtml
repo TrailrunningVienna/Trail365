@@ -1,0 +1,64 @@
+@using Trail365
+@using Trail365.Configuration
+@model Trail365.ViewModels.StoryViewModel
+
+@inject Microsoft.Extensions.Options.IOptionsMonitor<AppSettings> _settings
+@{
+    ViewData["Title"] = Model.Name;
+    ViewData["Description"] = Model.Excerpt;
+    ViewData["HideHeader"] = false;
+    ViewData["OpenGraphTags"] = Model.CreateOpenGraphTags(this.Url, new System.Drawing.Size(800, 600), _settings.CurrentValue.FacebookSettings?.AppId);
+    ViewData["NoConsent"] = Model.NoConsent;
+}
+
+<partial name="_StoryBlock" model="@(Model)" />
+
+<div class="row">
+    <div class="col-12">
+        <hr class="border-top m-0" />
+    </div>
+</div>
+
+@if (this.Model.CanEdit())
+{
+    <div class="row mt-2">
+        <div class="col-12">
+            <a class="btn btn-primary w-100" asp-area="" asp-controller="StoryEditor" asp-action="Edit" asp-route-ID="@Model.ID" asp-route-redirectto="@this.Url.GetStoryUrl(this.Model.ID)">
+                <i class="fa fa-arrow-transparent">&nbsp;</i>
+                Bearbeiten
+            </a>
+        </div>
+    </div>
+
+    <div class="row mt-2">
+        <div class="col-12">
+            <a class="btn btn-primary w-100" asp-area="" asp-controller="StoryDetails" asp-action="Index" asp-route-ID="@Model.ID">
+                <i class="fa fa-arrow-transparent">&nbsp;</i>
+                Details Bearbeiten
+            </a>
+        </div>
+    </div>
+}
+
+@if (_settings.CurrentValue.Features.ShareOnFacebook)
+{
+    <div class="row d-lg-none">
+        <div class="col-12 mt-2">
+            <p class="text-center fg-grey font-weight-bold">Trail teilen</p>
+            <p class="text-center">
+                <a href="@this.Url.GetFacebookHRefUrlForStoryShare(Model.ID)"><img src="~/img/share/facebook.png" /></a>
+            </p>
+        </div>
+    </div>
+}
+
+@*@section Sidebar
+    {
+    }*@
+
+@section Scripts
+{
+    <script type="text/javascript">
+        $('.carousel').carousel();
+    </script>
+}

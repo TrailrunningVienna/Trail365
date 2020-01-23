@@ -1,0 +1,222 @@
+@using System.Globalization
+@model Trail365.ViewModels.PlaceBackendViewModel
+
+@{
+    ViewData["Title"] = $"Ort '{this.Model.Name}' bearbeiten";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    string col_left = "col-3 text-right";
+    string col_right = "col-9";
+
+}
+
+<div class="row">
+    <div class="col-12">
+        <h4 class="headline mb-1">@ViewData["Title"]</h4>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <hr class="border-top" />
+    </div>
+</div>
+
+<form asp-action="Edit">
+
+    <div class="row">
+        <div class="col-12">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="ID" />
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-2 text-right">
+            <label asp-for="Name" class="d-block pt-3"></label>
+        </div>
+        <div class="col-10">
+            <input asp-for="Name" class="w-100" />
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-2">
+            <span></span>
+        </div>
+        <div class="col-10">
+            <span asp-validation-for="Name" class="text-danger pt-3 d-block"></span>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-2 text-right">
+            <label asp-for="City" class="d-block pt-3"></label>
+        </div>
+        <div class="col-10">
+            <input asp-for="City" class="w-100">
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-2 text-right">
+            <span></span>
+        </div>
+        <div class="col-10">
+            <span asp-validation-for="City" class="text-danger pt-3 d-block"></span>
+        </div>
+    </div>
+
+
+    <div class="row">
+        <div class="col-2 text-right">
+            <label asp-for="Zip" class="d-block pt-3"></label>
+        </div>
+        <div class="col-10">
+            <input asp-for="Zip" class="w-100">
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-2 text-right">
+            <label asp-for="CountryTwoLetterISOCode" class="d-block pt-3"></label>
+        </div>
+        <div class="col-10">
+            <select asp-for="CountryTwoLetterISOCode" asp-items="ViewBag.TwoLetterIsoCodes" class="w-100"></select>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-2 text-right">
+            <span></span>
+        </div>
+        <div class="col-10">
+            <span asp-validation-for="CountryTwoLetterISOCode" class="text-danger pt-3 d-block"></span>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="@col_left">
+            <label asp-for="IsCityPartOfTheName" class="d-block pt-3"></label>
+        </div>
+        <div class="@col_right">
+            <input asp-for="IsCityPartOfTheName" class="apple-switch ml-0" type="checkbox" />
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="@col_left">
+            <label asp-for="MeetingPoint" class="d-block pt-3"></label>
+        </div>
+        <div class="@col_right">
+            <textarea asp-for="MeetingPoint" class="w-100" rows="4"></textarea>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-2 text-right">
+            <label asp-for="Longitude" class="d-block pt-3"></label>
+        </div>
+        <div class="col-10">
+            <input asp-for="Longitude" class="w-100">
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-2 text-right">
+            <span></span>
+        </div>
+        <div class="col-10">
+            <span asp-validation-for="Longitude" class="text-danger pt-3 d-block"></span>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-2 text-right">
+            <label asp-for="Latitude" class="d-block pt-3"></label>
+        </div>
+        <div class="col-10">
+            <input asp-for="Latitude" class="w-100">
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-2 text-right">
+            <span></span>
+        </div>
+        <div class="col-10">
+            <span asp-validation-for="Latitude" class="text-danger pt-3 d-block"></span>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-2 text-right">
+            <label asp-for="Radius" class="d-block pt-3"></label>
+        </div>
+        <div class="col-10">
+            <input asp-for="Radius" class="w-100">
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-2 text-right">
+            <span></span>
+        </div>
+        <div class="col-10">
+            <span asp-validation-for="Radius" class="text-danger pt-3 d-block"></span>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-2 text-right">
+            <label asp-for="ExternalSource" class="d-block pt-3"></label>
+        </div>
+        <div class="col-10">
+            <input asp-for="ExternalSource" class="w-100">
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-2 text-right">
+            <label asp-for="ExternalID" class="d-block pt-3"></label>
+        </div>
+        <div class="col-10">
+            <input asp-for="ExternalID" class="w-100">
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-2 text-right">
+            <label asp-for="Created" class="d-block pt-3"></label>
+        </div>
+        <div class="col-4">
+            <input asp-for="Created" type="text" value="@(Model.Created.HasValue ? Model.Created.Value.ToString(CultureInfo.CurrentCulture) : string.Empty)" class="w-100" readonly="readonly" />
+        </div>
+        <div class="col-2 text-right">
+            <label asp-for="Modified" class="d-block pt-3"></label>
+        </div>
+        <div class="col-4">
+            <input asp-for="Modified" type="text" value="@(Model.Modified.HasValue ? Model.Modified.Value.ToString(CultureInfo.CurrentCulture) : string.Empty)" class="w-100" readonly="readonly" />
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-4">
+            <button type="submit" class="btn btn-primary d-block w-100">
+                <i class="fa fa-arrow-transparent">&nbsp;</i>
+                speichern
+            </button>
+        </div>
+
+        <div class="col-4"></div>
+
+        <div class="col-4">
+            <a asp-controller="Places" asp-action="Index" class="btn btn-primary d-block w-100">
+                <i class="fa fa-arrow-transparent">&nbsp;</i>
+                Zurück
+            </a>
+        </div>
+    </div>
+</form>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

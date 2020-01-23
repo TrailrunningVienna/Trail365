@@ -1,0 +1,73 @@
+@inject Microsoft.Extensions.Options.IOptionsMonitor<AppSettings> _settings
+
+@using Trail365.Configuration
+@model Trail365.ViewModels.ProfileSettingsViewModel
+@{
+    ViewData["Title"] = "Benutzerprofil";
+    ViewData["UnreadMessages"] = Model.UnreadMessages;
+}
+
+@if (_settings.CurrentValue.Features.UserProfile)
+{
+
+    <form asp-controller="Frontend" asp-action="ProfileSettings" method="post" enctype="multipart/form-data">
+
+        <div class="row mt-4 mb-2 d-none d-lg-flex">
+            <div class="col-12">
+                <h3 class="d-inline-block">@ViewData["Title"]</h3>
+            </div>
+        </div>
+
+        <div class="row d-none d-lg-flex">
+            <div class="col-12 pl-0">
+                <hr class="m-0 border-top" />
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-12">
+                <input type="hidden" asp-for="ID" />
+                <input asp-for="Name" class="w-100" placeholder="Name" />
+                <input asp-for="Surname" class="w-100" placeholder="Nachname" />
+                <input asp-for="GivenName" class="w-100" placeholder="Vorname" />
+                <input asp-for="AvatarUrl" class="w-100" placeholder="https://www.gravatar.com/avatar/HASH" />
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-12">
+                <hr class="m-0 border-top" />
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-12">
+                <button type="submit" class="w-100 btn-primary">Profileinstellungen speichern<i class="fa fa-arrow-transparent">&nbsp;</i></button>
+            </div>
+        </div>
+    </form>
+}
+
+@section Sidebar
+{
+    <div class="row mt-4 mb-2">
+        <div class="col-12 pr-0 ">
+            <h3 class="d-inline-block">Mein Profil</h3>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12 pr-0">
+            <hr class="m-0 border-top" />
+        </div>
+    </div>
+    <div class="row mt-4">
+        <div class="col-12 pr-0">
+            <div class="w-50 m-auto avatar-container">
+                <img class="rounded-circle d-block avatar" src="@(string.IsNullOrWhiteSpace(Model.AvatarUrl) ? "/img/avatar.png" : Model.AvatarUrl)?v=@Guid.NewGuid()" />
+            </div>
+            @*<p class="align-center font-weight-bold fg-grey"><br />Wie sehen andere mein Profil?<br /><a asp-controller="Home" asp-action="Profile" asp-route-UserID="@Model.Login.UserID.Value">Hier ansehen!</a></p>*@
+        </div>
+    </div>
+    @{await Html.RenderPartialAsync("_ProfilePartial"); }
+
+}

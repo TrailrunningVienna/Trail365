@@ -1,0 +1,107 @@
+@using Trail365
+@model Trail365.ViewModels.StoryBlockViewModel
+
+@{
+    ViewData["Title"] = $"Block ({Model.BlockType.ToDescription()}) bearbeiten";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    string col_left = "col-3 text-right";
+    string col_right = "col-9";
+
+}
+
+<div class="row">
+    <div class="col-12">
+        <h4 class="headline mb-1">@ViewData["Title"]</h4>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <hr class="border-top" />
+    </div>
+</div>
+
+<form asp-action="Edit">
+
+    <div class="row">
+        <div class="col-12">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="ID" />
+            <input type="hidden" asp-for="StoryID" />
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="@col_left">
+            <label asp-for="BlockType" class="d-block pt-3"></label>
+        </div>
+        <div class="@col_right">
+            <select asp-for="BlockType" class="w-100" asp-items="ViewBag.BlockType"></select>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="@col_left">
+            <label asp-for="Content" class="d-block pt-3"></label>
+        </div>
+        <div class="@col_right">
+            <textarea asp-for="Content" class="w-100" rows="6"></textarea>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="@col_left">
+            <label asp-for="SortOrder" class="d-block pt-3"></label>
+        </div>
+        <div class="@col_right">
+            <textarea asp-for="SortOrder" class="w-100"></textarea>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="@col_left">
+            <label asp-for="ImageUrl" class="d-block pt-3"></label>
+        </div>
+        <div class="@col_right">
+            <input asp-for="ImageUrl" class="w-100" readonly="readonly">
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-4">
+            <button type="submit" class="btn btn-primary d-block w-100">
+                <i class="fa fa-arrow-transparent">&nbsp;</i>
+                Block speichern
+            </button>
+        </div>
+        <div class="col-4"></div>
+        <div class="col-4">
+            <a asp-controller="StoryDetails" asp-route-id="@Model.StoryID" asp-action="Index" class="btn btn-primary d-block w-100">
+                <i class="fa fa-arrow-transparent">&nbsp;</i>
+                Zurück
+            </a>
+        </div>
+    </div>
+</form>
+
+@*@section Sidebar {
+        <div class="row">
+
+            <div class="col-lg-6 mb-4">
+                <partial name="@Model.GetStoryPreviewPartialName()" model="@(item)" />
+                @if (item.ID != Model.Stories.Last().ID)
+                {
+                    <div class="row d-lg-none">
+                        <div class="col-12">
+                            <hr class="border-top" />
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    }*@
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

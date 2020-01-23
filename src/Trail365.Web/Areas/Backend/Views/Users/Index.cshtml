@@ -1,0 +1,70 @@
+@model IEnumerable<Trail365.ViewModels.UserBackendViewModel>
+
+@{
+    ViewData["Title"] = "Benutzer";
+}
+
+<div class="row">
+    <div class="col-12">
+        <h4 class="headline">@ViewData["Title"]</h4>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <table id="datatable" class="table">
+            <thead>
+                <tr>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Name)
+                    </th>
+                    <th>
+                        Identities
+                    </th>
+                    <th data-orderable="false"></th>
+                    <th data-orderable="false"></th>
+                    <th data-orderable="false"></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>
+                            <a asp-action="Edit" asp-route-id="@item.ID">@item.Name</a>
+                        </td>
+                        <td>
+                            @Html.Raw(item.GetIdentitiesAsHtml())
+                        </td>
+                        <td>
+                            <a class="btn btn-primary d-block p-1" asp-action="Edit" asp-route-id="@item.ID">Bearbeiten</a>
+                        </td>
+
+                        <td>
+                            <a class="btn btn-primary d-block p-1" asp-action="Delete" asp-route-id="@item.ID">Löschen</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="row">
+    @*<div class="col-8"><p class="fg-grey pt-3">Benutzer können nicht angelegt werden, sondern müssen sich zuerst auf der Platform registrieren.</p></div>*@
+    <div class="col-4">
+        <a asp-controller="Home" asp-action="Index" class="btn btn-primary d-block w-100">
+            <i class="fa fa-arrow-transparent">&nbsp;</i>
+            Zurück
+        </a>
+    </div>
+</div>
+
+@section Scripts
+    {
+    <script type="text/javascript">
+        $(document).ready(function () {
+            initDataTable();
+        });
+    </script>
+}

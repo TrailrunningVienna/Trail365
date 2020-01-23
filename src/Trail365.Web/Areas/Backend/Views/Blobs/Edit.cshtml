@@ -1,0 +1,88 @@
+@using System.Globalization
+@model Trail365.ViewModels.BlobBackendViewModel
+
+@{
+    ViewData["Title"] = $"Ort 'Blob {this.Model.Url}' bearbeiten";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    string col_left = "col-3 text-right";
+    string col_right = "col-9";
+
+}
+
+<div class="row">
+    <div class="col-12">
+        <h4 class="headline mb-1">@ViewData["Title"]</h4>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <hr class="border-top" />
+    </div>
+</div>
+
+<form asp-action="Edit">
+
+    <div class="row">
+        <div class="col-12">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="ID" />
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-2 @col_left">
+            <label asp-for="Url" class="d-block pt-3"></label>
+        </div>
+        <div class="col-10 @col_right">
+            <input asp-for="Url" class="w-100" />
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-2">
+            <span></span>
+        </div>
+        <div class="col-10">
+            <span asp-validation-for="Url" class="text-danger pt-3 d-block"></span>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-2 text-right">
+            <label asp-for="Created" class="d-block pt-3"></label>
+        </div>
+        <div class="col-4">
+            <input asp-for="Created" type="text" value="@(Model.Created.HasValue ? Model.Created.Value.ToString(CultureInfo.CurrentCulture) : string.Empty)" class="w-100" readonly="readonly" />
+        </div>
+        <div class="col-2 text-right">
+            <label asp-for="Modified" class="d-block pt-3"></label>
+        </div>
+        <div class="col-4">
+            <input asp-for="Modified" type="text" value="@(Model.Modified.HasValue ? Model.Modified.Value.ToString(CultureInfo.CurrentCulture) : string.Empty)" class="w-100" readonly="readonly" />
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-4">
+            <button type="submit" class="btn btn-primary d-block w-100">
+                <i class="fa fa-arrow-transparent">&nbsp;</i>
+                speichern
+            </button>
+        </div>
+
+        <div class="col-4"></div>
+
+        <div class="col-4">
+            <a asp-controller="Blobs" asp-action="Index" class="btn btn-primary d-block w-100">
+                <i class="fa fa-arrow-transparent">&nbsp;</i>
+                Zurück
+            </a>
+        </div>
+    </div>
+</form>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

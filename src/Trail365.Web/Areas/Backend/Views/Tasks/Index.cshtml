@@ -1,0 +1,101 @@
+@model Trail365.ViewModels.TasksBackendIndexViewModel
+
+@{
+    ViewData["Title"] = "Task-Logs";
+}
+
+<form asp-area="Backend" asp-controller="Tasks" asp-action="Index" method="get" id="form">
+    <div class="row">
+        <div class="col-12">
+            <h4 class="headline">@ViewData["Title"]</h4>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div id="datatable_filter" class="dataTables_filter" style="text-align: right;">
+
+                <select name="loglevel" asp-items="ViewBag.FilterLogLevel as SelectList" class="w-25 d-inline-block" style="margin: 8px 0 8px auto;" onchange="$('#form').submit();" id="loglevel">
+                    <option value="">(Loglevel)</option>
+                </select>
+
+                <select name="category" asp-items="ViewBag.FilterCategory as SelectList" class="w-25 d-inline-block" style="margin: 8px 0 8px auto;" onchange="$('#form').submit();" id="category">
+                    <option value="">(Category)</option>
+                </select>
+
+                <label class="d-inline-block w-100">
+                    <input type="text" class="w-25 d-inline-block" placeholder="Name" aria-controls="datatable" style="margin: 8px 0 8px auto;" name="searchtext" id="searchtext" onchange="$('#form').submit();" value="@Model.SearchText" />
+                </label>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <partial name="_Pager" model="@Model" />
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <table class="table-large">
+                <thead>
+                    <tr>
+                        <th>
+                            @Html.DisplayNameFor(model => model.LogItems[0].TimestampUtc)
+                        </th>
+
+                        <th>
+                            @Html.DisplayNameFor(model => model.LogItems[0].Level)
+                        </th>
+
+                        <th>
+                            @Html.DisplayNameFor(model => model.LogItems[0].Category)
+                        </th>
+
+                        <th>
+                            @Html.DisplayNameFor(model => model.LogItems[0].LogMessage)
+                        </th>
+                        <th data-orderable="false"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.LogItems)
+                    {
+                        <tr>
+                            <td>
+                                @item.TimestampUtc.ToLocalTime().ToShortDateString()
+                                @item.TimestampUtc.ToLocalTime().ToLongTimeString()
+                            </td>
+
+                            <td>
+                                @item.Level.Substring(0, 1)
+                            </td>
+
+                            <td>
+                                @Html.DisplayFor(m => item.Category)
+                            </td>
+
+                            <td>
+                                @Html.DisplayFor(m => item.LogMessagePreview)
+                            </td>
+
+                            <td>
+                                <a class="btn btn-primary d-block p-1 mb-1" asp-action="Details" asp-route-id="@item.ID">Details</a>
+                                <a class="btn btn-primary d-block p-1" asp-action="Delete" asp-route-id="@item.ID">Löschen</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-4">
+            <a asp-controller="Home" asp-action="Index" class="btn btn-primary d-block w-100">
+                <i class="fa fa-arrow-transparent">&nbsp;</i>
+                Zurück
+            </a>
+        </div>
+    </div>
+</form>

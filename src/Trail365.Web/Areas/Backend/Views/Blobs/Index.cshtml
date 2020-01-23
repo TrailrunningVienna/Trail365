@@ -1,0 +1,132 @@
+@model Trail365.ViewModels.BlobsBackendIndexViewModel
+
+@{
+    ViewData["Title"] = "Blobs";
+}
+
+<form asp-area="Backend" asp-controller="Blobs" asp-action="Index" method="get" id="form">
+    <div class="row">
+        <div class="col-12">
+            <h4 class="headline">@ViewData["Title"]</h4>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div id="datatable_filter" class="dataTables_filter" style="text-align: right;">
+
+                @*<label class="d-inline-block w-100">
+                        <input type="text" class="w-25 d-inline-block" placeholder="Name" aria-controls="datatable" style="margin: 8px 0 8px auto;" name="searchtext" id="searchtext" onchange="$('#form').submit();" value="@Model.SearchText" />
+                    </label>*@
+
+                @*<label class="d-inline-block w-100">
+                        <input type="text" class="w-25 d-inline-block" placeholder="Source" aria-controls="datatable" style="margin: 8px 0 8px auto;" name="ExternalSource" id="ExternalSource" onchange="$('#form').submit();" value="@Model.ExternalSource" />
+                    </label>
+
+                    <label class="d-inline-block w-100">
+                        <input type="text" class="w-25 d-inline-block" placeholder="Land" aria-controls="datatable" style="margin: 8px 0 8px auto;" name="CountryTwoLetterISOCode" id="CountryTwoLetterISOCode" onchange="$('#form').submit();" value="@Model.CountryTwoLetterISOCode" />
+                    </label>*@
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <partial name="_Pager" model="@Model" />
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>
+                            @Html.DisplayName("Type")
+                        </th>
+
+                        <th>
+                            @Html.DisplayNameFor(model => model.Blobs[0].Url)
+                        </th>
+
+                        <th>
+                            @Html.DisplayNameFor(model => model.Blobs[0].StorageSize)
+                        </th>
+
+                        <th>
+                            @Html.DisplayNameFor(model => model.Blobs[0].ContentHash)
+                        </th>
+
+                        <th>
+                            @Html.DisplayNameFor(model => model.Blobs[0].CreatedUtc)
+                        </th>
+
+                        <th>
+                            @Html.DisplayNameFor(model => model.Blobs[0].CreatedByUser)
+                        </th>
+
+                        <th>
+                            @Html.DisplayNameFor(model => model.Blobs[0].ModifiedUtc)
+                        </th>
+
+                        <th>
+                            @Html.DisplayNameFor(model => model.Blobs[0].ModifiedByUser)
+                        </th>
+                        <th data-orderable="false"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.Blobs)
+                    {
+                        <tr>
+
+                            <td>
+                                @Html.Raw(item.FolderName)<br />
+                                @Html.Raw(item.MimeType)
+                            </td>
+
+                            <td>
+                                @item.GetHumanizedUrl()
+                            </td>
+
+                            <td>
+                                @item.GetHumanizedStorageSize()
+                            </td>
+
+                            <td>
+                                @item.GetShortContentHash()
+                            </td>
+
+                            <td>
+                                @Html.DisplayFor(m => item.CreatedUtc)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(m => item.CreatedByUser)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(m => item.ModifiedUtc)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(m => item.ModifiedByUser)
+                            </td>
+                            <td>
+                                @*<a class="btn btn-primary d-block p-1 mb-1" asp-action="Details" asp-route-id="@item.ID">Details</a>*@
+                                <a class="btn btn-primary d-block p-1 mb-1" asp-action="Edit" asp-route-id="@item.ID">Bearbeiten</a>
+                                <a class="btn btn-primary d-block p-1" asp-action="Delete" asp-route-id="@item.ID">Löschen</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="row">
+        @*<div class="col-8"><p class="fg-grey pt-3">Anzeigen können nicht angelegt werden, sondern müssen durch Benutzer erstellt werden.</p></div>*@
+        <div class="col-4">
+            <a asp-controller="Home" asp-action="Index" class="btn btn-primary d-block w-100">
+                <i class="fa fa-arrow-transparent">&nbsp;</i>
+                Zurück
+            </a>
+        </div>
+    </div>
+</form>

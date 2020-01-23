@@ -1,0 +1,15 @@
+@using Trail365
+@using Trail365.Configuration
+
+@inject Microsoft.Extensions.Options.IOptionsMonitor<AppSettings> _settings
+@{
+    ViewData["Title"] = "Trail 365";
+    ViewData["Description"] = "Welcome!";
+    ViewData["HideHeader"] = false;
+}
+
+@HtmlHelperExtension.EmptyRow(this.Html, 4)
+
+@*@section Sidebar
+    {
+    }*@

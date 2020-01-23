@@ -1,0 +1,74 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <IsPackable>false</IsPackable>
+    <RunAnalyzersDuringBuild>false</RunAnalyzersDuringBuild>
+    <RunAnalyzersDuringLiveAnalysis>false</RunAnalyzersDuringLiveAnalysis>
+    <IncludeOpenAPIAnalyzers>false</IncludeOpenAPIAnalyzers>
+    <RootNamespace>Trail365.UnitTests</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="DirectFileLoggerTest.cs" />
+    <Compile Remove="DummyAuthenticationService.cs" />
+    <Compile Remove="HomeModelTest.cs" />
+    <Compile Remove="HomeViewTest.cs" />
+    <Compile Remove="TestContext\BackendDealControllerTestContest.cs" />
+    <Compile Remove="TestContext\HomeControllerTestContext.cs" />
+    <Compile Remove="TestContext\MarketplaceTestContextExtensions.cs" />
+    <Compile Remove="TestContext\TestServerBuilder.cs" />
+    <Compile Remove="TestServerBuilder.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="xunit.runner.json" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <PackageReference Include="ISO3166" Version="1.0.2" />
+    <PackageReference Include="Markdig" Version="0.18.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="3.1.1" />
+    <PackageReference Include="Microsoft.AspNetCore.TestHost" Version="3.1.1" />
+    <PackageReference Include="Microsoft.Azure.Management.Fluent" Version="1.30.0" />
+    <PackageReference Include="Microsoft.Azure.Management.Logic" Version="4.1.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="3.1.1" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.4.0" />
+    <PackageReference Include="xunit" Version="2.4.1" />
+    <PackageReference Include="Microsoft.Azure.Storage.Blob" Version="11.1.2" />
+    <PackageReference Include="Microsoft.Extensions.Logging" Version="3.1.1" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.4.1">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="NetTopologySuite.Features" Version="2.0.0" />
+    <PackageReference Include="NetTopologySuite.IO.GeoJSON" Version="2.0.1" />
+    <PackageReference Include="NetTopologySuite.IO.GPX" Version="1.0.0" />
+    <PackageReference Include="MSS.GraphQL.Facebook" Version="0.8.2" />
+
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Trail365.Seeds\Trail365.Seeds.csproj" />
+    <ProjectReference Include="..\..\src\Trail365.Core\Trail365.Core.csproj" />
+    <ProjectReference Include="..\..\src\Trail365.Graphics\Trail365.Graphics.csproj" />
+    <ProjectReference Include="..\..\src\Trail365.Infrastructure\Trail365.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\src\Trail365.Web\Trail365.Web.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Properties\TestResource.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>TestResource.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="Properties\TestResource.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>TestResource.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+
+</Project>

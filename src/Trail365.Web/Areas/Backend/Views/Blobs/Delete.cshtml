@@ -1,0 +1,54 @@
+@model Trail365.ViewModels.BlobBackendViewModel
+
+@{
+    ViewData["Title"] = $"Blob '{this.Url}' löschen";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row">
+    <div class="col-12">
+        <h4 class="headline mb-1">@ViewData["Title"]</h4>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <hr class="border-top" />
+    </div>
+</div>
+
+@foreach (var refs in this.Model.References)
+{
+    <div class="row">
+        <div class="col-12">
+            <a href="@refs.Item1" class="external" rel="nofollow">@refs.Item2</a>
+        </div>
+    </div>
+}
+
+<form asp-action="Delete">
+    <div class="row">
+        @if (this.Model.References.Count == 0)
+        {
+            <div class="col-4">
+                <input type="hidden" asp-for="ID" />
+                <button type="submit" class="btn btn-lg btn-primary d-block w-100">
+                    <i class="fa fa-arrow-red">&nbsp;</i>
+                    Place löschen
+                </button>
+            </div>
+        }
+        else
+        {
+            <div class="col-4"></div>
+        }
+        <div class="col-4"></div>
+
+        <div class="col-4">
+            <a asp-controller="Places" asp-action="Index" class="btn btn-primary d-block w-100">
+                <i class="fa fa-arrow-red">&nbsp;</i>
+                Zurück
+            </a>
+        </div>
+    </div>
+</form>

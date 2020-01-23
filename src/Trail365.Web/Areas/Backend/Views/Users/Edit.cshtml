@@ -1,0 +1,142 @@
+@using Trail365.Configuration
+@using Trail365.Entities
+@model Trail365.ViewModels.UserBackendViewModel
+@inject Microsoft.Extensions.Options.IOptionsMonitor<AppSettings> _settings
+
+@{
+    ViewData["Title"] = $"Benutzer '{Model.Name}' bearbeiten";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row">
+    <div class="col-12">
+        <h4 class="headline mb-1">@ViewData["Title"]</h4>
+    </div>
+</div>
+<div class="row">
+    <div class="col-12">
+        <hr class="border-top" />
+    </div>
+</div>
+
+<form asp-action="Edit">
+
+    <div class="row">
+        <div class="col-12">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="ID" />
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-2 text-right">
+            <label asp-for="Name" class="d-block pt-3"></label>
+        </div>
+        <div class="col-10">
+            <input asp-for="Name" class="w-100" />
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-2">
+            <span></span>
+        </div>
+        <div class="col-10">
+            <span asp-validation-for="Name" class="text-danger pt-3 d-block"></span>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-2 text-right">
+            <label asp-for="Surname" class="d-block pt-3"></label>
+        </div>
+        <div class="col-10">
+            <input asp-for="Surname" class="w-100" />
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-2">
+            <span></span>
+        </div>
+        <div class="col-10">
+            <span asp-validation-for="Surname" class="text-danger pt-3 d-block"></span>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-2 text-right">
+            <label asp-for="GivenName" class="d-block pt-3"></label>
+        </div>
+        <div class="col-10">
+            <input asp-for="GivenName" class="w-100" />
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-2">
+            <span></span>
+        </div>
+        <div class="col-10">
+            <span asp-validation-for="GivenName" class="text-danger pt-3 d-block"></span>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-2 text-right">
+            <label asp-for="AvatarUrl" class="d-block pt-3"></label>
+        </div>
+        <div class="col-10">
+            <input asp-for="AvatarUrl" class="w-100" />
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-2">
+            <span></span>
+        </div>
+        <div class="col-10">
+            <span asp-validation-for="AvatarUrl" class="text-danger pt-3 d-block"></span>
+        </div>
+    </div>
+
+    @if (_settings.CurrentValue.Features.UserProfile)
+    {
+        foreach (var role in EntityExtension.GetAllRoleFlags())
+        {
+            <div class="row">
+                <div class="col-6">
+                    <h5>@role.ToString()</h5>
+                    @*<input class="w-100" placeholder="PLZ" />*@
+                </div>
+                <div class="col-3 text-right">
+                    <small class="fg-grey">@(Model.Login.UserRoles.HasFlag(role) ? "Freigabe" : "Gesperrt")</small><br />
+                    <input class="apple-switch-small ml-0" readonly />
+                </div>
+            </div>
+        }
+    }
+
+
+    <div class="row">
+        <div class="col-4">
+            <button type="submit" class="btn btn-primary d-block w-100">
+                <i class="fa fa-arrow-transparent">&nbsp;</i>
+                User speichern
+            </button>
+        </div>
+
+        <div class="col-4"></div>
+
+        <div class="col-4">
+            <a asp-controller="Users" asp-action="Index" class="btn btn-primary d-block w-100">
+                <i class="fa fa-arrow-transparent">&nbsp;</i>
+                Zurück
+            </a>
+        </div>
+    </div>
+</form>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

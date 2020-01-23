@@ -1,0 +1,81 @@
+@using Trail365
+@using Trail365.Configuration
+@model Trail365.ViewModels.EventViewModel
+
+@inject Microsoft.Extensions.Options.IOptionsMonitor<AppSettings> _settings
+@{
+    ViewData["Title"] = Model.Name;
+    ViewData["Description"] = Model.Excerpt;
+    ViewData["HideHeader"] = false;
+    ViewData["OpenGraphTags"] = Model.CreateOpenGraphTags(this.Url, _settings.CurrentValue.FacebookSettings?.AppId);
+    ViewData["NoConsent"] = Model.NoConsent;
+}
+
+<div class="row no-gutters">
+    <div class="col-12">
+        <div class="trail-preview-wrapper">
+            <img src="@(Model.CoverImageUrl)" class="img-fluid" />
+        </div>
+    </div>
+</div>
+
+@HtmlHelperExtension.EmptyRow(this.Html, 4)
+
+<div class="row no-gutters">
+    <div class="col-12 pr-0">
+        <h4 class="headline mb-0 text-truncate">@Model.Name</h4>
+    </div>
+</div>
+
+@HtmlHelperExtension.EmptyRow(this.Html, 1)
+
+<partial name="_EventMetadata" model="@Model" />
+
+
+@if (this.Model.Trail != null)
+{
+
+<partial name="_TrailMetadata" model="@this.Model.Trail" />
+
+<div class="row no-gutters">
+    <div class="col-12">
+        <div class="trail-preview-wrapper">
+            <img src="@(Model.Trail.GetChallengeElevationProfileUrlOrDefault(this.Model.Challenge))" class="img-fluid" />
+        </div>
+    </div>
+</div>
+}
+
+@HtmlHelperExtension.DisplayMultilineMarkdownAsRow(this.Html, @Model.Excerpt)
+
+@HtmlHelperExtension.DisplayMultilineMarkdownAsRow(this.Html, @Model.Description)
+
+@HtmlHelperExtension.EmptyRow(this.Html)
+
+@if (this.Model.CanEdit())
+{
+<div class="row mt-2 no-gutters">
+    <div class="col-12">
+        <a class="btn btn-lg btn-primary w-100" asp-area="Backend" asp-controller="Events" asp-action="Edit" asp-route-ID="@Model.ID">
+            <i class="fa fa-arrow-transparent">&nbsp;</i>
+            Bearbeiten
+        </a>
+    </div>
+</div>
+}
+
+@if (_settings.CurrentValue.Features.ShareOnFacebook)
+{
+<div class="row no-gutters">
+    <div class="col-12 mt-2">
+        <p class="text-center fg-grey font-weight-bold">Trail teilen</p>
+        <p class="text-center">
+            <a href="@this.Url.GetFacebookHRefUrlForEventShare(Model.ID)"><img src="~/img/share/facebook.png" /></a>
+        </p>
+    </div>
+</div>
+}
+
+@*@section Sidebar
+    {
+    }*@

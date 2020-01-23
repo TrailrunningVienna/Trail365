@@ -1,0 +1,73 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.28803.202
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{4D0BB3C9-0D24-4776-8EE6-453BF738666A}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+		.gitattributes = .gitattributes
+		.gitignore = .gitignore
+		src\Trail365.Web\Dockerfile = src\Trail365.Web\Dockerfile
+		.github\workflows\dockerimage.yml = .github\workflows\dockerimage.yml
+		.github\workflows\dotnetcore.yml = .github\workflows\dotnetcore.yml
+		README.md = README.md
+		version.props = version.props
+	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Trail365.Core", "src\Trail365.Core\Trail365.Core.csproj", "{8668F016-6F3C-4819-8E91-61F9F0ECD57B}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Trail365.Web", "src\Trail365.Web\Trail365.Web.csproj", "{C4BE94DA-1F2E-4C68-A4FE-68AF63D79647}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Trail365.Infrastructure", "src\Trail365.Infrastructure\Trail365.Infrastructure.csproj", "{04255074-8010-4E3C-9096-039E089D8A81}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Trail365.Seeds", "src\Trail365.Seeds\Trail365.Seeds.csproj", "{3E014F57-6181-4735-8C2B-097D79AD7DA1}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Trail365.Graphics", "src\Trail365.Graphics\Trail365.Graphics.csproj", "{50608003-585D-480A-8CF5-D3E4EB903741}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Trail365.UnitTests", "tests\Trail365.UnitTests\Trail365.UnitTests.csproj", "{CA6A3C2B-6BBD-45BF-A6FA-5D819CA6CEE6}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Trail365.IntegrationTests", "tests\Trail365.IntegrationTests\Trail365.IntegrationTests.csproj", "{323BFF7B-8BDD-46A7-A595-589A9AAFB512}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{8668F016-6F3C-4819-8E91-61F9F0ECD57B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8668F016-6F3C-4819-8E91-61F9F0ECD57B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8668F016-6F3C-4819-8E91-61F9F0ECD57B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8668F016-6F3C-4819-8E91-61F9F0ECD57B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C4BE94DA-1F2E-4C68-A4FE-68AF63D79647}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C4BE94DA-1F2E-4C68-A4FE-68AF63D79647}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C4BE94DA-1F2E-4C68-A4FE-68AF63D79647}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C4BE94DA-1F2E-4C68-A4FE-68AF63D79647}.Release|Any CPU.Build.0 = Release|Any CPU
+		{04255074-8010-4E3C-9096-039E089D8A81}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{04255074-8010-4E3C-9096-039E089D8A81}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{04255074-8010-4E3C-9096-039E089D8A81}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{04255074-8010-4E3C-9096-039E089D8A81}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3E014F57-6181-4735-8C2B-097D79AD7DA1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3E014F57-6181-4735-8C2B-097D79AD7DA1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3E014F57-6181-4735-8C2B-097D79AD7DA1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3E014F57-6181-4735-8C2B-097D79AD7DA1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{50608003-585D-480A-8CF5-D3E4EB903741}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{50608003-585D-480A-8CF5-D3E4EB903741}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{50608003-585D-480A-8CF5-D3E4EB903741}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{50608003-585D-480A-8CF5-D3E4EB903741}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CA6A3C2B-6BBD-45BF-A6FA-5D819CA6CEE6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CA6A3C2B-6BBD-45BF-A6FA-5D819CA6CEE6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CA6A3C2B-6BBD-45BF-A6FA-5D819CA6CEE6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CA6A3C2B-6BBD-45BF-A6FA-5D819CA6CEE6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{323BFF7B-8BDD-46A7-A595-589A9AAFB512}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{323BFF7B-8BDD-46A7-A595-589A9AAFB512}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{323BFF7B-8BDD-46A7-A595-589A9AAFB512}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{323BFF7B-8BDD-46A7-A595-589A9AAFB512}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {034E3CBA-2446-4F5C-B08B-29A47AFC010A}
+	EndGlobalSection
+EndGlobal

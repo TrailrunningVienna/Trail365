@@ -1,0 +1,7 @@
+@model Trail365.ViewModels.StoryCollectionViewModel
+@{
+    ViewData["Title"] = "Stories";
+    ViewData["UnreadMessages"] = 0;
+}
+
+<partial name="_StoryCollection" model="@Model" />
