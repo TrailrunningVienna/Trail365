@@ -394,7 +394,7 @@ namespace Trail365.Web
 
                 app.UseMiddleware<AuthenticatedRequestMiddleware>();
 
-                if (!settings.IdentityContextDisabled)
+                if (!settings.IdentityContextDisabled && ! settings.StaticUserSettings.ShouldNotLogin)
                 {
                     using (var serviceScope = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>().CreateScope())
                     {
