@@ -58,7 +58,7 @@ namespace Trail365
         /// <param name="html"></param>
         /// <param name="markDown"></param>
         /// <returns></returns>
-        public static IHtmlContent DisplayMultilineMarkdownAsRowOrNothing(IHtmlHelper html, string markDown, string hrefUrl = null)
+        public static IHtmlContent DisplayMultilineMarkdownAsRowOrNothing(IHtmlHelper html, string markDown, string hrefUrl)
         {
             return DisplayMultilineMarkdownAsRow(html, markDown, true, hrefUrl);
         }
@@ -71,7 +71,7 @@ namespace Trail365
         /// <returns></returns>
         public static IHtmlContent DisplayMultilineMarkdownAsRow(IHtmlHelper html, string markDown)
         {
-            return DisplayMultilineMarkdownAsRow(html, markDown, false);
+            return DisplayMultilineMarkdownAsRow(html, markDown, false, string.Empty);
         }
         /// <summary>
         /// single row, one column
@@ -107,7 +107,7 @@ namespace Trail365
             return sb;
         }
 
-        private static IHtmlContent DisplayMultilineMarkdownAsRow(IHtmlHelper html, string markDown, bool doNotCreateEmptyRow, string hrefUrl = null)
+        private static IHtmlContent DisplayMultilineMarkdownAsRow(IHtmlHelper html, string markDown, bool doNotCreateEmptyRow, string hrefUrl)
         {
             string rawResult = string.Empty;
 
@@ -130,7 +130,19 @@ namespace Trail365
             return html.Raw(sb.ToString());
         }
 
-        public static IHtmlContent DisplayTitleAsRow(IHtmlHelper html, string title, bool doNotCreateEmptyRow, string hrefUrl=null)
+        public static IHtmlContent DisplayTitleAsRow(IHtmlHelper html, string title)
+        {
+            int marginBottom = 2;
+            return DisplayTitleAsRow(html, title, false, null, marginBottom, null);
+        }
+
+        public static IHtmlContent DisplayTitleAsRow(IHtmlHelper html, string title, int? mt, int? mb)
+        {
+            return DisplayTitleAsRow(html, title, false, null, mt,mb);
+        }
+
+
+        public static IHtmlContent DisplayTitleAsRow(IHtmlHelper html, string title, bool doNotCreateEmptyRow, string hrefUrl, int? mt, int? mb)
         {
             if (string.IsNullOrEmpty(title) == false)
             {
@@ -142,7 +154,17 @@ namespace Trail365
                     return html.Raw(string.Empty);
                 }
             }
-            var sb = GetRowStringBuilder($"<h4 class=\"mb-0 text-truncate\">{title}</h4>", "mb-2", hrefUrl);
+            string margins = string.Empty;
+            if (mb.HasValue)
+            {
+                margins += $" mb-{mb.Value}";
+            }
+
+            if (mt.HasValue)
+            {
+                margins += $" mt-{mt.Value}";
+            }
+            var sb = GetRowStringBuilder($"<h4 class=\"mb-0 text-truncate\">{title}</h4>", margins.Trim(), hrefUrl);
             return html.Raw(sb.ToString());
         }
     }

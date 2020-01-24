@@ -42,6 +42,6 @@
     </a>
     @if (!this.Model.HideExcerpt)
     {
-        @HtmlHelperExtension.DisplayMultilineMarkdownAsRowOrNothing(this.Html, this.Model.Excerpt)
+        @HtmlHelperExtension.DisplayMultilineMarkdownAsRowOrNothing(this.Html, this.Model.Excerpt, detailsUrl)
     }
 </div>

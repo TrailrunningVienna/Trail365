@@ -43,14 +43,14 @@
 
     @if (currentItem.BlockType == StoryBlockType.Excerpt)
     {
-        @HtmlHelperExtension.DisplayMultilineMarkdownAsRowOrNothing(this.Html, currentItem.Content)
+        @HtmlHelperExtension.DisplayMultilineMarkdownAsRowOrNothing(this.Html, currentItem.Content,string.Empty)
         //TODO Excerpt with Image means what?
 
     }
 
     @if (currentItem.BlockType == StoryBlockType.Text)
     {
-        @HtmlHelperExtension.DisplayMultilineMarkdownAsRowOrNothing(this.Html, currentItem.Content)
+        @HtmlHelperExtension.DisplayMultilineMarkdownAsRowOrNothing(this.Html, currentItem.Content,string.Empty)
         //TODO Text with Image means what?
 
         @if (string.IsNullOrEmpty(currentItem.ImageUrl) == false)
