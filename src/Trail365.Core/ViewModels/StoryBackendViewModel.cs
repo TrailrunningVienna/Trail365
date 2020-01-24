@@ -80,7 +80,7 @@ namespace Trail365.ViewModels
                 Excerpt = from.Excerpt,
                 CoverImageID = from.CoverImageID
             };
-            vm.Blocks = from.StoryBlocks.OrderBy(sb => sb.SortOrder).Select(sb => new StoryBlockBackendViewModel { ID = sb.ID, BlockType = sb.BlockType, Url = sb.Image?.Url, Content = sb.RawContent, SortOrder = sb.SortOrder }).ToList();
+            vm.Blocks = from.StoryBlocks.OrderBy(sb => sb.SortOrder).Select(sb => new StoryBlockBackendViewModel { ID = sb.ID, BlockType = sb.BlockType, Url = sb.Image?.Url, Content = sb.RawContent, SortOrder = sb.SortOrder, BlockTypeGroup = sb.BlockTypeGroup }).ToList();
             return vm;
         }
 

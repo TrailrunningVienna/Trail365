@@ -66,6 +66,7 @@ namespace Trail365.ViewModels
                 ImageUrl = block.Image?.Url,
                 SortOrder = block.SortOrder,
                 StoryID = block.StoryID,
+                BlockTypeGroup = block.BlockTypeGroup
             };
             return blvm;
         }
@@ -80,7 +81,8 @@ namespace Trail365.ViewModels
                 Created = story.CreatedUtc.ToLocalTime(),
                 Modified = story.ModifiedUtc,
                 ListAccess = story.ListAccess,
-                Excerpt = story.Excerpt
+                Excerpt = story.Excerpt,
+                TitleImageUrl = story.CoverImage?.Url
             };
 
             vm.Login = login ?? throw new ArgumentNullException(nameof(login));

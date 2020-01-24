@@ -26,8 +26,8 @@
   </ItemGroup>
   
   <ItemGroup>
-    <PackageReference Include="ISO3166" Version="1.0.2" />
-    <PackageReference Include="Markdig" Version="0.18.0" />
+    <PackageReference Include="ISO3166" Version="1.0.3" />
+    <PackageReference Include="Markdig" Version="0.18.1" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="3.1.1" />
     <PackageReference Include="Microsoft.AspNetCore.TestHost" Version="3.1.1" />
     <PackageReference Include="Microsoft.Azure.Management.Fluent" Version="1.30.0" />

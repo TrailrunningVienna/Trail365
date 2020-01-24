@@ -1,48 +1,74 @@
+
 @using Trail365
 @using Trail365.Entities
 @using Trail365.ViewModels
+
 @model Trail365.ViewModels.StoryViewModel
 @{
     int itemIndex = 0;
+    int itemsPerRow = 3;
+    int neededRows = 0;
 }
 
-@HtmlHelperExtension.DisplayMultilineMarkdownAsRowOrNothing(this.Html, Model.Excerpt , string.Empty)
+@HtmlHelperExtension.DisplayMultilineMarkdownAsRowOrNothing(this.Html, Model.Excerpt, string.Empty)
 
 
 @while (itemIndex < Model.Blocks.Count)
 {
-
     var currentItem = Model.Blocks[itemIndex];
     StoryBlockViewModel nextItem = null;
-    bool nextItemIsImage = false;
 
     if (itemIndex + 1 < Model.Blocks.Count)
     {
         nextItem = Model.Blocks[itemIndex + 1];
-        nextItemIsImage = nextItem.BlockType == StoryBlockType.Image && (string.IsNullOrEmpty(nextItem.ImageUrl) == false);
     }
 
-    @*@if (currentItem.BlockType == StoryBlockType.Title)
+
+    if ((currentItem.BlockType == StoryBlockType.Image) && (nextItem != null))
     {
-        @if (string.IsNullOrEmpty(currentItem.ImageUrl) == false)
+        if ((nextItem.BlockType == StoryBlockType.Image) && (nextItem.BlockTypeGroup == currentItem.BlockTypeGroup))
         {
-            <div class="row">
-                <div class="col-12">
-                    @Html.GetImageRenderingHtml(currentItem.BlockType, currentItem.ImageUrl, currentItem.Content, false)
-                </div>
-            </div>
-        }
+            List<StoryBlockViewModel> items = new List<StoryBlockViewModel>();
+            items.Add(currentItem);
+            items.Add(nextItem);
+            int localIndex = itemIndex + 2;
+            while (localIndex < Model.Blocks.Count)
+            {
+                var localItem = Model.Blocks[localIndex];
+                if (localItem.BlockType != StoryBlockType.Image)
+                {
+                    break;
+                }
+                if (localItem.BlockTypeGroup!=currentItem.BlockTypeGroup)
+                {
+                    break;
+                }
+                items.Add(localItem);
+                localIndex += 1;
+            }
 
-        @if (String.IsNullOrEmpty(currentItem.Content) == false)
-        {
+            neededRows = Convert.ToInt32(Math.Ceiling( (double) items.Count/itemsPerRow));
 
-            <div class="row">
-                <div class="col-12 pt-1 pb-1">
-                    @Html.Raw(currentItem.GetTextRenderingHtml())
+            @for (int r = 0; r < neededRows; r++)
+            {
+                <div class="row">
+                    @for (int c = 0; c < itemsPerRow; c++)
+                    {
+                        var ix = (r * itemsPerRow) + c;
+                        @if (ix < items.Count)
+                        {
+                            <div class="col-sm">
+                                <img class="img-responsive story-album-image" src="@items[ix].ImageUrl" />
+                            </div>
+                        }
+                    }
                 </div>
-            </div>
+            }
+
+            itemIndex += items.Count;
+            continue;
         }
-    }*@
+    }
 
 
     @if (currentItem.BlockType == StoryBlockType.Text)
@@ -53,7 +79,7 @@
         @if (string.IsNullOrEmpty(currentItem.ImageUrl) == false)
         {
             <div class="row">
-                <div class="col-12">
+                <div class="col">
                     @Html.GetImageRenderingHtml(currentItem.BlockType, currentItem.ImageUrl, currentItem.Content, false)
                 </div>
             </div>
@@ -65,26 +91,11 @@
 
         @if (string.IsNullOrEmpty(currentItem.ImageUrl) == false)
         {
-            if (nextItemIsImage)
-            {
-                itemIndex += 1;
-                <div class="row">
-                    <div class="col-6">
-                        @Html.GetImageRenderingHtml(currentItem.BlockType, currentItem.ImageUrl, currentItem.Content, false)
-                    </div>
-                    <div class="col-6">
-                        @Html.GetImageRenderingHtml(nextItem.BlockType, nextItem.ImageUrl, nextItem.Content, false)
-                    </div>
+            <div class="row">
+                <div class="col">
+                    <img class="img-responsive story-detail-image" src="@currentItem.ImageUrl" />
                 </div>
-            }
-            else
-            {
-                <div class="row">
-                    <div class="col-12">
-                        @Html.GetImageRenderingHtml(currentItem.BlockType, currentItem.ImageUrl, currentItem.Content, false)
-                    </div>
-                </div>
-            }
+            </div>
         }
     }
 
