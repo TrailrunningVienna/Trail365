@@ -6,6 +6,9 @@
     int itemIndex = 0;
 }
 
+@HtmlHelperExtension.DisplayMultilineMarkdownAsRowOrNothing(this.Html, Model.Excerpt , string.Empty)
+
+
 @while (itemIndex < Model.Blocks.Count)
 {
 
@@ -19,7 +22,7 @@
         nextItemIsImage = nextItem.BlockType == StoryBlockType.Image && (string.IsNullOrEmpty(nextItem.ImageUrl) == false);
     }
 
-    @if (currentItem.BlockType == StoryBlockType.Title)
+    @*@if (currentItem.BlockType == StoryBlockType.Title)
     {
         @if (string.IsNullOrEmpty(currentItem.ImageUrl) == false)
         {
@@ -39,18 +42,12 @@
                 </div>
             </div>
         }
-    }
+    }*@
 
-    @if (currentItem.BlockType == StoryBlockType.Excerpt)
-    {
-        @HtmlHelperExtension.DisplayMultilineMarkdownAsRowOrNothing(this.Html, currentItem.Content,string.Empty)
-        //TODO Excerpt with Image means what?
-
-    }
 
     @if (currentItem.BlockType == StoryBlockType.Text)
     {
-        @HtmlHelperExtension.DisplayMultilineMarkdownAsRowOrNothing(this.Html, currentItem.Content,string.Empty)
+        @HtmlHelperExtension.DisplayMultilineMarkdownAsRowOrNothing(this.Html, currentItem.Content, string.Empty)
         //TODO Text with Image means what?
 
         @if (string.IsNullOrEmpty(currentItem.ImageUrl) == false)

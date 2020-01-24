@@ -5,22 +5,12 @@ namespace Trail365.DTOs
 {
     public static class DTOExtension
     {
-        /// <summary>
-        /// properties Data and imageType are impacted, NO Other!
-        /// </summary>
-        /// <param name="image"></param>
-        /// <param name="downloadService"></param>
-        /// <param name="url"></param>
 
         public static StoryDto AppendExcerpt(this StoryDto story, string excerpt)
         {
             if (story == null) throw new ArgumentNullException(nameof(story));
             if (string.IsNullOrEmpty(excerpt)) throw new ArgumentNullException(nameof(excerpt));
-            story.StoryBlocks.Add(new StoryBlockDto
-            {
-                BlockType = StoryBlockType.Excerpt,
-                RawContent = excerpt
-            });
+            story.Excerpt = excerpt;
             return story;
         }
 
@@ -46,19 +36,6 @@ namespace Trail365.DTOs
             {
                 BlockType = StoryBlockType.Image,
                 Image = image
-            };
-            story.StoryBlocks.Add(item);
-            return item;
-        }
-
-        public static StoryBlockDto AppendTitle(this StoryDto story, string title)
-        {
-            if (story == null) throw new ArgumentNullException(nameof(story));
-            if (string.IsNullOrEmpty(title)) throw new ArgumentNullException(nameof(title));
-            var item = new StoryBlockDto
-            {
-                BlockType = StoryBlockType.Title,
-                RawContent = title
             };
             story.StoryBlocks.Add(item);
             return item;

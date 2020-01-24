@@ -60,6 +60,7 @@ namespace Trail365.Data
             if (filter.IncludeBlocks)
             {
                 baseQuery = baseQuery.Include(s => s.StoryBlocks).ThenInclude(sb => sb.Image);
+                baseQuery = baseQuery.Include(s => s.CoverImage);
             }
 
             if (filter.FilterByAllowedLevels)

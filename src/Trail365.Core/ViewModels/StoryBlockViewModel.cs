@@ -45,20 +45,20 @@ namespace Trail365.ViewModels
             return true;
         }
 
-        public string GetTextRenderingHtml()
-        {
-            var sb = new StringBuilder();
+        //public string GetTextRenderingHtml()
+        //{
+        //    var sb = new StringBuilder();
 
-            if (this.BlockType == StoryBlockType.Title)
-            {
-                var cssClass = "headline mb-0";
-                sb.AppendLine($"<h3 class=\"{cssClass}\">{this.Content}</h3>");
-            }
-            else
-            {
-                sb.AppendLine($"<p class=\"trail-description\">{this.Content}</p>");
-            }
-            return sb.ToString();
-        }
+        //    if (this.BlockType == StoryBlockType.Title)
+        //    {
+        //        var cssClass = "headline mb-0";
+        //        sb.AppendLine($"<h3 class=\"{cssClass}\">{this.Content}</h3>");
+        //    }
+        //    else
+        //    {
+        //        sb.AppendLine($"<p class=\"trail-description\">{this.Content}</p>");
+        //    }
+        //    return sb.ToString();
+        //}
     }
 }

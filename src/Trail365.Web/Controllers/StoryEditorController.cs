@@ -73,7 +73,7 @@ namespace Trail365.Web.Controllers
                 return this.NotFound();
             }
 
-            var item = _context.GetStoriesByFilter(StoryQueryFilter.GetByID(id.Value, false)).SingleOrDefault();
+            var item = _context.GetStoriesByFilter(StoryQueryFilter.GetByID(id.Value, true)).SingleOrDefault();
 
             if (item == null)
             {
@@ -82,8 +82,11 @@ namespace Trail365.Web.Controllers
 
             var viewModel = StoryBackendViewModel.CreateFromStory(item);
             viewModel.Login = LoginViewModel.CreateFromClaimsPrincipalOrDefault(this.User);
+
             this.ViewData.CreateAccessLevelSelectList("ListAccess", viewModel.ListAccess);
             this.ViewData.CreateStoryStatusSelectList("Status", viewModel.Status);
+
+            this.ViewData.CreateStoryCoverImageSelectList("CoverImage", item);
 
             string redirect = this.Url.GetStoryUrl(id.Value);
 

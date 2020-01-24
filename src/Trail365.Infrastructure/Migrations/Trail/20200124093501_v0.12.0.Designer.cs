@@ -9,14 +9,14 @@ using Trail365.Data;
 namespace Trail365.Migrations
 {
     [DbContext(typeof(TrailContext))]
-    [Migration("20200116073400_v0.10.0")]
-    partial class v0100
+    [Migration("20200124093501_v0.12.0")]
+    partial class v0120
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "3.1.0");
+                .HasAnnotation("ProductVersion", "3.1.1");
 
             modelBuilder.Entity("Trail365.Entities.Blob", b =>
                 {
@@ -223,6 +223,9 @@ namespace Trail365.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("TEXT");
 
+                    b.Property<Guid?>("CoverImageID")
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("CreatedByUser")
                         .HasColumnType("TEXT");
 
@@ -230,6 +233,9 @@ namespace Trail365.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<Guid?>("EventID")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Excerpt")
                         .HasColumnType("TEXT");
 
                     b.Property<int>("ListAccess")
@@ -253,6 +259,8 @@ namespace Trail365.Migrations
 
                     b.HasKey("ID");
 
+                    b.HasIndex("CoverImageID");
+
                     b.HasIndex("EventID");
 
                     b.ToTable("Stories");
@@ -265,6 +273,9 @@ namespace Trail365.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<int>("BlockType")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("BlockTypeGroup")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("CreatedByUser")
@@ -445,6 +456,11 @@ namespace Trail365.Migrations
 
             modelBuilder.Entity("Trail365.Entities.Story", b =>
                 {
+                    b.HasOne("Trail365.Entities.Blob", "CoverImage")
+                        .WithMany("StoryCovers")
+                        .HasForeignKey("CoverImageID")
+                        .HasConstraintName("FK_Story_CoverImage");
+
                     b.HasOne("Trail365.Entities.Event", null)
                         .WithMany("Stories")
                         .HasForeignKey("EventID");

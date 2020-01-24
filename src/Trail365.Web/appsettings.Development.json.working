@@ -1,0 +1,91 @@
+{
+  "APPINSIGHTS_INSTRUMENTATIONKEY": "bd0fa8c3-94bb-4b45-a978-e42b4ba8fdc5",
+  "CloudStorageRootContainerName": "uploads",
+  "RunMigrationsAtStartup": true,
+  "CloudStorageEnabled": false,
+  "EnableForwardHeaders": true,
+  "PuppeteerEnabled": false,
+  "BackupDirectory": "c:\\work\\data\\backup",
+  "CloudStorageMaxAgeSeconds": -1,
+  "PageSize": 5,
+  "SyncOverwriteEnabled": true,
+  "SyncEnabled": false,
+  "MaxResultSize": 25,
+  "SeedOnCreation": false,
+  "SeedingApplicationUrl": "http://localhost:5000",
+  "FileSystemBlobServiceRootDirectory": "c:\\work\\data\\fs",
+  "FileSystemBlobServiceRequestPath": "/blob",
+  "ResponseCacheDurationSeconds": 25,
+  "BackgroundServiceDisabled": false,
+  "Features": {
+    "Events": true,
+    "UserTrailUpload": true,
+    "AdminTrailUpload": true,
+    "AdminStories": true,
+    "Stories": true,
+    "UserProfile": true,
+    "Login": true,
+    "Trails": true
+  },
+
+  "ConnectionStrings": {
+    "TrailDB": "Data Source=%HOME%\\data\\trail365.sqlite",
+    "IdentityDB": "Data Source=%HOME%\\data\\identity.sqlite",
+    "TaskDB": "Data Source=%HOME%\\data\\task.sqlite",
+
+    "CloudStorage11": "%STORAGE_MSSDEV%",
+    "CloudStorage": "DefaultEndpointsProtocol=https;AccountName=mssdev;AccountKey=P0QuJdZ82Vn2W9Y0Ae8kP4Qz+inIlvI/eJVfdJJs0y06uimkeWXCQadQ48fDng5nnNdjIc82snLNHtg/+NtFsQ==;EndpointSuffix=core.windows.net"
+  },
+
+  "AuthenticationEnabled": true,
+  "DatabaseProvider": "MSSQL",
+  "111DatabaseProvider": "Sqlite",
+  "AdminUsers": "werner.mairl@vaikoon.com;werner.mairl@gmail.com",
+  "MarketplaceAuthentication": true,
+
+  "GoogleAuthentication": true,
+  "GoogleSettings": {
+    "ClientId": "428108181896-sq7anaq9c2gi4veipukapsf5n60qj97u.apps.googleusercontent.com",
+    "ClientSecret": "q6TVcq5JvhmjtMfoRlHrH4mz",
+    "ApiKey": "AIzaSyA_j-I6ZhUQWpyRtS4RawN58VAeu_yQh2E"
+  },
+
+  "GitHubAuthentication": true,
+  "GitHubSettings": {
+    "ClientId": "ad61a9ab036970d002cd",
+    "ClientSecret": "f48fe9c5a6fdc6b1e32eede0038c589c5259fe93"
+  },
+
+  "FacebookAuthentication": true,
+  "FacebookSettings": {
+    "AppId": "1525313477516212",
+    "AppSecret": "c6e9a887b2258a5dbb5929596bd8a80e",
+    "ImporterAccessToken": "EAAblLLNJWhgBAPS0ptiqaEKPMYGqbl3ZAjTovbSW3riFi7aTytpQZBIZBAHjHR0qtYbx61wXn05nkMWsM6blnU1ldjsI5XPikdudZAmZBZAaUZCjrlLVbk1Hly1ujtJAXKM3V7YVCCZCnT34U5Fmj1Rc0BjuDJkqrTR5bHUf16Ya2mrJtssuwaIc",
+    "ImporterId": "1097090290402788",
+    "ApiDelayMilliseconds": 15
+  },
+
+  "YYYLogging": {
+    "Console": {
+      "LogLevel": {
+        "Default": "Warning",
+        "MSS.Trail365.Infrastructure.Services.ScrapingService": "Warning",
+        "MSS.Trail365.Web.Controllers.HomeController": "Warning",
+        "MSS.Trail365.Infrastructure.Services.QueuedHostedService": "Warning",
+        "MSS.Trail365.Web.TrailPreviewTask": "Warning",
+        "Microsoft": "Warning",
+        "Microsoft.EntityFrameworkCore.Query": "Warning",
+        "Microsoft.AspNetCore.ResponseCaching.ResponseCachingMiddleware": "Debug"
+      }
+    }
+  },
+
+  "XXXLogging": {
+    "LogLevel": {
+      "Default": "Warning",
+      "System": "Warning",
+      "Microsoft": "Warning",
+      "Microsoft.EntityFrameworkCore.Query": "Warning"
+    }
+  }
+}

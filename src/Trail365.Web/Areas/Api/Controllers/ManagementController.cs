@@ -62,7 +62,7 @@ namespace Trail365.Web.Api.Controllers
         }
 
         [Route("seedplaces")]
-        public IActionResult SeedPlaces([FromServices] TrailContext context, [FromServices]BlobService blobService)
+        public IActionResult SeedPlaces([FromServices] TrailContext context)
         {
             var dtoProvider = PlaceDtoProvider.CreateInstance();
             context.SeedPlaces(dtoProvider, this.Url);

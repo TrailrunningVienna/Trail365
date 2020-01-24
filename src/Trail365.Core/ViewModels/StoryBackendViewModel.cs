@@ -12,7 +12,11 @@ namespace Trail365.ViewModels
 
         public string Name { get; set; }
 
+        public string Excerpt { get; set; }
+
         public DateTime? Created { get; set; }
+
+        public Guid? CoverImageID { get; set; }
 
         public DateTime? Modified { get; set; }
 
@@ -20,6 +24,27 @@ namespace Trail365.ViewModels
         {
             if (item == null) throw new ArgumentNullException(nameof(item));
             item.Name = this.Name;
+            item.Excerpt = this.Excerpt;
+
+            if (this.CoverImageID.HasValue)
+            {
+                if (this.CoverImageID.Value == Guid.Empty)
+                {
+                    item.CoverImage = null;
+                    item.CoverImageID = null;
+                }
+                else
+                {
+                    item.CoverImage = null;
+                    item.CoverImageID = this.CoverImageID.Value;
+                }
+            }
+            else
+            {
+                item.CoverImage = null;
+                item.CoverImageID = null;
+            }
+
             item.PublishedUtc = this.Published.ToUniversalTime();
             item.ListAccess = this.ListAccess;
             if (item.Status != this.Status)
@@ -30,6 +55,7 @@ namespace Trail365.ViewModels
                 }
                 item.Status = this.Status;
             }
+            
             return item;
         }
 
@@ -51,6 +77,8 @@ namespace Trail365.ViewModels
                 Status = from.Status,
                 ListAccess = from.ListAccess,
                 Published = from.PublishedUtc.ToLocalTime(),
+                Excerpt = from.Excerpt,
+                CoverImageID = from.CoverImageID
             };
             vm.Blocks = from.StoryBlocks.OrderBy(sb => sb.SortOrder).Select(sb => new StoryBlockBackendViewModel { ID = sb.ID, BlockType = sb.BlockType, Url = sb.Image?.Url, Content = sb.RawContent, SortOrder = sb.SortOrder }).ToList();
             return vm;

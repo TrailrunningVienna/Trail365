@@ -43,10 +43,9 @@ namespace Trail365.Seeds
             StoryDto dto = new StoryDto
             {
                 ID = Guid.NewGuid(),
-                Name = $"Seeded Story {System.DateTime.UtcNow.ToString()}",
+                Name = $"Seeded Story Title {System.DateTime.UtcNow.ToString()}",
                 ListAccess = AccessLevel.Public,
             };
-            dto.AppendTitle("This should be the Title (without image)");
             dto.AppendExcerpt("This should be the excerpt");
             dto.AppendText($"This is flowing text with {Environment.NewLine}some word wrap and multiline behavior.");
             var image1 = dto.AppendImage(ImageDtoProvider.CreateTGHoch().AssignNewID());
@@ -66,11 +65,9 @@ namespace Trail365.Seeds
             StoryDto dto = new StoryDto
             {
                 ID = new Guid("5D020827-EA45-4102-9594-3B02230F5916"),
-                Name = "Rote Wälder am Toten Grund 01",
+                Name = "Title Rote Wälder am Toten Grund 01",
                 ListAccess = AccessLevel.Public,
             };
-
-            dto.AppendTitle("Title: Geniesser Trail am Toten Grund");
             dto.AppendExcerpt("Excerpt with Link: https://www.wien.gv.at/umwelt/gewaesser/donauinsel/oekologie/nischen.html#accessibletabscontent1-0");
             dto.AppendText("Natur pur in Line 1!" + Environment.NewLine + "Aulandschaft in Line2");
             dto.AppendImage(ImageDtoProvider.CreateTGHoch());

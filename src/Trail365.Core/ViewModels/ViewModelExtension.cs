@@ -80,7 +80,7 @@ namespace Trail365.ViewModels
                 Created = story.CreatedUtc.ToLocalTime(),
                 Modified = story.ModifiedUtc,
                 ListAccess = story.ListAccess,
-                Excerpt = null
+                Excerpt = story.Excerpt
             };
 
             vm.Login = login ?? throw new ArgumentNullException(nameof(login));
@@ -89,11 +89,7 @@ namespace Trail365.ViewModels
             {
                 vm.Blocks.Add(bl.ToStoryBlockViewModel());
             }
-            var excerptBlock = vm.Blocks.Where(bl => (bl.BlockType == StoryBlockType.Excerpt) && (bl.IsEmpty() == false)).FirstOrDefault();
-            if (excerptBlock != null)
-            {
-                vm.Excerpt = excerptBlock.Content;
-            }
+
             return vm;
         }
 

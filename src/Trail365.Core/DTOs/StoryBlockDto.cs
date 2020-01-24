@@ -10,5 +10,7 @@ namespace Trail365.DTOs
         public StoryBlockType BlockType { get; set; }
         public string RawContent { get; set; }
         public int SortOrder { get; set; } = 0;
+        public int BlockTypeGroup { get; set; } = 0;
+
     }
 }

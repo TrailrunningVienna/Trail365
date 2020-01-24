@@ -18,10 +18,10 @@ namespace Trail365
             {
                 cssClass = "story-detail-image";
             }
-            if (blockType == StoryBlockType.Title)
-            {
-                cssClass = "story-title-image";
-            }
+            //if (blockType == StoryBlockType.Title)
+            //{
+            //    cssClass = "story-title-image";
+            //}
             sb.AppendLine($"<img class=\"img-responsive {cssClass}\" src=\"{url}\" />");
             if (blockType == StoryBlockType.Image)
             {
@@ -138,7 +138,7 @@ namespace Trail365
 
         public static IHtmlContent DisplayTitleAsRow(IHtmlHelper html, string title, int? mt, int? mb)
         {
-            return DisplayTitleAsRow(html, title, false, null, mt,mb);
+            return DisplayTitleAsRow(html, title, false, null, mt, mb);
         }
 
 
