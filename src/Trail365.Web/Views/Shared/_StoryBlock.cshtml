@@ -43,25 +43,15 @@
 
     @if (currentItem.BlockType == StoryBlockType.Excerpt)
     {
-        if (string.IsNullOrEmpty(currentItem.Content) == false)
-        {
-            <div class="row">
-                <div class="col-12 mt-3 mb-3">
-                    @Html.Raw(currentItem.GetTextRenderingHtml())
-                </div>
-            </div>
-        }
+        @HtmlHelperExtension.DisplayMultilineMarkdownAsRowOrNothing(this.Html, currentItem.Content)
+        //TODO Excerpt with Image means what?
+
     }
+
     @if (currentItem.BlockType == StoryBlockType.Text)
     {
-        if (string.IsNullOrEmpty(currentItem.Content) == false)
-        {
-            <div class="row">
-                <div class="col-12 mt-3 mb-3">
-                    @Html.Raw(currentItem.GetTextRenderingHtml())
-                </div>
-            </div>
-        }
+        @HtmlHelperExtension.DisplayMultilineMarkdownAsRowOrNothing(this.Html, currentItem.Content)
+        //TODO Text with Image means what?
 
         @if (string.IsNullOrEmpty(currentItem.ImageUrl) == false)
         {

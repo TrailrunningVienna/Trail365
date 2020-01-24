@@ -58,9 +58,9 @@ namespace Trail365
         /// <param name="html"></param>
         /// <param name="markDown"></param>
         /// <returns></returns>
-        public static IHtmlContent DisplayMultilineMarkdownAsRowOrNothing(IHtmlHelper html, string markDown)
+        public static IHtmlContent DisplayMultilineMarkdownAsRowOrNothing(IHtmlHelper html, string markDown, string hrefUrl = null)
         {
-            return DisplayMultilineMarkdownAsRow(html, markDown, true);
+            return DisplayMultilineMarkdownAsRow(html, markDown, true, hrefUrl);
         }
 
         /// <summary>
@@ -73,8 +73,41 @@ namespace Trail365
         {
             return DisplayMultilineMarkdownAsRow(html, markDown, false);
         }
+        /// <summary>
+        /// single row, one column
+        /// </summary>
+        /// <param name="cellHtml"></param>
+        /// <param name="hrefUrl"></param>
+        /// <returns></returns>
+        private static StringBuilder GetRowStringBuilder(string cellHtml, string additionalColumnClasses, string hrefUrl)
+        {
+            //https://getbootstrap.com/docs/4.4/utilities/stretched-link/
+            var colClass = "col preview-markdown multi-line";
+            if (!string.IsNullOrEmpty(additionalColumnClasses))
+            {
+                colClass += " " + additionalColumnClasses.Trim();
+            }
 
-        private static IHtmlContent DisplayMultilineMarkdownAsRow(IHtmlHelper html, string markDown, bool doNotCreateEmptyRow)
+            string rowClass = "row";
+            if (!string.IsNullOrEmpty(hrefUrl))
+            {
+                colClass += " position-static";
+                rowClass += " position-relative";
+            }
+            StringBuilder sb = new StringBuilder();
+            sb.AppendLine($"<div class=\"{rowClass}\">");
+            sb.AppendLine($"<div class=\"{colClass}\">");
+            if (!string.IsNullOrEmpty(cellHtml))
+            {
+                sb.AppendLine(cellHtml);
+            }
+            sb.AppendLine($"<a href=\"{hrefUrl}\" class=\"stretched-link\"></a>");
+            sb.AppendLine("</div>");
+            sb.AppendLine("</div>");
+            return sb;
+        }
+
+        private static IHtmlContent DisplayMultilineMarkdownAsRow(IHtmlHelper html, string markDown, bool doNotCreateEmptyRow, string hrefUrl = null)
         {
             string rawResult = string.Empty;
 
@@ -93,17 +126,11 @@ namespace Trail365
                     return html.Raw(string.Empty);
                 }
             }
-
-            StringBuilder sb = new StringBuilder();
-            sb.AppendLine("<div class=\"row\">");
-            sb.AppendLine($"<div class=\"col-12 mt-3 mb-3 preview-markdown multi-line\">");
-            sb.Append(rawResult);
-            sb.AppendLine("</div>");
-            sb.AppendLine("</div>");
+            var sb = GetRowStringBuilder(rawResult, string.Empty, hrefUrl);
             return html.Raw(sb.ToString());
         }
 
-        public static IHtmlContent DisplayTitleAsRow(IHtmlHelper html, string title, bool doNotCreateEmptyRow)
+        public static IHtmlContent DisplayTitleAsRow(IHtmlHelper html, string title, bool doNotCreateEmptyRow, string hrefUrl=null)
         {
             if (string.IsNullOrEmpty(title) == false)
             {
@@ -115,13 +142,7 @@ namespace Trail365
                     return html.Raw(string.Empty);
                 }
             }
-
-            StringBuilder sb = new StringBuilder();
-            sb.AppendLine("<div class=\"row\">");
-            sb.AppendLine($"<div class=\"col-12 mt-3 mb-3\">");
-            sb.Append($"<h4 class=\"headline mb-0 text-truncate\">{title}</h4>");
-            sb.AppendLine("</div>");
-            sb.AppendLine("</div>");
+            var sb = GetRowStringBuilder($"<h4 class=\"mb-0 text-truncate\">{title}</h4>", "mb-2", hrefUrl);
             return html.Raw(sb.ToString());
         }
     }

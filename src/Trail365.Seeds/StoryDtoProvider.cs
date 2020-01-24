@@ -21,7 +21,7 @@ namespace Trail365.Seeds
         /// No Images, only Excerpt-Block and Text-Block
         /// </summary>
         /// <returns></returns>
-        public static StoryDto CreateExcerptandTextStoryWithoutTitleAndImages()
+        public static StoryDto CreateExcerptandTextStoryWithoutTitleAndImages(Guid? id=null)
         {
             StoryDto dto = new StoryDto
             {
@@ -29,8 +29,12 @@ namespace Trail365.Seeds
                 Name = "Name: Kopfhörer am Trail",
                 ListAccess = AccessLevel.Public,
             };
-            dto.AppendExcerpt("Excerpt: Über Sinn und Unsinn mancher Ausrüstungsgegenstände am Trail");
-            dto.AppendText("Text: bla bla bla bla in Line 1" + Environment.NewLine + "blob blob blob in line 2");
+            if (id.HasValue)
+            {
+                dto.ID = id.Value;
+            }
+            dto.AppendExcerpt("Excerpt: Über Sinn und Unsinn mancher Ausrüstungsgegenstände am [Trail](https:\\www.google.com)");
+            dto.AppendText("# Text: bla bla bla bla in Line 1" + Environment.NewLine + "blob blob blob in line 2");
             return dto;
         }
 
@@ -90,7 +94,8 @@ namespace Trail365.Seeds
         public static StoryDtoProvider UniqueStories()
         {
             return CreateFromStoryDtos(
-                  CreateUniquePicturestory()
+                  CreateUniquePicturestory(),
+                  CreateExcerptandTextStoryWithoutTitleAndImages(Guid.NewGuid())
                 );
         }
         public StoryDto[] All { get; private set; }

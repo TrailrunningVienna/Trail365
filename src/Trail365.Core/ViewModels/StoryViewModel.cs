@@ -29,13 +29,13 @@ namespace Trail365.ViewModels
             return this.Login.IsAdmin || this.Login.IsModerator;
         }
 
-        public string GetPreviewGridHtml()
+        public string GetImagesPreviewGridHtml()
         {
             string[] blocksWithImages = this.Blocks.Where(bl => string.IsNullOrEmpty(bl.ImageUrl) == false).Select(bl => bl.ImageUrl).Distinct().ToArray();
 
             if (blocksWithImages.Length == 0)
             {
-                blocksWithImages = new string[] { "/img/empty.png" };
+                return string.Empty;
             }
 
             Guard.Assert(blocksWithImages.Length > 0);
