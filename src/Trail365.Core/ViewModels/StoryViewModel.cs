@@ -11,6 +11,43 @@ namespace Trail365.ViewModels
 {
     public class StoryViewModel
     {
+
+        public List<StoryBlockViewModel> GetCurrentImageGroup(int itemIndex)
+        {
+            if (itemIndex < 0)
+            {
+                throw new IndexOutOfRangeException(nameof(itemIndex));
+            }
+
+            if (!(itemIndex < this.Blocks.Count))
+            {
+                throw new IndexOutOfRangeException(nameof(itemIndex));
+            }
+
+            var Model = this;
+            var currentItem = this.Blocks[itemIndex];
+            if (currentItem.BlockType != StoryBlockType.Image) throw new InvalidOperationException("Current Block must be from type image");
+            List<StoryBlockViewModel> items = new List<StoryBlockViewModel>();
+            items.Add(currentItem);
+
+            int localIndex = itemIndex + 1;
+            while (localIndex < Model.Blocks.Count)
+            {
+                var localItem = Model.Blocks[localIndex];
+                if (localItem.BlockType != StoryBlockType.Image)
+                {
+                    break;
+                }
+                if (localItem.BlockTypeGroup != currentItem.BlockTypeGroup)
+                {
+                    break;
+                }
+                items.Add(localItem);
+                localIndex += 1;
+            }
+            return items;
+        }
+
         public List<StoryBlockFileViewModel> FileInfos { get; set; } = new List<StoryBlockFileViewModel>();
 
         public List<StoryBlockViewModel> Blocks { get; set; } = new List<StoryBlockViewModel>();

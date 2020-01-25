@@ -6,8 +6,6 @@
 @model Trail365.ViewModels.StoryViewModel
 @{
     int itemIndex = 0;
-    int itemsPerRow = 3;
-    int neededRows = 0;
 }
 
 @HtmlHelperExtension.DisplayMultilineMarkdownAsRowOrNothing(this.Html, Model.Excerpt, string.Empty)
@@ -16,62 +14,38 @@
 @while (itemIndex < Model.Blocks.Count)
 {
     var currentItem = Model.Blocks[itemIndex];
-    StoryBlockViewModel nextItem = null;
 
-    if (itemIndex + 1 < Model.Blocks.Count)
+
+    if (currentItem.BlockType == StoryBlockType.Image)
     {
-        nextItem = Model.Blocks[itemIndex + 1];
-    }
+        var items = Model.GetCurrentImageGroup(itemIndex);
+        int itemsPerRow = 3;
 
+        int neededRows = Convert.ToInt32(Math.Ceiling((double)items.Count / itemsPerRow));
 
-    if ((currentItem.BlockType == StoryBlockType.Image) && (nextItem != null))
-    {
-        if ((nextItem.BlockType == StoryBlockType.Image) && (nextItem.BlockTypeGroup == currentItem.BlockTypeGroup))
+        @for (int r = 0; r < neededRows; r++)
         {
-            List<StoryBlockViewModel> items = new List<StoryBlockViewModel>();
-            items.Add(currentItem);
-            items.Add(nextItem);
-            int localIndex = itemIndex + 2;
-            while (localIndex < Model.Blocks.Count)
-            {
-                var localItem = Model.Blocks[localIndex];
-                if (localItem.BlockType != StoryBlockType.Image)
+            <div class="row">
+                @for (int c = 0; c < itemsPerRow; c++)
                 {
-                    break;
-                }
-                if (localItem.BlockTypeGroup!=currentItem.BlockTypeGroup)
-                {
-                    break;
-                }
-                items.Add(localItem);
-                localIndex += 1;
-            }
-
-            neededRows = Convert.ToInt32(Math.Ceiling( (double) items.Count/itemsPerRow));
-
-            @for (int r = 0; r < neededRows; r++)
-            {
-                <div class="row">
-                    @for (int c = 0; c < itemsPerRow; c++)
+                    var ix = (r * itemsPerRow) + c;
+                    @if (ix < items.Count)
                     {
-                        var ix = (r * itemsPerRow) + c;
-                        @if (ix < items.Count)
-                        {
-                            <div class="col-sm">
-                                <img class="img-responsive story-album-image" src="@items[ix].ImageUrl" />
-                            </div>
-                        }
+                        <div class="col-sm">
+                            <img class="img-responsive story-album-image" src="@items[ix].ImageUrl" />
+                        </div>
                     }
-                </div>
-            }
-
-            itemIndex += items.Count;
-            continue;
+                }
+            </div>
         }
+
+        itemIndex += items.Count;
+        continue;
     }
 
 
-    @if (currentItem.BlockType == StoryBlockType.Text)
+
+    @*@if (currentItem.BlockType == StoryBlockType.Text)
     {
         @HtmlHelperExtension.DisplayMultilineMarkdownAsRowOrNothing(this.Html, currentItem.Content, string.Empty)
         //TODO Text with Image means what?
@@ -84,20 +58,7 @@
                 </div>
             </div>
         }
-    }
-
-    @if (currentItem.BlockType == StoryBlockType.Image)
-    {
-
-        @if (string.IsNullOrEmpty(currentItem.ImageUrl) == false)
-        {
-            <div class="row">
-                <div class="col">
-                    <img class="img-responsive story-detail-image" src="@currentItem.ImageUrl" />
-                </div>
-            </div>
-        }
-    }
+    }*@
 
     itemIndex += 1;
 }
