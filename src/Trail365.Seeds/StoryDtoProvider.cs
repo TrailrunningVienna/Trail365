@@ -48,7 +48,6 @@ namespace Trail365.Seeds
                 Name = $"Seeded Story with 16 Pictures {System.DateTime.UtcNow.ToString()}",
                 ListAccess = AccessLevel.Public,
             };
-
             dto.AppendExcerpt("This should be the excerpt");
             var r = new Random();
             for (int i = 0; i < 16; i++)
@@ -72,7 +71,7 @@ namespace Trail365.Seeds
                         throw new InvalidOperationException("oops");
                 }
                 var image = dto.AppendImage(sampleImage);
-                image.RawContent = $"image ({i}): this should be the image caption (bottom text)";
+                image.RawContent = $"Image {i} Caption - lot of fun!";
             }
             dto.CoverImageID = dto.StoryBlocks[0].Image.ID;
             return dto;

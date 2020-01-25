@@ -1050,6 +1050,21 @@ span.trail-image-counter {
   border-top-right-radius: 5px;
 }
 
+span.storyblock-image-caption {
+  position: absolute;
+  bottom: 0;
+  right: 15px;
+  color: #fff;
+  font-size: 0.9em;
+  font-weight: 500;
+  padding: 2px 12px;
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
+}
+
+
+
+
 span.price {
   font-weight: bold;
   font-size: 1.4em;

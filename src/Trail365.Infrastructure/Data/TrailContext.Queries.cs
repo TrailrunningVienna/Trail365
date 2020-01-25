@@ -13,12 +13,46 @@ namespace Trail365.Data
     {
         public List<Story> GetStoriesByFilter(StoryQueryFilter filter)
         {
+            if (filter == null) throw new ArgumentNullException(nameof(filter));
+
+            IMemoryCache cache = filter.Cache;
+            if (filter.AbsoluteExpiration == TimeSpan.Zero)
+            {
+                cache = null;
+            }
+
+            string fullKey = null;
+
+            if (cache != null)
+            {
+                fullKey = filter.GetCacheKey();
+                var sw = Stopwatch.StartNew();
+
+                var hit = cache.TryGetValue<List<Story>>(fullKey, out var cacheResults);
+                sw.Stop();
+                if (hit)
+                {
+                    this.LogCacheDependency(nameof(GetStoriesByFilter), t =>
+                    {
+                        t.Duration = sw.Elapsed;
+                        t.Data = fullKey;
+                        t.Metrics.Add("Results", cacheResults.Count);
+                    });
+                    return cacheResults;
+                }
+            }
+
             using (var operation = this.DependencyTracker(nameof(this.GetStoriesByFilter)))
             {
                 operation.Telemetry.Data = filter.GetCommandText();
                 var query = this.GetStoriesByFilterQueryable(filter);
                 var result = query.ToList();
                 operation.Telemetry.Metrics.Add("Results", result.Count);
+
+                if (cache != null)
+                {
+                    cache.Set(fullKey, result, filter.AbsoluteExpiration);
+                }
                 return result;
             }
         }
@@ -149,7 +183,7 @@ namespace Trail365.Data
 
                 if (filter.IncludeTrails)
                 {
-                    baseQuery = baseQuery.Include(s => s.Trail).ThenInclude(t=>t.GpxBlob);
+                    baseQuery = baseQuery.Include(s => s.Trail).ThenInclude(t => t.GpxBlob);
                 }
 
                 if (filter.FilterByAllowedLevels)

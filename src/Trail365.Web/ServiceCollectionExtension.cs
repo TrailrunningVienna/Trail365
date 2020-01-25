@@ -123,7 +123,7 @@ namespace Trail365.Web
 
                     dictionary.Add($"{nameof(settings.FacebookSettings)}.{nameof(settings.FacebookSettings.ImporterDays)}", settings.FacebookSettings.ImporterDays);
 
-                    dictionary.Add(nameof(settings.ResponseCacheDurationSeconds), settings.ResponseCacheDurationSeconds);
+                    dictionary.Add(nameof(settings.AbsoluteExpirationInSecondsRelativeToNow), settings.AbsoluteExpirationInSecondsRelativeToNow);
 
                     dictionary.Add(nameof(settings.BackupDirectory), settings.BackupDirectory);
                     dictionary.Add(nameof(settings.SyncEnabled), settings.SyncEnabled);

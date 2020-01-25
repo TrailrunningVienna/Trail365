@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Options;
 using Trail365.Configuration;
 using Trail365.Data;
@@ -12,12 +13,13 @@ namespace Trail365.Web.Controllers
     {
         private readonly TrailContext _context;
         private readonly AppSettings _settings;
-
-        public StoryNewsController(TrailContext context, IOptionsMonitor<AppSettings> settingsMonitor)
+        private readonly IMemoryCache _cache;
+        public StoryNewsController(TrailContext context, IOptionsMonitor<AppSettings> settingsMonitor, IMemoryCache cache)
         {
             _context = context ?? throw new ArgumentNullException(nameof(context));
             _ = settingsMonitor ?? throw new ArgumentNullException(nameof(settingsMonitor));
             _settings = settingsMonitor.CurrentValue;
+            _cache = cache;
         }
 
         public StoryCollectionViewModel InitStoryCollectionViewModel(StoryCollectionViewModel model = null, LoginViewModel login = null)
@@ -44,6 +46,10 @@ namespace Trail365.Web.Controllers
                 SearchText = model.SearchText,
                 IncludeBlocks = true
             };
+
+            qf.Cache = _cache;
+            qf.AbsoluteExpiration = TimeSpan.FromSeconds(_settings.AbsoluteExpirationInSecondsRelativeToNow);
+
             var baseList = _context.GetStoriesByFilter(qf);
 
             model.Stories = baseList.Select(e =>
