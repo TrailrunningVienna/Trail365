@@ -691,10 +691,13 @@ img.story-detail-image {
 }
 
 img.story-album-image {
-  object-fit: cover;
+  margin-top: 8px;
+  vertical-align: middle;
+  width: 100%;
+  /*object-fit: cover;
   height: 100px;
   max-width: 140px;
-  width: 100%;
+  width: 100%;*/
 }
 
 

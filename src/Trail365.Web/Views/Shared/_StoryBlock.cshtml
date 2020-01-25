@@ -19,7 +19,19 @@
     if (currentItem.BlockType == StoryBlockType.Image)
     {
         var items = Model.GetCurrentImageGroup(itemIndex);
-        int itemsPerRow = 3;
+
+    <div class="row">
+
+        @foreach (var item in items)
+        {
+        <div class="col">
+            <img class="img-responsive story-album-image" src="@item.ImageUrl" />
+        </div>
+        }
+
+    </div>
+
+        @*int itemsPerRow = 3;
 
         int neededRows = Convert.ToInt32(Math.Ceiling((double)items.Count / itemsPerRow));
 
@@ -37,28 +49,28 @@
                     }
                 }
             </div>
-        }
+        }*@
 
         itemIndex += items.Count;
         continue;
-    }
-
-
-
-    @*@if (currentItem.BlockType == StoryBlockType.Text)
-    {
-        @HtmlHelperExtension.DisplayMultilineMarkdownAsRowOrNothing(this.Html, currentItem.Content, string.Empty)
-        //TODO Text with Image means what?
-
-        @if (string.IsNullOrEmpty(currentItem.ImageUrl) == false)
-        {
-            <div class="row">
-                <div class="col">
-                    @Html.GetImageRenderingHtml(currentItem.BlockType, currentItem.ImageUrl, currentItem.Content, false)
-                </div>
-            </div>
         }
-    }*@
 
-    itemIndex += 1;
-}
+
+
+        @*@if (currentItem.BlockType == StoryBlockType.Text)
+        {
+            @HtmlHelperExtension.DisplayMultilineMarkdownAsRowOrNothing(this.Html, currentItem.Content, string.Empty)
+            //TODO Text with Image means what?
+
+            @if (string.IsNullOrEmpty(currentItem.ImageUrl) == false)
+            {
+                <div class="row">
+                    <div class="col">
+                        @Html.GetImageRenderingHtml(currentItem.BlockType, currentItem.ImageUrl, currentItem.Content, false)
+                    </div>
+                </div>
+            }
+        }*@
+
+        itemIndex += 1;
+        }
