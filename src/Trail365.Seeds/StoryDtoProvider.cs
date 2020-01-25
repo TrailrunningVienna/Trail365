@@ -114,7 +114,7 @@ namespace Trail365.Seeds
             dto.AppendImage(ImageDtoProvider.CreateTGHoch());
             dto.AppendImage(ImageDtoProvider.CreateTGQuer1());
             dto.AppendImage(ImageDtoProvider.CreateTGQuer2());
-            dto.CoverImageID = dto.StoryBlocks[0].Image.ID;
+            dto.CoverImageID = dto.StoryBlocks[2].Image.ID;
             return dto;
         }
 
