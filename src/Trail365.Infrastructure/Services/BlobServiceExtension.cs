@@ -134,7 +134,9 @@ namespace Trail365.Services
                 Name = storyDto.Name,
                 ListAccess = storyDto.ListAccess,
             };
-            Story resultStory = storyDto.ToStoryWithoutBlocks();
+
+            Story resultStory = storyDto.ToStoryWithoutBlocksAndImages();
+            //TODO: CoverImage
 
             var withOrdering = storyDto.StoryBlocks.Where(sb => sb.SortOrder != 0).ToArray();
 

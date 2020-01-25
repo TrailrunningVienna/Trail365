@@ -28,7 +28,7 @@ namespace Trail365.UnitTests.Views
             {
                 foreach (var seed in storyDtoProvider.All)
                 {
-                    Story story = seed.ToStoryWithoutBlocks();
+                    Story story = seed.ToStoryWithoutBlocksAndImages();
                     story.StoryBlocks.AddRange(seed.StoryBlocks.Select(sb => sb.ToStoryBlockWithoutImage(story)));
                     host.TrailContext.Stories.Add(story);
                 }

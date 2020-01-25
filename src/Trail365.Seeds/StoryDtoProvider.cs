@@ -38,6 +38,46 @@ namespace Trail365.Seeds
             return dto;
         }
 
+
+
+        public static StoryDto CreateUnique16Picturestory()
+        {
+            StoryDto dto = new StoryDto
+            {
+                ID = Guid.NewGuid(),
+                Name = $"Seeded Story with 16 Pictures {System.DateTime.UtcNow.ToString()}",
+                ListAccess = AccessLevel.Public,
+            };
+
+            dto.AppendExcerpt("This should be the excerpt");
+            var r = new Random();
+            for (int i = 0; i < 16; i++)
+            {
+                BlobDto sampleImage;
+                var rnd = r.Next(0, 3);
+                switch (rnd)
+                {
+                    case 0: sampleImage = ImageDtoProvider.CreateTGHoch().AssignNewID();
+                        break;
+                    case 1:
+                        sampleImage = ImageDtoProvider.CreateKahlenberg().AssignNewID();
+                        break;
+                    case 2:
+                        sampleImage = ImageDtoProvider.CreateLindkogel().AssignNewID();
+                        break;
+                    case 3:
+                        sampleImage = ImageDtoProvider.CreateIATF2020().AssignNewID();
+                        break;
+                    default:
+                        throw new InvalidOperationException("oops");
+                }
+                var image = dto.AppendImage(sampleImage);
+                image.RawContent = $"image ({i}): this should be the image caption (bottom text)";
+            }
+            return dto;
+        }
+
+
         public static StoryDto CreateUniquePicturestory()
         {
             StoryDto dto = new StoryDto
@@ -92,7 +132,8 @@ namespace Trail365.Seeds
         {
             return CreateFromStoryDtos(
                   CreateUniquePicturestory(),
-                  CreateExcerptandTextStoryWithoutTitleAndImages(Guid.NewGuid())
+                  CreateExcerptandTextStoryWithoutTitleAndImages(Guid.NewGuid()),
+                  CreateUnique16Picturestory()
                 );
         }
         public StoryDto[] All { get; private set; }

@@ -92,7 +92,7 @@ namespace Trail365.DTOs
             return p;
         }
 
-        public static Story ToStoryWithoutBlocks(this StoryDto storyDto)
+        public static Story ToStoryWithoutBlocksAndImages(this StoryDto storyDto)
         {
             if (storyDto == null) throw new ArgumentNullException(nameof(storyDto));
             Story story = new Story
@@ -100,6 +100,7 @@ namespace Trail365.DTOs
                 ID = storyDto.ID,
                 Name = storyDto.Name,
                 ListAccess = storyDto.ListAccess,
+                Excerpt = storyDto.Excerpt,
             };
             return story;
         }
@@ -112,6 +113,7 @@ namespace Trail365.DTOs
                 ID = model.ID,
                 Name = model.Name,
                 ListAccess = model.ListAccess,
+                Excerpt = model.Excerpt,
             };
         }
 

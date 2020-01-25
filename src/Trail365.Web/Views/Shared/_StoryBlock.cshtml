@@ -20,44 +20,21 @@
     {
         var items = Model.GetCurrentImageGroup(itemIndex);
 
-    <div class="row">
-
-        @foreach (var item in items)
-        {
-        <div class="col">
-            <img class="img-responsive story-album-image" src="@item.ImageUrl" />
+        <div class="row">
+            @foreach (var item in items)
+            {
+                <div class="col-sm-6 col-md-4 col-lg-3 col-xl-2">
+                    <img class="img-responsive story-album-image" src="@item.ImageUrl" />
+                </div>
+            }
         </div>
-        }
 
-    </div>
-
-        @*int itemsPerRow = 3;
-
-        int neededRows = Convert.ToInt32(Math.Ceiling((double)items.Count / itemsPerRow));
-
-        @for (int r = 0; r < neededRows; r++)
-        {
-            <div class="row">
-                @for (int c = 0; c < itemsPerRow; c++)
-                {
-                    var ix = (r * itemsPerRow) + c;
-                    @if (ix < items.Count)
-                    {
-                        <div class="col-sm">
-                            <img class="img-responsive story-album-image" src="@items[ix].ImageUrl" />
-                        </div>
-                    }
-                }
-            </div>
-        }*@
 
         itemIndex += items.Count;
         continue;
-        }
+    }
 
-
-
-        @*@if (currentItem.BlockType == StoryBlockType.Text)
+    @*@if (currentItem.BlockType == StoryBlockType.Text)
         {
             @HtmlHelperExtension.DisplayMultilineMarkdownAsRowOrNothing(this.Html, currentItem.Content, string.Empty)
             //TODO Text with Image means what?
@@ -72,5 +49,5 @@
             }
         }*@
 
-        itemIndex += 1;
-        }
+    itemIndex += 1;
+}

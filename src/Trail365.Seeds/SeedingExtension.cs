@@ -61,7 +61,6 @@ namespace Trail365.Seeds
             if (blobService == null) throw new ArgumentNullException(nameof(context));
             if (helper == null) throw new ArgumentNullException(nameof(helper));
             if (storyDtoProvider == null) throw new ArgumentNullException(nameof(storyDtoProvider));
-            //assume database is empty and migrated (latest version)
 
             List<Story> batch = new List<Story>();
             foreach (var seed in storyDtoProvider.All)

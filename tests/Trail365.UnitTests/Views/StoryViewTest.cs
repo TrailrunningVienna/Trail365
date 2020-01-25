@@ -51,7 +51,7 @@ namespace Trail365.UnitTests.Views
             {
                 foreach (var seed in storyDtoProvider.All)
                 {
-                    Story story = seed.ToStoryWithoutBlocks();
+                    Story story = seed.ToStoryWithoutBlocksAndImages();
                     host.TrailContext.Stories.Add(story);
                 }
                 host.TrailContext.SaveChanges();
