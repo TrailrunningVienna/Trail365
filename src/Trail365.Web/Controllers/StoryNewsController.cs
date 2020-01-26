@@ -22,7 +22,7 @@ namespace Trail365.Web.Controllers
             _cache = cache;
         }
 
-        public StoryCollectionViewModel InitStoryCollectionViewModel(StoryCollectionViewModel model = null, LoginViewModel login = null)
+        public StoryCollectionViewModel InitStoryCollectionViewModel(StoryCollectionViewModel model, LoginViewModel login, bool ignoreCache)
         {
             if (model == null)
             {
@@ -47,8 +47,11 @@ namespace Trail365.Web.Controllers
                 IncludeBlocks = true
             };
 
-            qf.Cache = _cache;
-            qf.AbsoluteExpiration = TimeSpan.FromSeconds(_settings.AbsoluteExpirationInSecondsRelativeToNow);
+            if (!ignoreCache)
+            {
+                qf.Cache = _cache;
+                qf.AbsoluteExpiration = TimeSpan.FromSeconds(_settings.AbsoluteExpirationInSecondsRelativeToNow);
+            }
 
             var baseList = _context.GetStoriesByFilter(qf);
 
@@ -62,7 +65,7 @@ namespace Trail365.Web.Controllers
 
         public IActionResult Index(NewsRequestViewModel requestModel)
         {
-            var model = this.InitStoryCollectionViewModel();
+            var model = this.InitStoryCollectionViewModel(null, null, requestModel.IgnoreCache ?? false);
             return this.View(model);
         }
     }

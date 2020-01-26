@@ -126,8 +126,8 @@ namespace Trail365
                     return html.Raw(string.Empty);
                 }
             }
-            var sb = GetRowStringBuilder(rawResult, string.Empty, hrefUrl);
-            return html.Raw(sb.ToString());
+            var rawHtml = GetRowStringBuilder(rawResult, string.Empty, hrefUrl).ToString();
+            return html.Raw(rawHtml);
         }
 
         public static IHtmlContent DisplayTitleAsRow(IHtmlHelper html, string title)
