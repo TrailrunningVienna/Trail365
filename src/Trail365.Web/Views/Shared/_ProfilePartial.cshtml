@@ -37,84 +37,78 @@
 }
 
 
+@if (Model.Login.IsModeratorOrHigher)
+{
+    <div class="row">
+        <div class="col-6 mt-4">
+            <a class="btn btn-lg btn-secondary w-100" asp-area="Api" asp-controller="Management" asp-action="Backup" asp-route-enforceLogging="true">
+                <i class="fa fa-settings">&nbsp;</i>Backup
+            </a>
+        </div>
+        <div class="col-6 mt-4">
+            <a class="btn btn-lg btn-secondary w-100" asp-area="Api" asp-controller="Management" asp-action="StartFacebookSync">
+                <i class="fa fa-settings">&nbsp;</i>Facebook Sync
+            </a>
+        </div>
+    </div>
 
 
-    @if (Model.Login.IsModeratorOrHigher)
-    {
-        <div class="row">
-            <div class="col-6 mt-4">
-                <a class="btn btn-lg btn-secondary w-100" asp-area="Api" asp-controller="Management" asp-action="Backup" asp-route-enforceLogging="true">
-                    <i class="fa fa-settings">&nbsp;</i>Backup
-                </a>
-            </div>
-            <div class="col-6 mt-4">
-                <a class="btn btn-lg btn-secondary w-100" asp-area="Api" asp-controller="Management" asp-action="StartFacebookSync">
-                    <i class="fa fa-settings">&nbsp;</i>Facebook Sync
-                </a>
-            </div>
+    <div class="row">
+
+        <div class="col-4 mt-4">
+            <a class="btn btn-lg btn-secondary w-100" asp-area="Api" asp-controller="Management" asp-action="SeedStories">
+                <i class="fa fa-settings">&nbsp;</i>Seed Stories
+            </a>
+        </div>
+
+        <div class="col-4 mt-4">
+            <a class="btn btn-lg btn-secondary w-100" asp-area="Api" asp-controller="Management" asp-action="SeedPlaces">
+                <i class="fa fa-settings">&nbsp;</i>Seed Places
+            </a>
         </div>
 
 
-        <div class="row">
+        <div class="col-4 mt-4">
+            <a class="btn btn-lg btn-secondary w-100" asp-area="Api" asp-controller="Management" asp-action="SeedEvents">
+                <i class="fa fa-settings">&nbsp;</i>Seed Events
+            </a>
+        </div>
+    </div>
+}
 
-            <div class="col-4 mt-4">
-                <a class="btn btn-lg btn-secondary w-100" asp-area="Api" asp-controller="Management" asp-action="SeedStories">
-                    <i class="fa fa-settings">&nbsp;</i>Seed Stories
-                </a>
-            </div>
-
-            <div class="col-4 mt-4">
-                <a class="btn btn-lg btn-secondary w-100" asp-area="Api" asp-controller="Management" asp-action="SeedPlaces">
-                    <i class="fa fa-settings">&nbsp;</i>Seed Places
-                </a>
-            </div>
-
-
-            <div class="col-4 mt-4">
-                <a class="btn btn-lg btn-secondary w-100" asp-area="Api" asp-controller="Management" asp-action="SeedEvents">
-                    <i class="fa fa-settings">&nbsp;</i>Seed Events
-                </a>
-            </div>
-
-
+@if (Model.Login.BackendAvailable)
+{
+    <div class="row">
+        <div class="col-3 mt-4">
+            <a class="btn btn-lg btn-secondary w-100" asp-area="" asp-controller="Home" asp-action="Layout" asp-route-key="default">
+                <i class="fa fa-settings">&nbsp;</i>Default Layout
+            </a>
         </div>
 
-    }
-
-    @if (Model.Login.BackendAvailable)
-    {
-        <div class="row">
-            <div class="col-3 mt-4">
-                <a class="btn btn-lg btn-secondary w-100" asp-area="" asp-controller="Home" asp-action="Layout" asp-route-key="default">
-                    <i class="fa fa-settings">&nbsp;</i>Default Layout
-                </a>
-            </div>
-
-            <div class="col-3 mt-4">
-                <a class="btn btn-lg btn-secondary w-100" asp-area="" asp-controller="Home" asp-action="Layout" asp-route-key="empty">
-                    <i class="fa fa-settings">&nbsp;</i>Empty Layout
-                </a>
-            </div>
-
-            <div class="col-3 mt-4">
-                <a class="btn btn-lg btn-secondary w-100" asp-area="" asp-controller="Home" asp-action="Layout" asp-route-key="edit">
-                    <i class="fa fa-settings">&nbsp;</i>Edit Layout
-                </a>
-            </div>
-
-            <div class="col-3 mt-4">
-                <a class="btn btn-lg btn-secondary w-100" asp-area="" asp-controller="Home" asp-action="Layout" asp-route-key="table">
-                    <i class="fa fa-settings">&nbsp;</i>Table Layout
-                </a>
-            </div>
+        <div class="col-3 mt-4">
+            <a class="btn btn-lg btn-secondary w-100" asp-area="" asp-controller="Home" asp-action="Layout" asp-route-key="empty">
+                <i class="fa fa-settings">&nbsp;</i>Empty Layout
+            </a>
         </div>
 
-        <div class="row">
-            <div class="col-12 mt-4">
-                <a class="btn btn-lg btn-secondary w-100" asp-controller="Auth" asp-action="signout">
-                    <i class="fa fa-logout">&nbsp;</i>Logout
-                </a>
-            </div>
+        <div class="col-3 mt-4">
+            <a class="btn btn-lg btn-secondary w-100" asp-area="" asp-controller="Home" asp-action="Layout" asp-route-key="edit">
+                <i class="fa fa-settings">&nbsp;</i>Edit Layout
+            </a>
         </div>
 
-    }
+        <div class="col-3 mt-4">
+            <a class="btn btn-lg btn-secondary w-100" asp-area="" asp-controller="Home" asp-action="Layout" asp-route-key="table">
+                <i class="fa fa-settings">&nbsp;</i>Table Layout
+            </a>
+        </div>
+    </div>
+}
+
+<div class="row">
+    <div class="col-12 mt-4">
+        <a class="btn btn-lg btn-secondary w-100" asp-controller="Auth" asp-action="signout">
+            <i class="fa fa-logout">&nbsp;</i>Logout
+        </a>
+    </div>
+</div>

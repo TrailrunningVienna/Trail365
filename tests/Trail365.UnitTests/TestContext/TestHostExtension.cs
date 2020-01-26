@@ -240,7 +240,8 @@ namespace Trail365.UnitTests.TestContext
         public static StoryController CreateStoryController(this TestHost host)
         {
             if (host == null) throw new ArgumentNullException(nameof(host));
-            var controller = new StoryController(host.TrailContext)
+            var cache = host.ServiceProvider.GetRequiredService<IMemoryCache>();
+            var controller = new StoryController(host.TrailContext, cache, host.SettingsMonitor)
             {
                 Url = HelperExtensions.EmptyUrlHelper
             };

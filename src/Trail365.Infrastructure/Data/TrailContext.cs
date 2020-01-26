@@ -139,6 +139,12 @@ namespace Trail365.Data
                .WithMany(i => i.StoryBlocks)
                .HasForeignKey(bl => bl.ImageID)
                .HasConstraintName("FK_StoryBlock_Image");
+
+            modelBuilder.Entity<Story>()
+               .HasOne(block => block.CoverImage)
+               .WithMany(i => i.StoryCovers)
+               .HasForeignKey(bl => bl.CoverImageID)
+               .HasConstraintName("FK_Story_CoverImage");
         }
     }
 }

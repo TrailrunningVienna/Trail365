@@ -295,7 +295,7 @@ namespace Trail365
 
         public static string GetTrailDetailsUrl(this IUrlHelper url, Guid trail, bool noConsent = false, bool scraping = false) => url.AbsoluteUrl($"{RouteName.TrailDetails}/{trail.ToString()}?noconsent={noConsent}&scraping={scraping}");
 
-        public static string GetStoryUrl(this IUrlHelper url, Guid trail, bool noConsent = false, bool scraping = false) => url.AbsoluteUrl($"Home/Story?id={trail.ToString()}&noconsent={noConsent}&scraping={scraping}");
+        public static string GetStoryUrl(this IUrlHelper url, Guid story, bool noConsent = false, bool scraping = false) => url.AbsoluteUrl($"{RouteName.StoryIndex}/{story.ToString()}?noconsent={noConsent}&scraping={scraping}");
 
         public static string GetEventUrl(this IUrlHelper url, Guid eventID, bool noConsent = false, bool scraping = false) => url.AbsoluteUrl($"Home/Event?id={eventID.ToString()}&noconsent={noConsent}&scraping={scraping}");
 

@@ -391,7 +391,23 @@ namespace Trail365.Web
                 {
                     throw new InvalidOperationException("StaticUserSettings missing in Appsettings");
                 }
+
                 app.UseMiddleware<AuthenticatedRequestMiddleware>();
+
+                if (!settings.IdentityContextDisabled && ! settings.StaticUserSettings.ShouldNotLogin)
+                {
+                    using (var serviceScope = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>().CreateScope())
+                    {
+                        var context = serviceScope.ServiceProvider.GetService<IdentityContext>();
+                        var principal = AuthenticatedRequestMiddleware.CreateClaimsPrincipal(settings.StaticUserSettings);
+                        if (context.TryGetFederatedIdentity(principal, out var identity) == false)
+                        {
+                            context.CreateIdentity(principal, true, settings.StaticUserSettings.UserID);
+                            context.SaveChanges();
+                        }
+                    }
+                }
+
             }
             else
             {

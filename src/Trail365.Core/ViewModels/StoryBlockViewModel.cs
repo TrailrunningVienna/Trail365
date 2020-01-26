@@ -18,6 +18,7 @@ namespace Trail365.ViewModels
             item.BlockType = this.BlockType;
             item.RawContent = this.Content;
             item.SortOrder = this.SortOrder;
+            item.BlockTypeGroup = this.BlockTypeGroup;
             return item;
         }
 
@@ -38,27 +39,19 @@ namespace Trail365.ViewModels
 
         public int SortOrder { get; set; } = 0;
 
+        /// <summary>
+        /// multiple blocks with the same BlockType (Image) and the same group are handled like a album
+        /// group changes are handled like album changes
+        /// </summary>
+        public int BlockTypeGroup { get; set; } = 0;
+
+
         public bool IsEmpty()
         {
             if (string.IsNullOrEmpty(this.Content) == false) return false;
             if (string.IsNullOrEmpty(this.ImageUrl) == false) return false;
             return true;
         }
-
-        public string GetTextRenderingHtml()
-        {
-            var sb = new StringBuilder();
-
-            if (this.BlockType == StoryBlockType.Title)
-            {
-                var cssClass = "headline mb-0";
-                sb.AppendLine($"<h3 class=\"{cssClass}\">{this.Content}</h3>");
-            }
-            else
-            {
-                sb.AppendLine($"<p class=\"trail-description\">{this.Content}</p>");
-            }
-            return sb.ToString();
-        }
+    
     }
 }

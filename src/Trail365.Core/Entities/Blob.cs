@@ -105,6 +105,8 @@ namespace Trail365.Entities
 
         public List<StoryBlock> StoryBlocks { get; set; } = new List<StoryBlock>();
 
+        public List<Story> StoryCovers { get; set; } = new List<Story>();
+
         public string ContentHash { get; set; }
 
         public string GetShortContentHash()

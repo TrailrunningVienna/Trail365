@@ -66,6 +66,7 @@ namespace Trail365.ViewModels
                 ImageUrl = block.Image?.Url,
                 SortOrder = block.SortOrder,
                 StoryID = block.StoryID,
+                BlockTypeGroup = block.BlockTypeGroup
             };
             return blvm;
         }
@@ -80,7 +81,9 @@ namespace Trail365.ViewModels
                 Created = story.CreatedUtc.ToLocalTime(),
                 Modified = story.ModifiedUtc,
                 ListAccess = story.ListAccess,
-                Excerpt = null
+                Excerpt = story.Excerpt,
+                TitleImageUrl = story.CoverImage?.Url,
+                TitleImageSize = (story.CoverImage==null ? System.Drawing.Size.Empty : story.CoverImage.GetImageSizeOrDefault())
             };
 
             vm.Login = login ?? throw new ArgumentNullException(nameof(login));
@@ -89,11 +92,7 @@ namespace Trail365.ViewModels
             {
                 vm.Blocks.Add(bl.ToStoryBlockViewModel());
             }
-            var excerptBlock = vm.Blocks.Where(bl => (bl.BlockType == StoryBlockType.Excerpt) && (bl.IsEmpty() == false)).FirstOrDefault();
-            if (excerptBlock != null)
-            {
-                vm.Excerpt = excerptBlock.Content;
-            }
+
             return vm;
         }
 

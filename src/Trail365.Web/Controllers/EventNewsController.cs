@@ -42,7 +42,7 @@ namespace Trail365.Web.Controllers
             Features features = _settings.Features;
             List<Tuple<Event, int>> fullEventList;
 
-            fullEventList = _context.GetEventStreamForNews(_settings.MaxPromotionSize, _settings.MaxResultSize, DateTime.UtcNow, _cache, model.Login.GetListAccessPermissionsForCurrentLogin(), _settings.ResponseCacheDurationSeconds).ToList().ToList();
+            fullEventList = _context.GetEventStreamForNews(_settings.MaxPromotionSize, _settings.MaxResultSize, DateTime.UtcNow, _cache, model.Login.GetListAccessPermissionsForCurrentLogin(), _settings.AbsoluteExpirationInSecondsRelativeToNow).ToList().ToList();
 
             Guard.Assert(fullEventList.Select(n => n.Item1.ID).Distinct().Count() == fullEventList.Count, "distinct alarm 3");
 

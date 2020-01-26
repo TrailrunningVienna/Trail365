@@ -26,7 +26,11 @@ namespace Trail365.Configuration
 
         public bool TaskContextDisabled { get; set; } = false;
 
-        public int ResponseCacheDurationSeconds { get; set; } = 10;
+        /// <summary>
+        /// we user IMemoryCache instead and this value is used as AbsoluteExpiration
+        /// Default is 15
+        /// </summary>
+        public int AbsoluteExpirationInSecondsRelativeToNow { get; set; } = 15;
 
         public bool StaticUserSettingsEnabled { get; set; }
 

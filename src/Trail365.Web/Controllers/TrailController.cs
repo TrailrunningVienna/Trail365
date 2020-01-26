@@ -42,7 +42,7 @@ namespace Trail365.Web.Controllers
 
             model.Login = LoginViewModel.CreateFromClaimsPrincipalOrDefault(this.User);
 
-            var trails = _context.GetTrailsByListAccessOrderByDateDescending(includeImages, includeGpxBlob, model.Login.GetListAccessPermissionsForCurrentLogin(), _settings.MaxResultSize, _cache, _settings.ResponseCacheDurationSeconds);
+            var trails = _context.GetTrailsByListAccessOrderByDateDescending(includeImages, includeGpxBlob, model.Login.GetListAccessPermissionsForCurrentLogin(), _settings.MaxResultSize, _cache, _settings.AbsoluteExpirationInSecondsRelativeToNow);
 
             Blob[] imagesList = new Blob[] { };
 

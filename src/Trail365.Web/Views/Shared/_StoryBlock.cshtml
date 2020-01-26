@@ -1,94 +1,39 @@
+
 @using Trail365
 @using Trail365.Entities
 @using Trail365.ViewModels
+
 @model Trail365.ViewModels.StoryViewModel
 @{
     int itemIndex = 0;
 }
 
+@HtmlHelperExtension.DisplayMultilineMarkdownAsRowOrNothing(this.Html, Model.Excerpt, string.Empty)
+
+
 @while (itemIndex < Model.Blocks.Count)
 {
-
     var currentItem = Model.Blocks[itemIndex];
-    StoryBlockViewModel nextItem = null;
-    bool nextItemIsImage = false;
 
-    if (itemIndex + 1 < Model.Blocks.Count)
+
+    if (currentItem.BlockType == StoryBlockType.Image)
     {
-        nextItem = Model.Blocks[itemIndex + 1];
-        nextItemIsImage = nextItem.BlockType == StoryBlockType.Image && (string.IsNullOrEmpty(nextItem.ImageUrl) == false);
-    }
+        var items = Model.GetCurrentImageGroup(itemIndex);
 
-    @if (currentItem.BlockType == StoryBlockType.Title)
-    {
-        @if (string.IsNullOrEmpty(currentItem.ImageUrl) == false)
-        {
-            <div class="row">
-                <div class="col-12">
-                    @Html.GetImageRenderingHtml(currentItem.BlockType, currentItem.ImageUrl, currentItem.Content, false)
-                </div>
-            </div>
-        }
-
-        @if (String.IsNullOrEmpty(currentItem.Content) == false)
-        {
-
-            <div class="row">
-                <div class="col-12 pt-1 pb-1">
-                    @Html.Raw(currentItem.GetTextRenderingHtml())
-                </div>
-            </div>
-        }
-    }
-
-    @if (currentItem.BlockType == StoryBlockType.Text)
-    {
-        if (string.IsNullOrEmpty(currentItem.Content) == false)
-        {
-            <div class="row">
-                <div class="col-12 mt-3 mb-3">
-                    @Html.Raw(currentItem.GetTextRenderingHtml())
-                </div>
-            </div>
-        }
-
-        @if (string.IsNullOrEmpty(currentItem.ImageUrl) == false)
-        {
-            <div class="row">
-                <div class="col-12">
-                    @Html.GetImageRenderingHtml(currentItem.BlockType, currentItem.ImageUrl, currentItem.Content, false)
-                </div>
-            </div>
-        }
-    }
-
-    @if (currentItem.BlockType == StoryBlockType.Image)
-    {
-
-        @if (string.IsNullOrEmpty(currentItem.ImageUrl) == false)
-        {
-            if (nextItemIsImage)
+        <div class="row">
+            @foreach (var item in items)
             {
-                itemIndex += 1;
-                <div class="row">
-                    <div class="col-6">
-                        @Html.GetImageRenderingHtml(currentItem.BlockType, currentItem.ImageUrl, currentItem.Content, false)
-                    </div>
-                    <div class="col-6">
-                        @Html.GetImageRenderingHtml(nextItem.BlockType, nextItem.ImageUrl, nextItem.Content, false)
-                    </div>
-                </div>
+            <div class="col-sm-6 col-md-4 col-lg-4 col-xl-4">
+                <img class="img-responsive story-album-image" src="@item.ImageUrl" />
+                @if (!string.IsNullOrEmpty(item.Content))
+                {
+                   <span class="storyblock-image-caption">@item.Content</span>
+                }
+            </div>
             }
-            else
-            {
-                <div class="row">
-                    <div class="col-12">
-                        @Html.GetImageRenderingHtml(currentItem.BlockType, currentItem.ImageUrl, currentItem.Content, false)
-                    </div>
-                </div>
-            }
-        }
+        </div>
+        itemIndex += items.Count;
+        continue;
     }
-
     itemIndex += 1;
 }

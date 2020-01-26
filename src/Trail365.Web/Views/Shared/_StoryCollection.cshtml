@@ -1,30 +1,22 @@
 @model Trail365.ViewModels.StoryCollectionViewModel
 @if (Model.Stories.Any())
 {
-    //small row as padding
     <div class="row mt-4 mt-lg-2 mb-1">
-        <div class="col-12">
-            @*<h3>Trails</h3>*@
+        <div class="col">
             &nbsp;
         </div>
     </div>
 
     @foreach (var item in Model.Stories)
     {
-        <div class="row">
-
-            <div class="col-lg-6 mb-4">
-                <partial name="@Model.GetStoryPreviewPartialName()" model="@(item)" />
-                @if (item.ID != Model.Stories.Last().ID)
-                {
-                    <div class="row d-lg-none">
-                        <div class="col-12">
-                            <hr class="border-top" />
-                        </div>
-                    </div>
-                }
+        <partial name="_StoryAsListItem" model="@(item)" />
+        @if (item.ID != Model.Stories.Last().ID)
+        {
+            <div class="row d-lg-none">
+                <div class="col-12">
+                    <hr class="border-top" />
+                </div>
             </div>
-        </div>
-
+        }
     }
 }

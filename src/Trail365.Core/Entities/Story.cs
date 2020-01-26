@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
 
 namespace Trail365.Entities
 {
@@ -17,6 +16,15 @@ namespace Trail365.Entities
 
         [Required]
         public string Name { get; set; }
+
+        /// <summary>
+        /// Should be WITHOUT markdown(support) because we use it for openGraph tagging => no markdown support
+        /// </summary>
+        public string Excerpt { get; set; }
+
+        public Blob CoverImage { get; set; }
+
+        public Guid? CoverImageID { get; set; }
 
         public DateTime CreatedUtc { get; set; } = DateTime.UtcNow;
 
@@ -34,17 +42,10 @@ namespace Trail365.Entities
 
         public Blob GetCoverImageOrDefault()
         {
-            StoryBlockType[] tryInOrder = new StoryBlockType[] { StoryBlockType.Title, StoryBlockType.Excerpt, StoryBlockType.Image, StoryBlockType.Text };
-
-            var orderedBlocks = this.StoryBlocks.OrderBy(b => b.SortOrder);
-
-            foreach (var blockType in tryInOrder)
+            if (this.CoverImageID.HasValue)
             {
-                var block = orderedBlocks.Where(sb => sb.BlockType == blockType && sb.Image != null).FirstOrDefault();
-                if ((block != null) && (block.Image != null))
-                {
-                    return block.Image;
-                }
+                if (this.CoverImage == null) throw new InvalidOperationException("CoverImage not included on EF Context");
+                return this.CoverImage;
             }
             return null;
         }

@@ -7,9 +7,29 @@
     ViewData["Title"] = Model.Name;
     ViewData["Description"] = Model.Excerpt;
     ViewData["HideHeader"] = false;
-    ViewData["OpenGraphTags"] = Model.CreateOpenGraphTags(this.Url, new System.Drawing.Size(800, 600), _settings.CurrentValue.FacebookSettings?.AppId);
+    ViewData["OpenGraphTags"] = Model.CreateOpenGraphTags(this.Url, _settings.CurrentValue.FacebookSettings?.AppId);
     ViewData["NoConsent"] = Model.NoConsent;
 }
+
+
+@if (Model.Login.IsModeratorOrHigher)
+{
+    <div class="row">
+        <div class="col-3">
+            <a class="fg-link" asp-area="" asp-controller="StoryEditor" asp-action="Edit" asp-route-Id="@this.Model.ID">[Edit]</a>
+        </div>
+        <div class="col-3">
+            <a class="fg-link" asp-area="" asp-controller="StoryDetails" asp-action="Index" asp-route-Id="@this.Model.ID">[Details]</a>
+        </div>
+        <div class="col-3">
+        </div>
+        <div class="col-3">
+        </div>
+    </div>
+}
+
+
+@HtmlHelperExtension.DisplayTitleAsRow(this.Html, Model.Name, 4, 1)
 
 <partial name="_StoryBlock" model="@(Model)" />
 
@@ -40,11 +60,13 @@
     </div>
 }
 
-@if (_settings.CurrentValue.Features.ShareOnFacebook)
+@if (_settings.CurrentValue.Features.ShareOnFacebook && (!this.Model.Scraping))
 {
-    <div class="row d-lg-none">
-        <div class="col-12 mt-2">
-            <p class="text-center fg-grey font-weight-bold">Trail teilen</p>
+    <div class="row no-gutters">
+        <div class="col-12">
+            <a href="@this.Url.GetStoryUrl(Model.ID,true,true)">
+                <p class="text-center fg-grey font-weight-bold">Story teilen</p>
+            </a>
             <p class="text-center">
                 <a href="@this.Url.GetFacebookHRefUrlForStoryShare(Model.ID)"><img src="~/img/share/facebook.png" /></a>
             </p>

@@ -21,7 +21,7 @@
     </div>
 </div>
 
-<form asp-action="Edit" asp-route-redirectto="@ViewBag.RedirectTo" >
+<form asp-action="Edit" asp-route-redirectto="@ViewBag.RedirectTo">
 
     <div class="row">
         <div class="col-12">
@@ -45,6 +45,61 @@
         </div>
         <div class="@col_right">
             <span asp-validation-for="Name" class="text-danger pt-3 d-block"></span>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="@col_left">
+            <label asp-for="CoverImageID" class="d-block pt-3"></label>
+        </div>
+        <div class="@col_right">
+            <select asp-for="CoverImageID" asp-items="ViewBag.CoverImage" class="w-100"></select>
+        </div>
+    </div>
+
+    @*<div class="row">
+        <div class="@col_left">
+            <span></span>
+        </div>
+        <div class="@col_right">
+            <span asp-validation-for="Status" class="text-danger pt-3 d-block"></span>
+        </div>
+    </div>*@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <div class="row">
+        <div class="@col_left">
+            <label asp-for="Excerpt" class="d-block pt-3"></label>
+        </div>
+        <div class="@col_right">
+            <input asp-for="Excerpt" class="w-100" />
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="@col_left">
+            <span></span>
+        </div>
+        <div class="@col_right">
+            <span asp-validation-for="Excerpt" class="text-danger pt-3 d-block"></span>
         </div>
     </div>
 

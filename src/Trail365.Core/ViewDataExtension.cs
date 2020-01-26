@@ -126,6 +126,52 @@ namespace Trail365
             }
         }
 
+        private static Tuple<string, string, Blob> GetLookup(StoryBlock block)
+        {
+            string value = block.Image.ID.ToString();
+            string name = block.RawContent;
+
+            if (!string.IsNullOrEmpty(block.Image.OriginalFileName))
+            {
+                name = $"{block.BlockType.ToString()} {block.Image.OriginalFileName}";
+            }
+
+            if (string.IsNullOrEmpty(name))
+            {
+                name = $"{block.BlockType.ToString()} {value}";
+            }
+
+            return new Tuple<string, string, Blob>(value, name, block.Image);
+        }
+
+        public static void CreateStoryCoverImageSelectList(this ViewDataDictionary viewData, string key, Story story)
+        {
+            if (viewData == null) throw new ArgumentNullException(nameof(viewData));
+            var images = story.StoryBlocks.Where(sb => sb.ImageID.HasValue && sb.Image != null).Select(sb => GetLookup(sb)).ToList();
+
+            var items = images.Select(s => new SelectListItem()
+            {
+                Value = s.Item1,
+                Text = s.Item2,
+                Selected = story.CoverImageID.HasValue && story.CoverImageID.Value == s.Item3.ID,
+            }).ToList();
+
+            items.Insert(0, new SelectListItem()
+            {
+                Value = Guid.Empty.ToString(),
+                Text = "<not set>",
+                Selected = !story.CoverImageID.HasValue
+            });
+
+            Guid selected = Guid.Empty;
+
+            if (story.CoverImageID.HasValue)
+            {
+                selected = story.CoverImageID.Value;
+            }
+            viewData[key] = new SelectList(items, nameof(SelectListItem.Value), nameof(SelectListItem.Text), selected.ToString());
+        }
+
         public static void CreateStoryStatusSelectList(this ViewDataDictionary viewData, string key, StoryStatus? selectedValue)
         {
             if (viewData == null) throw new ArgumentNullException(nameof(viewData));

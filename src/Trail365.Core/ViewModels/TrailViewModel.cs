@@ -41,7 +41,6 @@ namespace Trail365.ViewModels
         /// true if the calling request is coming from social media for scraping
         /// </summary>
         public bool Scraping { get; set; }
-
         public ChallengeLevel Challenge { get; set; } = ChallengeLevel.Advanced;
 
         public AccessLevel GpxDownloadAccess { get; set; }

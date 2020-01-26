@@ -9,7 +9,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		.gitattributes = .gitattributes
 		.gitignore = .gitignore
 		src\Trail365.Web\Dockerfile = src\Trail365.Web\Dockerfile
-		.github\workflows\dockerimage.yml = .github\workflows\dockerimage.yml
 		.github\workflows\dotnetcore.yml = .github\workflows\dotnetcore.yml
 		README.md = README.md
 		version.props = version.props

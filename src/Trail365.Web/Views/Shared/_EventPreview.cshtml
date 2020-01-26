@@ -8,7 +8,7 @@
 
     <a href="@Model.DetailsUrl" @Html.Raw(externalDetails ? "target='_blank'" : string.Empty) class="deal-link d-block">
 
-        @HtmlHelperExtension.DisplayTitleAsRow(this.Html, Model.Name, doNotCreateEmptyRow: false)
+        @HtmlHelperExtension.DisplayTitleAsRow(this.Html, Model.Name)
 
         <div class="row">
 
@@ -31,7 +31,7 @@
                     </div>
                 </div>
 
-                @HtmlHelperExtension.DisplayMultilineMarkdownAsRowOrNothing(this.Html, @Model.Excerpt)
+                @HtmlHelperExtension.DisplayMultilineMarkdownAsRowOrNothing(this.Html, @Model.Excerpt,@Model.DetailsUrl)
             </div>
         </div>
         @HtmlHelperExtension.EmptyRow(this.Html, 1)

@@ -134,7 +134,22 @@ namespace Trail365.Services
                 Name = storyDto.Name,
                 ListAccess = storyDto.ListAccess,
             };
-            Story resultStory = storyDto.ToStoryWithoutBlocks();
+
+            Story resultStory = storyDto.ToStoryWithoutBlocksAndImages();
+
+
+            var withOrdering = storyDto.StoryBlocks.Where(sb => sb.SortOrder != 0).ToArray();
+
+            if (withOrdering.Length == 0)
+            {
+                //use the ordering coming from dtoModel.
+                int ordering = 0;
+                storyDto.StoryBlocks.ForEach(sb =>
+               {
+                   sb.SortOrder = ordering;
+                   ordering += 1;
+               });
+            }
             foreach (var block in storyDto.StoryBlocks)
             {
                 StoryBlock sp = block.ToStoryBlockWithoutImage(resultStory);
@@ -150,6 +165,18 @@ namespace Trail365.Services
                 }
                 resultStory.StoryBlocks.Add(sp);
             }
+
+            if (storyDto.CoverImageID.HasValue && (storyDto.CoverImageID.Value != Guid.Empty))
+            {
+                var exists = resultStory.StoryBlocks.Where(sb => sb.ImageID == storyDto.CoverImageID).Any();
+                if (!exists)
+                {
+                    throw new InvalidOperationException("CoverImage does not exists");
+                }
+                resultStory.CoverImageID = storyDto.CoverImageID.Value;
+            }
+
+
             return new Tuple<Story, StoryDto>(resultStory, resultDto);
         }
 

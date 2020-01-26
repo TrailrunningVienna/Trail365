@@ -21,11 +21,13 @@
     <partial name="_ListIndexNews" model="@Model" />
 }
 
-@if ((_settings.CurrentValue.Features.ShareOnFacebook) && (!this.Model.Scraping))
+@if ((false) && (_settings.CurrentValue.Features.ShareOnFacebook) && (!this.Model.Scraping))
 {
-    <div class="row">
+    <div class="row no-gutters">
         <div class="col-12">
-            <p class="text-center fg-grey font-weight-bold">Teilen</p>
+            <a href="@this.Url.GetNewsUrl(true,true)">
+                <p class="text-center fg-grey font-weight-bold">Teilen</p>
+            </a>
             <p class="text-center">
                 <a href="@this.Url.GetFacebookHRefUrlForNewsShare()"><img src="~/img/share/facebook.png" /></a>
             </p>

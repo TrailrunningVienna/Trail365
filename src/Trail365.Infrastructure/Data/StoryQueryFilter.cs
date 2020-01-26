@@ -4,8 +4,31 @@ using Trail365.Entities;
 
 namespace Trail365.Data
 {
-    public class StoryQueryFilter
+    public class StoryQueryFilter : QueryFilter
     {
+
+        public override string GetCacheKey()
+        {
+            string[] levelArgs = new string[] { "nolevelfilter" };
+            var filter = this;
+            if (filter.FilterByAllowedLevels)
+            {
+                levelArgs = filter.AllowedLevels.OrderBy(l => l).Select(l => l.ToString().ToLowerInvariant()).ToArray();
+            }
+
+            var excluded = filter.ExcludedStatus.OrderBy(e => e).Select(e => $"ex:{e.ToString()}".ToLowerInvariant()).ToArray();
+            var included = filter.IncludedStatus.OrderBy(e => e).Select(e => $"in:{e.ToString()}".ToLowerInvariant()).ToArray();
+
+            var coreArgs = new string[] {
+                    filter.StoryID.HasValue ? filter.StoryID.ToString():"noid",
+                    filter.Skip.HasValue ? filter.Skip.Value.ToString(): "noskip",
+                    filter.Take.HasValue? filter.Take.ToString():"notake",
+                    filter.IncludeBlocks.ToString(),filter.OrderBy.ToString(), $"{filter.SearchText}" };
+
+            return string.Join('|', coreArgs.Concat(levelArgs).Concat(excluded).Concat(included));
+        }
+
+
         /// <summary>
         ///
         /// </summary>

@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Trail365.Migrations
 {
-    public partial class v0100 : Migration
+    public partial class v0120 : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -207,6 +207,8 @@ namespace Trail365.Migrations
                     ID = table.Column<Guid>(nullable: false),
                     ListAccess = table.Column<int>(nullable: false),
                     Name = table.Column<string>(nullable: false),
+                    Excerpt = table.Column<string>(nullable: true),
+                    CoverImageID = table.Column<Guid>(nullable: true),
                     CreatedUtc = table.Column<DateTime>(nullable: false),
                     CreatedByUser = table.Column<string>(nullable: true),
                     Status = table.Column<int>(nullable: false),
@@ -218,6 +220,12 @@ namespace Trail365.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Stories", x => x.ID);
+                    table.ForeignKey(
+                        name: "FK_Story_CoverImage",
+                        column: x => x.CoverImageID,
+                        principalTable: "Blobs",
+                        principalColumn: "ID",
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_Stories_Events_EventID",
                         column: x => x.EventID,
@@ -239,7 +247,8 @@ namespace Trail365.Migrations
                     CreatedByUser = table.Column<string>(nullable: true),
                     ModifiedUtc = table.Column<DateTime>(nullable: true),
                     ModifiedByUser = table.Column<string>(nullable: true),
-                    SortOrder = table.Column<int>(nullable: false)
+                    SortOrder = table.Column<int>(nullable: false),
+                    BlockTypeGroup = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -277,6 +286,11 @@ namespace Trail365.Migrations
                 name: "IX_Events_TrailID",
                 table: "Events",
                 column: "TrailID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Stories_CoverImageID",
+                table: "Stories",
+                column: "CoverImageID");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Stories_EventID",

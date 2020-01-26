@@ -3,18 +3,13 @@ namespace Trail365.Entities
     public enum StoryBlockType
     {
         /// <summary>
-        /// text first, then image
+        /// Content first, then image like a add on!
         /// </summary>
         Text = 0,
 
         /// <summary>
-        /// Image first, text (formatted as title afterwards)
-        ///
+        /// Image is primary, content is subtitle
         /// </summary>
-        ///
-        Title = 1,
-
-        Excerpt = 2,
-        Image = 3
+        Image = 1
     }
 }

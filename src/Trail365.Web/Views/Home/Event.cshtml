@@ -35,15 +35,15 @@
 @if (this.Model.Trail != null)
 {
 
-<partial name="_TrailMetadata" model="@this.Model.Trail" />
+    <partial name="_TrailMetadata" model="@this.Model.Trail" />
 
-<div class="row no-gutters">
-    <div class="col-12">
-        <div class="trail-preview-wrapper">
-            <img src="@(Model.Trail.GetChallengeElevationProfileUrlOrDefault(this.Model.Challenge))" class="img-fluid" />
+    <div class="row no-gutters">
+        <div class="col-12">
+            <div class="trail-preview-wrapper">
+                <img src="@(Model.Trail.GetChallengeElevationProfileUrlOrDefault(this.Model.Challenge))" class="img-fluid" />
+            </div>
         </div>
     </div>
-</div>
 }
 
 @HtmlHelperExtension.DisplayMultilineMarkdownAsRow(this.Html, @Model.Excerpt)
@@ -54,26 +54,28 @@
 
 @if (this.Model.CanEdit())
 {
-<div class="row mt-2 no-gutters">
-    <div class="col-12">
-        <a class="btn btn-lg btn-primary w-100" asp-area="Backend" asp-controller="Events" asp-action="Edit" asp-route-ID="@Model.ID">
-            <i class="fa fa-arrow-transparent">&nbsp;</i>
-            Bearbeiten
-        </a>
+    <div class="row mt-2 no-gutters">
+        <div class="col-12">
+            <a class="btn btn-lg btn-primary w-100" asp-area="Backend" asp-controller="Events" asp-action="Edit" asp-route-ID="@Model.ID">
+                <i class="fa fa-arrow-transparent">&nbsp;</i>
+                Bearbeiten
+            </a>
+        </div>
     </div>
-</div>
 }
 
 @if (_settings.CurrentValue.Features.ShareOnFacebook)
 {
-<div class="row no-gutters">
-    <div class="col-12 mt-2">
-        <p class="text-center fg-grey font-weight-bold">Trail teilen</p>
-        <p class="text-center">
-            <a href="@this.Url.GetFacebookHRefUrlForEventShare(Model.ID)"><img src="~/img/share/facebook.png" /></a>
-        </p>
+    <div class="row no-gutters">
+        <div class="col-12">
+            <a href="@this.Url.GetEventUrl(Model.ID,true,true)">
+                <p class="text-center fg-grey font-weight-bold">Event teilen</p>
+            </a>
+            <p class="text-center">
+                <a href="@this.Url.GetFacebookHRefUrlForEventShare(Model.ID)"><img src="~/img/share/facebook.png" /></a>
+            </p>
+        </div>
     </div>
-</div>
 }
 
 @*@section Sidebar

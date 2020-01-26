@@ -13,12 +13,46 @@ namespace Trail365.Data
     {
         public List<Story> GetStoriesByFilter(StoryQueryFilter filter)
         {
+            if (filter == null) throw new ArgumentNullException(nameof(filter));
+
+            IMemoryCache cache = filter.Cache;
+            if (filter.AbsoluteExpiration == TimeSpan.Zero)
+            {
+                cache = null;
+            }
+
+            string fullKey = null;
+
+            if (cache != null)
+            {
+                fullKey = filter.GetCacheKey();
+                var sw = Stopwatch.StartNew();
+
+                var hit = cache.TryGetValue<List<Story>>(fullKey, out var cacheResults);
+                sw.Stop();
+                if (hit)
+                {
+                    this.LogCacheDependency(nameof(GetStoriesByFilter), t =>
+                    {
+                        t.Duration = sw.Elapsed;
+                        t.Data = fullKey;
+                        t.Metrics.Add("Results", cacheResults.Count);
+                    });
+                    return cacheResults;
+                }
+            }
+
             using (var operation = this.DependencyTracker(nameof(this.GetStoriesByFilter)))
             {
                 operation.Telemetry.Data = filter.GetCommandText();
                 var query = this.GetStoriesByFilterQueryable(filter);
                 var result = query.ToList();
                 operation.Telemetry.Metrics.Add("Results", result.Count);
+
+                if (cache != null)
+                {
+                    cache.Set(fullKey, result, filter.AbsoluteExpiration);
+                }
                 return result;
             }
         }
@@ -60,6 +94,7 @@ namespace Trail365.Data
             if (filter.IncludeBlocks)
             {
                 baseQuery = baseQuery.Include(s => s.StoryBlocks).ThenInclude(sb => sb.Image);
+                baseQuery = baseQuery.Include(s => s.CoverImage);
             }
 
             if (filter.FilterByAllowedLevels)
@@ -120,111 +155,151 @@ namespace Trail365.Data
             return baseQuery;
         }
 
+
+        private IQueryable<Event> GetEventsByFilterQueryable(EventQueryFilter filter)
+        {
+            if (filter == null) throw new ArgumentNullException(nameof(filter));
+
+            if ((filter.Take.HasValue) && (filter.OrderBy == EventQueryOrdering.None))
+            {
+                throw new InvalidOperationException("TopN requires OrderBy to prevent random results");
+            }
+
+            IQueryable<Event> baseQuery = this.Events;
+
+            if (filter.IncludePlaces)
+            {
+                baseQuery = baseQuery.Include(s => s.Place);
+                baseQuery.Include(e => e.EndPlace);
+            }
+
+            if (filter.IncludeImages)
+            {
+                baseQuery = baseQuery.Include(s => s.CoverImage);
+            }
+
+            if (filter.IncludeTrails)
+            {
+                baseQuery = baseQuery.Include(s => s.Trail).ThenInclude(t => t.GpxBlob);
+            }
+
+            if (filter.FilterByAllowedLevels)
+            {
+                baseQuery = baseQuery.Where(t => filter.AllowedLevels.Contains(t.ListAccess));
+            }
+
+            if (filter.StartTimeUtcMinValue.HasValue)
+            {
+                baseQuery = baseQuery.Where(e => e.StartTimeUtc >= filter.StartTimeUtcMinValue);
+            }
+
+            if (filter.EventID.HasValue)
+            {
+                baseQuery = baseQuery.Where(e => e.ID == filter.EventID.Value);
+            }
+
+            if (filter.ExcludedStatus != null && filter.ExcludedStatus.Length > 0)
+            {
+                baseQuery = baseQuery.Where(e => !filter.ExcludedStatus.Contains(e.Status));
+            }
+
+            if (filter.OwnerID.HasValue)
+            {
+                baseQuery = baseQuery.Where(e => e.OwnerID == filter.OwnerID.Value);
+            }
+
+            if (filter.ExcludedEvents.Count > 0)
+            {
+                baseQuery = baseQuery.Where(e => !filter.ExcludedEvents.Contains(e.ID));
+            }
+
+            switch (filter.OrderBy)
+            {
+                case EventQueryOrdering.None:
+                    break;
+
+                case EventQueryOrdering.DescendingCreationOrModificationDate:
+                    baseQuery = baseQuery.OrderByDescending(item => item.ModifiedUtc ?? item.CreatedUtc);
+                    break;
+
+                case EventQueryOrdering.AscendingStartDate:
+                    baseQuery = baseQuery.OrderBy(en => en.StartTimeUtc);
+                    break;
+
+                case EventQueryOrdering.AscendingName:
+                    baseQuery = baseQuery.OrderBy(en => en.Name);
+                    break;
+
+                default:
+                    throw new NotSupportedException($"{nameof(EventQueryOrdering)} => {filter.OrderBy}");
+            }
+
+            if (filter.Take.HasValue)
+            {
+                baseQuery = baseQuery.Take(filter.Take.Value);
+            }
+
+            return baseQuery;
+
+
+        }
+
+
         public List<Event> GetEventsByFilter(EventQueryFilter filter)
         {
             if (filter == null) throw new ArgumentNullException(nameof(filter));
 
-            if ((filter.TopN.HasValue) && (filter.OrderBy == EventQueryOrdering.None))
+            if ((filter.Take.HasValue) && (filter.OrderBy == EventQueryOrdering.None))
             {
                 throw new InvalidOperationException("TopN requires OrderBy to prevent random results");
+            }
+
+            IMemoryCache cache = filter.Cache;
+            if (filter.AbsoluteExpiration == TimeSpan.Zero)
+            {
+                cache = null;
+            }
+
+            string fullKey = null;
+
+            if (cache != null)
+            {
+                fullKey = filter.GetCacheKey();
+                var sw = Stopwatch.StartNew();
+
+                var hit = cache.TryGetValue<List<Event>>(fullKey, out var cacheResults);
+                sw.Stop();
+                if (hit)
+                {
+                    this.LogCacheDependency(nameof(GetEventsByFilter), t =>
+                    {
+                        t.Duration = sw.Elapsed;
+                        t.Data = fullKey;
+                        t.Metrics.Add("Results", cacheResults.Count);
+                    });
+                    return cacheResults;
+                }
             }
 
             using (var operation = this.DependencyTracker(nameof(this.GetEventsByFilter)))
             {
                 operation.Telemetry.Target = OperationTarget;
                 operation.Telemetry.Type = OperationType;
-
-                IQueryable<Event> baseQuery = this.Events;
-
-                if (filter.IncludePlaces)
-                {
-                    baseQuery = baseQuery.Include(s => s.Place);
-                }
-
-                if (filter.IncludeImages)
-                {
-                    baseQuery = baseQuery.Include(s => s.CoverImage);
-                }
-
-                if (filter.IncludeTrails)
-                {
-                    baseQuery = baseQuery.Include(s => s.Trail).ThenInclude(t=>t.GpxBlob);
-                }
-
-                if (filter.FilterByAllowedLevels)
-                {
-                    baseQuery = baseQuery.Where(t => filter.AllowedLevels.Contains(t.ListAccess));
-                }
-
-                if (filter.StartTimeUtcMinValue.HasValue)
-                {
-                    baseQuery = baseQuery.Where(e => e.StartTimeUtc >= filter.StartTimeUtcMinValue);
-                }
-
-                if (filter.EventID.HasValue)
-                {
-                    baseQuery = baseQuery.Where(e => e.ID == filter.EventID.Value);
-                }
-
-                if (filter.ExcludedStatus != null && filter.ExcludedStatus.Length > 0)
-                {
-                    baseQuery = baseQuery.Where(e => !filter.ExcludedStatus.Contains(e.Status));
-                }
-
-                if (filter.OwnerID.HasValue)
-                {
-                    baseQuery = baseQuery.Where(e => e.OwnerID == filter.OwnerID.Value);
-                }
-
-                if (filter.ExcludedEvents.Count > 0)
-                {
-                    baseQuery = baseQuery.Where(e => !filter.ExcludedEvents.Contains(e.ID));
-                }
-
-                switch (filter.OrderBy)
-                {
-                    case EventQueryOrdering.None:
-                        break;
-
-                    case EventQueryOrdering.DescendingCreationOrModificationDate:
-                        baseQuery = baseQuery.OrderByDescending(item => item.ModifiedUtc ?? item.CreatedUtc);
-                        break;
-
-                    case EventQueryOrdering.AscendingStartDate:
-                        baseQuery = baseQuery.OrderBy(en => en.StartTimeUtc);
-                        break;
-
-                    case EventQueryOrdering.AscendingName:
-                        baseQuery = baseQuery.OrderBy(en => en.Name);
-                        break;
-
-                    default:
-                        throw new NotSupportedException($"{nameof(EventQueryOrdering)} => {filter.OrderBy}");
-                }
-
-                if (filter.TopN.HasValue)
-                {
-                    baseQuery = baseQuery.Take(filter.TopN.Value);
-                }
-
+                IQueryable<Event> baseQuery = this.GetEventsByFilterQueryable(filter);
                 operation.Telemetry.Data = filter.GetCommandText();
-
                 var result = baseQuery.ToList();
 
-                if (filter.IncludePlaces)
-                {
-                    //migration for foreign key not implemented (SQLite restriction)
-                    result.Where(e => e.EndPlaceID.HasValue).ToList().ForEach(e =>
-                      {
-                          e.EndPlace = this.Places.Find(e.EndPlaceID.Value);
-                      });
-                }
-
                 if (filter.ExcludedEvents.Count > 0)
                 {
-                    //WM 23.12.2019 "Contains" seems not working not working serverside!
+                    //WM 23.12.2019 "Contains" seems not working serverside!
                     result = result.Where(e => !filter.ExcludedEvents.Contains(e.ID)).ToList();
                 }
+
+                if (cache != null)
+                {
+                    cache.Set(fullKey, result, filter.AbsoluteExpiration);
+                }
+
                 return result;
             }
         }
@@ -236,7 +311,7 @@ namespace Trail365.Data
                 IncludeImages = includeImages,
                 IncludeTrails = includeTrail,
                 IncludePlaces = inlcudePlaces,
-                TopN = topN
+                Take = topN
             };
             return this.GetEventsByFilter(qf);
         }
@@ -288,7 +363,7 @@ namespace Trail365.Data
                 {
                     EventQueryFilter filter = new EventQueryFilter(allowedLevels, restrictToPublishedEventsOnly: true)
                     {
-                        TopN = maxToPromote,
+                        Take = maxToPromote,
                         IncludeImages = includeImages,
                         IncludePlaces = includePlaces,
                         IncludeTrails = includeTrails,
@@ -327,7 +402,7 @@ namespace Trail365.Data
                         IncludePlaces = includePlaces,
                         IncludeTrails = includeTrails,
                         OrderBy = EventQueryOrdering.DescendingCreationOrModificationDate,
-                        TopN = maxFromHistory,
+                        Take = maxFromHistory,
                     };
 
                     filter.ExcludedEvents.AddRange(IdsToPromote);
@@ -359,18 +434,6 @@ namespace Trail365.Data
             });
             Guard.AssertNotNull(result);
             return result;
-        }
-
-        public List<Event> GetEventsByListAccess(bool includePlaces, bool includeImages, bool includeTrails, int? topN, AccessLevel[] allowedLevels)
-        {
-            EventQueryFilter filter = new EventQueryFilter(allowedLevels, restrictToPublishedEventsOnly: true)
-            {
-                IncludeImages = includeImages,
-                IncludePlaces = includePlaces,
-                IncludeTrails = includeTrails,
-                TopN = topN
-            };
-            return this.GetEventsByFilter(filter);
         }
 
         public IQueryable<Story> GetStories(AccessLevel[] allowedAccessLevels, bool inlcudeImages)

@@ -1,45 +1,45 @@
 @model Trail365.ViewModels.StoryViewModel
+@using Trail365
 @{
     var divID = $"{Model.ID}-Default";
     var detailsUrl = Url.Action("Index", "Story", new { ID = Model.ID, NoConsent = false });
     var externalDetails = false;
 }
-<div id="@divID">
 
-    <div class="row">
-        <div class="col-8">
-            <h4>@Model.Name</h4>
-        </div>
-        <div class="col-4">
-            @if (Model.Login.IsModeratorOrHigher)
-            {
-                <p>
-                    <a class="fg-link" asp-area="" asp-controller="StoryEditor" asp-action="Edit" asp-route-Id="@this.Model.ID">[Edit]</a>&nbsp;<a class="fg-link" asp-area="" asp-controller="StoryDetails" asp-action="Index" asp-route-Id="@this.Model.ID">[Details]</a>
-                </p>
-            }
-            else
-            {
-                <span>&nbsp;</span>
-            }
-        </div>
-    </div>
+    <div id="@divID">
 
-    <a href="@detailsUrl" @Html.Raw(externalDetails ? "target='_blank'" : string.Empty) class="deal-link d-block">
 
-        @if (string.IsNullOrEmpty(Model.Excerpt))
-        {
-            @Html.Raw(Model.GetPreviewGridHtml())
-        }
-        else
+        @if (Model.Login.IsModeratorOrHigher)
         {
             <div class="row">
-                <div class="col-6">
-                    <p class="story-description-preview">@Model.Excerpt</p>
+                <div class="col-3">
+                    <a class="fg-link" asp-area="" asp-controller="StoryEditor" asp-action="Edit" asp-route-Id="@this.Model.ID">[Edit]</a>
                 </div>
-                <div class="col-6">
-                    @Html.Raw(Model.GetPreviewGridHtml())
+                <div class="col-3">
+                    <a class="fg-link" asp-area="" asp-controller="StoryDetails" asp-action="Index" asp-route-Id="@this.Model.ID">[Details]</a>
+                </div>
+                <div class="col-3">
+                </div>
+                <div class="col-3">
                 </div>
             </div>
         }
-    </a>
-</div>
+
+        <div class="row pl-4">
+
+            @if (!string.IsNullOrEmpty(Model.TitleImageUrl))
+            {
+                <div class="col-3 pr-0">
+                    <a href="@detailsUrl" @Html.Raw(externalDetails ? "target='_blank'" : string.Empty) class="deal-link d-block">
+                        <div class="news-preview-wrapper">
+                            <img src="@(Model.TitleImageUrl)" class="img-fluid rounded d-block avatar" style="object-fit:cover" />
+                        </div>
+                        </a>
+                </div>
+            }
+           <div class="col pr-0 pl-1">
+              @HtmlHelperExtension.DisplayTitleAsRow(this.Html, Model.Name, true, detailsUrl, null, 2)
+              @HtmlHelperExtension.DisplayMultilineMarkdownAsRowOrNothing(this.Html, Model.Excerpt, detailsUrl)
+           </div>
+        </div>
+    </div>

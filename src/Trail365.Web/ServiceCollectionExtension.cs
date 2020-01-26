@@ -99,9 +99,10 @@ namespace Trail365.Web
                 AppSettings settings = isp.GetRequiredService<IOptions<AppSettings>>().Value;
                 IWebHostEnvironment env = isp.GetRequiredService<IWebHostEnvironment>();
 
-                Dictionary<string, object> dictionary = new Dictionary<string, object>();
-
-                dictionary.Add(nameof(settings.BackgroundServiceDisabled), settings.BackgroundServiceDisabled.ToString());
+                Dictionary<string, object> dictionary = new Dictionary<string, object>
+                {
+                    { nameof(settings.BackgroundServiceDisabled), settings.BackgroundServiceDisabled.ToString() }
+                };
 
                 if (env.IsDevelopment())
                 {
@@ -123,7 +124,7 @@ namespace Trail365.Web
 
                     dictionary.Add($"{nameof(settings.FacebookSettings)}.{nameof(settings.FacebookSettings.ImporterDays)}", settings.FacebookSettings.ImporterDays);
 
-                    dictionary.Add(nameof(settings.ResponseCacheDurationSeconds), settings.ResponseCacheDurationSeconds);
+                    dictionary.Add(nameof(settings.AbsoluteExpirationInSecondsRelativeToNow), settings.AbsoluteExpirationInSecondsRelativeToNow);
 
                     dictionary.Add(nameof(settings.BackupDirectory), settings.BackupDirectory);
                     dictionary.Add(nameof(settings.SyncEnabled), settings.SyncEnabled);

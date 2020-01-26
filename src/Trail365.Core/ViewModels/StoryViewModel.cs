@@ -11,13 +11,59 @@ namespace Trail365.ViewModels
 {
     public class StoryViewModel
     {
+
+        public List<StoryBlockViewModel> GetCurrentImageGroup(int itemIndex)
+        {
+            if (itemIndex < 0)
+            {
+                throw new IndexOutOfRangeException(nameof(itemIndex));
+            }
+
+            if (!(itemIndex < this.Blocks.Count))
+            {
+                throw new IndexOutOfRangeException(nameof(itemIndex));
+            }
+
+            var Model = this;
+            var currentItem = this.Blocks[itemIndex];
+            if (currentItem.BlockType != StoryBlockType.Image) throw new InvalidOperationException("Current Block must be from type image");
+            List<StoryBlockViewModel> items = new List<StoryBlockViewModel>
+            {
+                currentItem
+            };
+
+            int localIndex = itemIndex + 1;
+            while (localIndex < Model.Blocks.Count)
+            {
+                var localItem = Model.Blocks[localIndex];
+                if (localItem.BlockType != StoryBlockType.Image)
+                {
+                    break;
+                }
+                if (localItem.BlockTypeGroup != currentItem.BlockTypeGroup)
+                {
+                    break;
+                }
+                items.Add(localItem);
+                localIndex += 1;
+            }
+            return items;
+        }
+
         public List<StoryBlockFileViewModel> FileInfos { get; set; } = new List<StoryBlockFileViewModel>();
 
         public List<StoryBlockViewModel> Blocks { get; set; } = new List<StoryBlockViewModel>();
 
         public string TitleImageUrl { get; set; }
 
+        public Size TitleImageSize { get; set; } = Size.Empty;
+
         public bool NoConsent { get; set; }
+
+        /// <summary>
+        /// true if the calling request is coming from social media/scraper/puppeteer for scraping (hide social media logos in this case)
+        /// </summary>
+        public bool Scraping { get; set; }
 
         public LoginViewModel Login { get; set; } = new LoginViewModel();
 
@@ -29,13 +75,13 @@ namespace Trail365.ViewModels
             return this.Login.IsAdmin || this.Login.IsModerator;
         }
 
-        public string GetPreviewGridHtml()
+        public string GetImagesPreviewGridHtml()
         {
             string[] blocksWithImages = this.Blocks.Where(bl => string.IsNullOrEmpty(bl.ImageUrl) == false).Select(bl => bl.ImageUrl).Distinct().ToArray();
 
             if (blocksWithImages.Length == 0)
             {
-                blocksWithImages = new string[] { "/img/empty.png" };
+                return string.Empty;
             }
 
             Guard.Assert(blocksWithImages.Length > 0);
@@ -92,7 +138,7 @@ namespace Trail365.ViewModels
             return sb.ToString();
         }
 
-        public Dictionary<string, string> CreateOpenGraphTags(IUrlHelper helper, Size imageSize, string appID)
+        public Dictionary<string, string> CreateOpenGraphTags(IUrlHelper helper, string appID)
         {
             if (helper == null)
             {
@@ -101,22 +147,28 @@ namespace Trail365.ViewModels
 
             var ogDict = new Dictionary<string, string>
             {
-                {"og:url", helper.GetTrailDetailsUrl(this.ID,true)},
+                {"og:url", helper.GetStoryUrl(this.ID,true)},
                 {"og:type", "website"},
                 {"og:title", $"{this.Name}".Trim()},
                 {"og:description", $"{this.Excerpt}".Trim()}
             };
 
-            //if (string.IsNullOrEmpty(this.PreviewUrl) == false)
-            //{
-            //    ogDict.Add("og:image", this.PreviewUrl);
-            //    if (!imageSize.IsEmpty)
-            //    {
-            //        ogDict.Add("og:image:width", imageSize.Width.ToString());
-            //        ogDict.Add("og:image:height", imageSize.Height.ToString());
-            //    }
-            //}
+            if (string.IsNullOrEmpty(this.TitleImageUrl) == false)
+            {
+                ogDict.Add("og:image", this.TitleImageUrl);
+                var imageSize = this.TitleImageSize;
 
+                if (!imageSize.IsEmpty)
+                {
+                    ogDict.Add("og:image:width", imageSize.Width.ToString());
+                    ogDict.Add("og:image:height", imageSize.Height.ToString());
+                }
+            }
+
+            if (!string.IsNullOrEmpty(appID))
+            {
+                ogDict.Add("fb:app_id", appID);
+            }
             if (!string.IsNullOrEmpty(appID))
             {
                 ogDict.Add("fb:app_id", appID);
@@ -125,11 +177,6 @@ namespace Trail365.ViewModels
         }
 
         public Guid ID { get; set; } = Guid.NewGuid();
-
-        //public string GetHumanizedPlace()
-        //{
-        //    return "Veranstaltungsort";
-        //}
 
         public string Name { get; set; }
 
@@ -154,10 +201,8 @@ namespace Trail365.ViewModels
         }
 
         /// <summary>
-        /// Calculated ViewModel Property calculated during "InitModel" from the "Blocks"
+        /// Should be WITHOUT markdown(support) because we use it for openGraph tagging => no markdown support
         /// </summary>
         public string Excerpt { get; set; }
-
-        //public string Content { get; set; }
     }
 }

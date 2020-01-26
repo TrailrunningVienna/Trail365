@@ -5,7 +5,7 @@ using Trail365.Entities;
 
 namespace Trail365.Data
 {
-    public class TrailQueryFilter
+    public class TrailQueryFilter : QueryFilter
     {
         public int? Skip { get; set; }
         public Guid? TrailID { get; set; }

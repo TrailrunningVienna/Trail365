@@ -5,16 +5,6 @@ namespace Trail365.ViewModels
 {
     public class StoryCollectionViewModel
     {
-        public string GetStoryPreviewPartialName()
-        {
-            string partialName = "_StoryAsListItem"; //_EventAsGridItem
-
-            //if (this.AsGrid)
-            //{
-            //    partialName = "_TrailPreviewGrid";
-            //}
-            return partialName;
-        }
 
         [HiddenInput]
         public LoginViewModel Login { get; set; } = new LoginViewModel();
