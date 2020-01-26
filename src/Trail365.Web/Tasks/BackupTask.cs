@@ -40,7 +40,9 @@ namespace Trail365.Web.Tasks
                     throw new InvalidOperationException($"Database file '{dbFileInfo.FullName}' does not exists for '{dbcontext.GetType().Name}'");
                 }
 
-                string targetFileName = Utils.GetTargetFileName(_settings.BackupDirectory, dbFileInfo.LastWriteTimeUtc, dbFileInfo.Name);
+                string cn = dbcontext.GetType().Name.ToLowerInvariant().Replace("context", string.Empty);
+
+                string targetFileName = Utils.GetTargetFileName(_settings.BackupDirectory, cn, dbFileInfo.LastWriteTimeUtc, dbFileInfo.Name);
 
                 if (File.Exists(targetFileName))
                 {
