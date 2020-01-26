@@ -17,6 +17,12 @@
 <div id="@divID">
     <a href="@Model.DetailsUrl" @Html.Raw(externalDetails ? "target='_blank'" : string.Empty) class="deal-link d-block">
 
+        <div class="@row ml-2">
+            <div class="col text-truncate">
+                <h4>@Model.EventItem.Name</h4>   
+            </div>
+        </div>
+
         <div class="row pl-4">
 
             <div class="col-3 pr-0">
