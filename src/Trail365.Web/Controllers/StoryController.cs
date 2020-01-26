@@ -38,6 +38,11 @@ namespace Trail365.Web.Controllers
 
             var model = this.InitStoryViewModel(requestModel.ID.Value);
 
+            if (requestModel.Scraping.HasValue)
+            {
+                model.Scraping = requestModel.Scraping.Value;
+            }
+
             if (requestModel.NoConsent.HasValue)
             {
                 model.NoConsent = requestModel.NoConsent.Value;

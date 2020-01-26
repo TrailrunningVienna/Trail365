@@ -60,6 +60,11 @@ namespace Trail365.ViewModels
 
         public bool NoConsent { get; set; }
 
+        /// <summary>
+        /// true if the calling request is coming from social media/scraper/puppeteer for scraping (hide social media logos in this case)
+        /// </summary>
+        public bool Scraping { get; set; }
+
         public LoginViewModel Login { get; set; } = new LoginViewModel();
 
         public AccessLevel ListAccess { get; set; }

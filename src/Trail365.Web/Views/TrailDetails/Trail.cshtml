@@ -60,73 +60,75 @@
 
 @if (allPictures.Length > 1)
 {
-<div class="row">
+    <div class="row">
 
-    @foreach (var imageUrl in allPictures.Skip(1).Take(12))
+        @foreach (var imageUrl in allPictures.Skip(1).Take(12))
         {
-    <div class="col">
-        <div class="trail-preview-wrapper">
-            <img src="@(imageUrl)" class="img-fluid" />
-        </div>
-    </div>
+            <div class="col">
+                <div class="trail-preview-wrapper">
+                    <img src="@(imageUrl)" class="img-fluid" />
+                </div>
+            </div>
         }
-</div>
+    </div>
 }
 
 @HtmlHelperExtension.EmptyRow(this.Html)
 
 @if (_settings.CurrentValue.Features.TrailAnalyzer)
 {
-<div class="row mt-2">
-    <div class="col-12">
-        <a class="btn btn-lg btn-primary w-100" href="@Model.GetTrailAnalyzerUrl(this.Url)" target="_blank">
-            Trail-Analyse
-        </a>
+    <div class="row mt-2">
+        <div class="col-12">
+            <a class="btn btn-lg btn-primary w-100" href="@Model.GetTrailAnalyzerUrl(this.Url)" target="_blank">
+                Trail-Analyse
+            </a>
+        </div>
     </div>
-</div>
 }
 
 @if (this.Model.CanDownload())
 {
-<div class="row mt-2">
-    <div class="col-12">
-        <a class="btn btn-lg btn-primary w-100" href="@Model.GpxUrl" target="_blank">
-            Gpx-Download
-        </a>
+    <div class="row mt-2">
+        <div class="col-12">
+            <a class="btn btn-lg btn-primary w-100" href="@Model.GpxUrl" target="_blank">
+                Gpx-Download
+            </a>
+        </div>
     </div>
-</div>
 }
 
 @if (this.Model.CanEdit())
 {
-<div class="row mt-2">
-    <div class="col-12">
-        <a class="btn btn-lg w-100 btn-primary" asp-area="Backend" asp-controller="Trails" asp-action="Edit" asp-route-ID="@Model.ID">
-            <i class="fa fa-arrow-transparent">&nbsp;</i>
-            Bearbeiten
-        </a>
+    <div class="row mt-2">
+        <div class="col-12">
+            <a class="btn btn-lg w-100 btn-primary" asp-area="Backend" asp-controller="Trails" asp-action="Edit" asp-route-ID="@Model.ID">
+                <i class="fa fa-arrow-transparent">&nbsp;</i>
+                Bearbeiten
+            </a>
+        </div>
     </div>
-</div>
 
-<div class="row mt-2">
-    <div class="col-12">
-        <a class="btn btn-lg btn-primary" asp-area="" asp-controller="TrailPreview" asp-action="CalculateTrailPreview" asp-route-ID="@Model.ID">
-            Vorschau berechnen
-        </a>
+    <div class="row mt-2">
+        <div class="col-12">
+            <a class="btn btn-lg btn-primary" asp-area="" asp-controller="TrailPreview" asp-action="CalculateTrailPreview" asp-route-ID="@Model.ID">
+                Vorschau berechnen
+            </a>
+        </div>
     </div>
-</div>
 }
 
 @if (_settings.CurrentValue.Features.ShareOnFacebook && !Model.Scraping)
 {
-<div class="row no-gutters">
-    <div class="col-12">
-        <p class="text-center fg-grey font-weight-bold">Trail teilen</p>
-        <p class="text-center">
-            <a href="@this.Url.GetFacebookHRefUrlForTrailShare(Model.ID)"><img src="~/img/share/facebook.png" /></a>
-        </p>
+    <div class="row no-gutters">
+        <div class="col-12">
+            <a href="@this.Url.GetTrailDetailsUrl(Model.ID,true,true)">
+                <p class="text-center fg-grey font-weight-bold">Trail teilen</p>
+            </a>
+            <p class="text-center">
+                <a href="@this.Url.GetFacebookHRefUrlForTrailShare(Model.ID)"><img src="~/img/share/facebook.png" /></a>
+            </p>
+        </div>
     </div>
-</div>
 }
 
 @*@section Sidebar

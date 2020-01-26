@@ -289,16 +289,6 @@ namespace Trail365.Data
                 operation.Telemetry.Data = filter.GetCommandText();
                 var result = baseQuery.ToList();
 
-                if (filter.IncludePlaces)
-                {
-                    //migration for foreign key not implemented (SQLite restriction)
-                    result.Where(e => e.EndPlaceID.HasValue).ToList().ForEach(e =>
-                      {
-                          Guard.AssertNotNull(e.EndPlace);
-                          //e.EndPlace = this.Places.Find(e.EndPlaceID.Value);
-                      });
-                }
-
                 if (filter.ExcludedEvents.Count > 0)
                 {
                     //WM 23.12.2019 "Contains" seems not working serverside!
@@ -309,6 +299,7 @@ namespace Trail365.Data
                 {
                     cache.Set(fullKey, result, filter.AbsoluteExpiration);
                 }
+
                 return result;
             }
         }

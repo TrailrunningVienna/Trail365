@@ -60,11 +60,13 @@
     </div>
 }
 
-@if (_settings.CurrentValue.Features.ShareOnFacebook)
+@if (_settings.CurrentValue.Features.ShareOnFacebook && (!this.Model.Scraping))
 {
     <div class="row no-gutters">
         <div class="col-12">
-            <p class="text-center fg-grey font-weight-bold">Trail teilen</p>
+            <a href="@this.Url.GetStoryUrl(Model.ID,true,true)">
+                <p class="text-center fg-grey font-weight-bold">Story teilen</p>
+            </a>
             <p class="text-center">
                 <a href="@this.Url.GetFacebookHRefUrlForStoryShare(Model.ID)"><img src="~/img/share/facebook.png" /></a>
             </p>
