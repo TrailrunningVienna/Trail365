@@ -82,7 +82,8 @@ namespace Trail365.ViewModels
                 Modified = story.ModifiedUtc,
                 ListAccess = story.ListAccess,
                 Excerpt = story.Excerpt,
-                TitleImageUrl = story.CoverImage?.Url
+                TitleImageUrl = story.CoverImage?.Url,
+                TitleImageSize = (story.CoverImage==null ? System.Drawing.Size.Empty : story.CoverImage.GetImageSizeOrDefault())
             };
 
             vm.Login = login ?? throw new ArgumentNullException(nameof(login));

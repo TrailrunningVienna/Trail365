@@ -21,9 +21,9 @@
     <partial name="_ListIndexNews" model="@Model" />
 }
 
-@if ((_settings.CurrentValue.Features.ShareOnFacebook) && (!this.Model.Scraping))
+@if ( (false) && (_settings.CurrentValue.Features.ShareOnFacebook) && (!this.Model.Scraping))
 {
-    <div class="row">
+    <div class="row no-gutters">
         <div class="col-12">
             <p class="text-center fg-grey font-weight-bold">Teilen</p>
             <p class="text-center">

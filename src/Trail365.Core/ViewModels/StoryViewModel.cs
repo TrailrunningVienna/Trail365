@@ -56,6 +56,8 @@ namespace Trail365.ViewModels
 
         public string TitleImageUrl { get; set; }
 
+        public Size TitleImageSize { get; set; } = Size.Empty;
+
         public bool NoConsent { get; set; }
 
         public LoginViewModel Login { get; set; } = new LoginViewModel();
@@ -131,7 +133,7 @@ namespace Trail365.ViewModels
             return sb.ToString();
         }
 
-        public Dictionary<string, string> CreateOpenGraphTags(IUrlHelper helper, Size imageSize, string appID)
+        public Dictionary<string, string> CreateOpenGraphTags(IUrlHelper helper, string appID)
         {
             if (helper == null)
             {
@@ -146,16 +148,22 @@ namespace Trail365.ViewModels
                 {"og:description", $"{this.Excerpt}".Trim()}
             };
 
-            //if (string.IsNullOrEmpty(this.PreviewUrl) == false)
-            //{
-            //    ogDict.Add("og:image", this.PreviewUrl);
-            //    if (!imageSize.IsEmpty)
-            //    {
-            //        ogDict.Add("og:image:width", imageSize.Width.ToString());
-            //        ogDict.Add("og:image:height", imageSize.Height.ToString());
-            //    }
-            //}
+            if (string.IsNullOrEmpty(this.TitleImageUrl) == false)
+            {
+                ogDict.Add("og:image", this.TitleImageUrl);
+                var imageSize = this.TitleImageSize;
 
+                if (!imageSize.IsEmpty)
+                {
+                    ogDict.Add("og:image:width", imageSize.Width.ToString());
+                    ogDict.Add("og:image:height", imageSize.Height.ToString());
+                }
+            }
+
+            if (!string.IsNullOrEmpty(appID))
+            {
+                ogDict.Add("fb:app_id", appID);
+            }
             if (!string.IsNullOrEmpty(appID))
             {
                 ogDict.Add("fb:app_id", appID);
@@ -164,11 +172,6 @@ namespace Trail365.ViewModels
         }
 
         public Guid ID { get; set; } = Guid.NewGuid();
-
-        //public string GetHumanizedPlace()
-        //{
-        //    return "Veranstaltungsort";
-        //}
 
         public string Name { get; set; }
 
@@ -193,10 +196,8 @@ namespace Trail365.ViewModels
         }
 
         /// <summary>
-        /// Calculated ViewModel Property calculated during "InitModel" from the "Blocks"
+        /// Should be WITHOUT markdown(support) because we use it for openGraph tagging => no markdown support
         /// </summary>
         public string Excerpt { get; set; }
-
-        //public string Content { get; set; }
     }
 }

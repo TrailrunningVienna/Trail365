@@ -7,7 +7,7 @@
     ViewData["Title"] = Model.Name;
     ViewData["Description"] = Model.Excerpt;
     ViewData["HideHeader"] = false;
-    ViewData["OpenGraphTags"] = Model.CreateOpenGraphTags(this.Url, new System.Drawing.Size(800, 600), _settings.CurrentValue.FacebookSettings?.AppId);
+    ViewData["OpenGraphTags"] = Model.CreateOpenGraphTags(this.Url, _settings.CurrentValue.FacebookSettings?.AppId);
     ViewData["NoConsent"] = Model.NoConsent;
 }
 
@@ -62,8 +62,8 @@
 
 @if (_settings.CurrentValue.Features.ShareOnFacebook)
 {
-    <div class="row d-lg-none">
-        <div class="col-12 mt-2">
+    <div class="row no-gutters">
+        <div class="col-12">
             <p class="text-center fg-grey font-weight-bold">Trail teilen</p>
             <p class="text-center">
                 <a href="@this.Url.GetFacebookHRefUrlForStoryShare(Model.ID)"><img src="~/img/share/facebook.png" /></a>

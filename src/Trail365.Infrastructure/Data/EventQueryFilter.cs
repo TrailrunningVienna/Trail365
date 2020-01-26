@@ -7,7 +7,6 @@ namespace Trail365.Data
 {
     public class EventQueryFilter : QueryFilter
     {
-        //private System.Linq.Expressions.Expression<Func<Event, bool>> Where { get; set; }
 
         public static readonly EventStatus[] PublishedOnlyExclusions = new EventStatus[] { EventStatus.Canceled, EventStatus.Draft };
 

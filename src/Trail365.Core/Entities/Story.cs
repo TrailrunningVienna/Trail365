@@ -17,6 +17,9 @@ namespace Trail365.Entities
         [Required]
         public string Name { get; set; }
 
+        /// <summary>
+        /// Should be WITHOUT markdown(support) because we use it for openGraph tagging => no markdown support
+        /// </summary>
         public string Excerpt { get; set; }
 
         public Blob CoverImage { get; set; }
