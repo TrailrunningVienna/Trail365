@@ -43,10 +43,12 @@ namespace Trail365.Data
                 {
                     targetFileInfo.Directory.Create();
                 }
+                string cn = dbcontext.GetType().Name.ToLowerInvariant().Replace("context", string.Empty);
 
                 var t = Task.Run(() =>
                 {
-                    if (Utils.TryGetLatest(backupDirectory, name, logger, out var finding))
+
+                    if (Utils.TryGetLatest(backupDirectory, name, cn, logger, out var finding))
                     {
                         logger.WriteLine($"{nameof(SyncSqliteFiles)}: FileCopy started for '{name}' from '{finding.FullName}' to '{targetFileInfo.FullName}'");
                         var sw1 = Stopwatch.StartNew();

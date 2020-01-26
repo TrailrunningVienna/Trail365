@@ -14,10 +14,16 @@ namespace Trail365
             ReturnSpecialDirectories = false
         };
 
-        public static bool TryGetLatest(string entryDirectory, string filename, TextWriter logger, out FileInfo result)
+        public static bool TryGetLatest(string entryDirectory, string filename, string contextName, TextWriter logger, out FileInfo result)
         {
             if (string.IsNullOrEmpty(entryDirectory)) throw new ArgumentNullException(entryDirectory);
             if (string.IsNullOrEmpty(filename)) throw new ArgumentNullException(filename);
+            if (string.IsNullOrWhiteSpace(contextName)) throw new ArgumentNullException(nameof(contextName));
+
+            var part0 = contextName.ToLowerInvariant();
+            Guard.Assert(part0 == part0.Trim());
+
+
             if (logger == null) throw new ArgumentNullException(nameof(logger));
             logger.WriteLine($"{nameof(TryGetLatest)}: Start for filename '{filename}' with directory '{entryDirectory}'");
             result = null;
@@ -29,7 +35,8 @@ namespace Trail365
                 var currentDate = lastWriteTime.AddDays(-i);
                 var part1 = currentDate.ToString("yyyyMMdd", CultureInfo.InvariantCulture);
 
-                var startDirectory = Path.Combine(entryDirectory, part1);
+                var startDirectory = Path.Combine(entryDirectory, part0, part1);
+
                 if (!Directory.Exists(startDirectory))
                 {
                     logger.WriteLine($"{nameof(TryGetLatest)}: Directory '{startDirectory}' ignored because does not exists");
@@ -60,23 +67,30 @@ namespace Trail365
             return false;
         }
 
-        public static string GetTargetDirectoryName(string entryDirectory, DateTime lastWriteTime)
+        public static string GetTargetDirectoryName(string entryDirectory, string contextName, DateTime lastWriteTime)
         {
+            if (string.IsNullOrWhiteSpace(entryDirectory)) throw new ArgumentNullException(nameof(entryDirectory));
+            if (string.IsNullOrWhiteSpace(contextName)) throw new ArgumentNullException(nameof(contextName));
+            var part0 = contextName.ToLowerInvariant();
+            Guard.Assert(part0 == part0.Trim());
+
             var part1 = lastWriteTime.ToString("yyyyMMdd", CultureInfo.InvariantCulture); //"yyyyMMddHHmmssfff"
             var part2 = lastWriteTime.ToString("HHmmss", CultureInfo.InvariantCulture); //"yyyyMMddHHmmssfff"
             var part3 = lastWriteTime.ToString("fff", CultureInfo.InvariantCulture); //"yyyyMMddHHmmssfff"
-            var targetDirectory = Path.Combine(entryDirectory, part1, part2, part3);
+
+            var targetDirectory = Path.Combine(entryDirectory, part0, part1, part2, part3);
+
             return targetDirectory;
         }
 
-        public static string GetTargetFileName(string entryDirectory, DateTime lastWriteTime, string fileName)
+        public static string GetTargetFileName(string entryDirectory, string contextName, DateTime lastWriteTime, string fileName)
         {
             //requirements:
             //#1 don't change the filename because easier to copy/move/recover
-            //#2 we need a method: "findLatestVersion" of a certail file. It should not be slow!
+            //#2 we need a method: "findLatestVersion" of a certain file. It should not be slow!
             //#3 we have different files (Trail, Identity Tasks...)
             //#4 the files have different lastWriteTime
-            var targetDirectory = GetTargetDirectoryName(entryDirectory, lastWriteTime);
+            var targetDirectory = GetTargetDirectoryName(entryDirectory, contextName, lastWriteTime);
             return Path.Combine(targetDirectory, fileName);
         }
 
