@@ -14,7 +14,7 @@ namespace Trail365.Web.Controllers
         private readonly TrailContext _context;
         private readonly IMemoryCache _cache;
         private readonly AppSettings _settings;
-        public StoryViewModel InitStoryViewModel(Guid storyID, bool includeImages)
+        public StoryViewModel InitStoryViewModel(Guid storyID)
         {
             var login = LoginViewModel.CreateFromClaimsPrincipalOrDefault(this.User);
             StoryQueryFilter sqf = StoryQueryFilter.GetByID(storyID, true, login.GetListAccessPermissionsForCurrentLogin());
@@ -36,7 +36,7 @@ namespace Trail365.Web.Controllers
         {
             if (requestModel.ID.HasValue == false) return base.BadRequest();
 
-            var model = this.InitStoryViewModel(requestModel.ID.Value, includeImages: true);
+            var model = this.InitStoryViewModel(requestModel.ID.Value);
 
             if (requestModel.NoConsent.HasValue)
             {

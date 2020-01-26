@@ -58,7 +58,7 @@ namespace Trail365.Web.Controllers
                 IncludePlaces = true,
                 IncludeImages = true,
                 IncludeTrails = includeTrails,
-                TopN = _settings.MaxResultSize,
+                Take = _settings.MaxResultSize,
                 OrderBy = ordering,
                 OwnerID = restrictToOwner
             };

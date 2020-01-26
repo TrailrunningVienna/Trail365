@@ -99,9 +99,10 @@ namespace Trail365.Web
                 AppSettings settings = isp.GetRequiredService<IOptions<AppSettings>>().Value;
                 IWebHostEnvironment env = isp.GetRequiredService<IWebHostEnvironment>();
 
-                Dictionary<string, object> dictionary = new Dictionary<string, object>();
-
-                dictionary.Add(nameof(settings.BackgroundServiceDisabled), settings.BackgroundServiceDisabled.ToString());
+                Dictionary<string, object> dictionary = new Dictionary<string, object>
+                {
+                    { nameof(settings.BackgroundServiceDisabled), settings.BackgroundServiceDisabled.ToString() }
+                };
 
                 if (env.IsDevelopment())
                 {

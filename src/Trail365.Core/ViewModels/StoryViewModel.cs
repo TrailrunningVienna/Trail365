@@ -27,8 +27,10 @@ namespace Trail365.ViewModels
             var Model = this;
             var currentItem = this.Blocks[itemIndex];
             if (currentItem.BlockType != StoryBlockType.Image) throw new InvalidOperationException("Current Block must be from type image");
-            List<StoryBlockViewModel> items = new List<StoryBlockViewModel>();
-            items.Add(currentItem);
+            List<StoryBlockViewModel> items = new List<StoryBlockViewModel>
+            {
+                currentItem
+            };
 
             int localIndex = itemIndex + 1;
             while (localIndex < Model.Blocks.Count)
@@ -138,7 +140,7 @@ namespace Trail365.ViewModels
 
             var ogDict = new Dictionary<string, string>
             {
-                {"og:url", helper.GetTrailDetailsUrl(this.ID,true)},
+                {"og:url", helper.GetStoryUrl(this.ID,true)},
                 {"og:type", "website"},
                 {"og:title", $"{this.Name}".Trim()},
                 {"og:description", $"{this.Excerpt}".Trim()}
