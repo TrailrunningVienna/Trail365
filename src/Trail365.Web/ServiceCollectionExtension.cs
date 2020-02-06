@@ -300,15 +300,13 @@ namespace Trail365.Web
                 return r;
             });
 
-            if (thisEnv.IsDevelopment())
+            healthChecksBuilder.AddCheck("Features", () =>
             {
-                healthChecksBuilder.AddCheck("Features", () =>
+                var isp = healthChecksBuilder.Services.BuildServiceProvider();
+                AppSettings settings = isp.GetRequiredService<IOptions<AppSettings>>().Value;
+                IWebHostEnvironment env = isp.GetRequiredService<IWebHostEnvironment>();
+                Dictionary<string, object> dictionary = new Dictionary<string, object>
                 {
-                    var isp = healthChecksBuilder.Services.BuildServiceProvider();
-                    AppSettings settings = isp.GetRequiredService<IOptions<AppSettings>>().Value;
-                    IWebHostEnvironment env = isp.GetRequiredService<IWebHostEnvironment>();
-                    Dictionary<string, object> dictionary = new Dictionary<string, object>
-                    {
                         { $"{nameof(settings.Features.Stories)}", settings.Features.Stories },
                         { $"{nameof(settings.Features.UserProfile)}", settings.Features.UserProfile },
                         { $"{nameof(settings.Features.Events)}", settings.Features.Events },
@@ -318,13 +316,13 @@ namespace Trail365.Web
                         { $"{nameof(settings.Features.TrailAnalyzer)}", settings.Features.TrailAnalyzer },
                         { $"{nameof(settings.Features.ShareOnFacebook)}", settings.Features.ShareOnFacebook },
                         { $"{nameof(settings.Features.Trails)}", settings.Features.Trails }
-                    };
+                };
 
-                    ReadOnlyDictionary<string, object> roDict = new ReadOnlyDictionary<string, object>(dictionary);
-                    HealthCheckResult r = new HealthCheckResult(HealthStatus.Healthy, description: "feature toggles", data: roDict);
-                    return r;
-                });
-            }
+                ReadOnlyDictionary<string, object> roDict = new ReadOnlyDictionary<string, object>(dictionary);
+                HealthCheckResult r = new HealthCheckResult(HealthStatus.Healthy, description: "feature toggles", data: roDict);
+                return r;
+            });
+
 
             return services;
         }

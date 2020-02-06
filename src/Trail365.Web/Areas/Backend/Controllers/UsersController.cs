@@ -51,7 +51,7 @@ namespace Trail365.Web.Backend.Controllers
             }
             var vm = UserBackendViewModel.CreateFromUser(item, false);
             vm.Login = LoginViewModel.CreateFromClaimsPrincipalOrDefault(this.User);
-            return this.View(UserBackendViewModel.CreateFromUser(item, false));
+            return this.View(vm);
         }
 
         // POST: Backend/Users/Edit/5

@@ -7,6 +7,10 @@ namespace Trail365.ViewModels
 {
     public class UserBackendViewModel
     {
+
+
+        private Role _role = Role.None;
+
         public string GetIdentitiesAsHtml()
         {
             return string.Join("", this.Identities.Select(i => $"<p>{i.Email}</p>"));
@@ -23,6 +27,7 @@ namespace Trail365.ViewModels
             item.Surname = this.Surname;
             item.GivenName = this.GivenName;
             item.AvatarUrl = this.AvatarUrl;
+            item.UserRoles = this._role;
             return item;
         }
 
@@ -35,6 +40,7 @@ namespace Trail365.ViewModels
                 AvatarUrl = from.AvatarUrl,
                 GivenName = from.GivenName,
                 Surname = from.Surname,
+                _role = from.UserRoles,
             };
             if (includeIdentities)
             {
@@ -55,5 +61,68 @@ namespace Trail365.ViewModels
         public string Surname { get; set; }
 
         public string GivenName { get; set; }
+
+        private void Flag(Role flag, bool set)
+        {
+            // flags |= flag;// SetFlag
+            //flags &= ~flag; // ClearFlag
+            if (set)
+            {
+                _role |= flag;
+            }
+            else
+            {
+                _role &= ~flag;
+            }
+        }
+
+        public bool IsModerator
+        {
+            get
+            {
+                return _role.HasFlag(Role.Moderator);
+            }
+            set
+            {
+                this.Flag(Role.Moderator, value);
+            }
+        }
+
+        public bool IsMember
+        {
+            get
+            {
+                return _role.HasFlag(Role.Member);
+            }
+            set
+            {
+                this.Flag(Role.Member, value);
+            }
+        }
+
+        public bool IsAdministrator
+        {
+            get
+            {
+                return _role.HasFlag(Role.Admin);
+            }
+            set
+            {
+                this.Flag(Role.Admin, value);
+            }
+        }
+
+        public bool IsUser
+        {
+            get
+            {
+                return _role.HasFlag(Role.User);
+            }
+            set
+            {
+                this.Flag(Role.User, value);
+            }
+        }
+
     }
 }
