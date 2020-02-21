@@ -7,7 +7,7 @@ using Microsoft.Extensions.Logging;
 using Trail365.Data;
 using Trail365.Entities;
 
-namespace Trail365.Web
+namespace Trail365.Services
 {
     public abstract class EventImporter<T>
     {
