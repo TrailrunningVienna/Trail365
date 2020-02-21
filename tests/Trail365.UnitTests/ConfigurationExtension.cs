@@ -9,7 +9,7 @@ namespace Trail365.UnitTests
         public static Dictionary<string, string> ConfigureDefaults(this Dictionary<string, string> configuration)
         {
             configuration.Add($"{nameof(AppSettings.PuppeteerEnabled)}", false.ToString());
-
+            configuration.Add($"{nameof(AppSettings.TrailExplorerBaseUrl)}", "https://noscraper.url");
             configuration.Add($"{nameof(AppSettings.AbsoluteExpirationInSecondsRelativeToNow)}", 0.ToString());
             configuration.Add($"{nameof(AppSettings.AllowRobots)}", true.ToString()); //true means: do nothing, don't create a file!
             configuration.Add($"{nameof(AppSettings.IdentityContextDisabled)}", true.ToString()); //true means context is not created, migrations or createdatabase not executed!

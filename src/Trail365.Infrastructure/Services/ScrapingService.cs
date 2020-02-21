@@ -280,6 +280,11 @@ namespace Trail365.Services
                 sizePart = $"&height={size.Height}&width={size.Width}";
             }
 
+            if (string.IsNullOrEmpty(this.Settings.TrailExplorerBaseUrl))
+            {
+                throw new InvalidOperationException($"AppSettings.{nameof(AppSettings.TrailExplorerBaseUrl)} not defined");
+            }
+
             Uri baseUri = new UriBuilder(this.Settings.TrailExplorerBaseUrl).Uri;
 
             Uri api = new Uri(baseUri, "/Index");
