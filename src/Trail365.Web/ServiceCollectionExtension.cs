@@ -77,6 +77,7 @@ namespace Trail365.Web
             {
                 services.AddSingleton<MapScraper, NullScraper>();
             }
+
             services.AddSingleton<ScrapingService>();
 
             services.AddSingleton<TrailImporterService>();
@@ -109,6 +110,7 @@ namespace Trail365.Web
                     dictionary.Add(nameof(settings.HasInstrumentationKey), settings.HasInstrumentationKey());
                     dictionary.Add(nameof(settings.RunMigrationsAtStartup), settings.RunMigrationsAtStartup);
                     dictionary.Add(nameof(settings.PuppeteerEnabled), settings.PuppeteerEnabled);
+                    dictionary.Add(nameof(settings.TrailExplorerBaseUrl), $"{settings.TrailExplorerBaseUrl}");
 
                     dictionary.Add(nameof(settings.GoogleAuthentication), settings.GoogleAuthentication);
                     dictionary.Add(nameof(settings.FacebookAuthentication), settings.FacebookAuthentication);

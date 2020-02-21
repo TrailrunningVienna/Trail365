@@ -43,6 +43,8 @@ namespace Trail365.Configuration
 
         public bool PuppeteerEnabled { get; set; } = true;
 
+        public string TrailExplorerBaseUrl { get; set; }
+
         public string CloudStorageRootContainerName { get; set; }
 
         public string FileSystemBlobServiceRootDirectory { get; set; }
