@@ -227,9 +227,9 @@ namespace Trail365.ViewModels
         public int? Ascent { get; set; }
         public int? Descent { get; set; }
 
-        public string GetTrailAnalyzerUrl(IUrlHelper url)
+        public string GetTrailAnalyzerUrl(string trailExplorerBaseUrl, IUrlHelper url)
         {
-            return url.GetTrailExplorerUrlOrDefault(this.GpxUrl);
+            return url.GetTrailExplorerUrlOrDefault(trailExplorerBaseUrl, this.GpxUrl);
         }
     }
 }

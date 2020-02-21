@@ -75,11 +75,11 @@
 
 @HtmlHelperExtension.EmptyRow(this.Html)
 
-@if (_settings.CurrentValue.Features.TrailAnalyzer)
+@if (_settings.CurrentValue.Features.TrailAnalyzer && (!string.IsNullOrEmpty(_settings.CurrentValue.TrailExplorerBaseUrl)))
 {
     <div class="row mt-2">
         <div class="col-12">
-            <a class="btn btn-lg btn-primary w-100" href="@Model.GetTrailAnalyzerUrl(this.Url)" target="_blank">
+            <a class="btn btn-lg btn-primary w-100" href="@Model.GetTrailAnalyzerUrl(_settings.CurrentValue.TrailExplorerBaseUrl, this.Url)" target="_blank">
                 Trail-Analyse
             </a>
         </div>
