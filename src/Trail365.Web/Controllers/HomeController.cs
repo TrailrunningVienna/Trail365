@@ -25,7 +25,7 @@ namespace Trail365.Web.Controllers
         private readonly IServiceScopeFactory _serviceScopeFactory;
         private readonly IMemoryCache _cache;
 
-        private static readonly Blob[] EmptyImageList = new Blob[] { };
+        private static readonly Blob[] EmptyImageList = null;
         public HomeController(TrailContext context, IOptionsMonitor<AppSettings> settingsMonitor, ILogger<HomeController> logger, IBackgroundTaskQueue queue, IServiceScopeFactory serviceScopeFactory, IMemoryCache cache)
         {
             _context = context ?? throw new ArgumentNullException(nameof(context));
@@ -176,7 +176,8 @@ namespace Trail365.Web.Controllers
             //the view showed here is depending on the enabled/disabled feature (the first new-stream feature that is enabled or a default view
             if (_settings.Features.Events)
             {
-                return this.RedirectToAction("Index", "EventNews", requestModel);
+                // return this.RedirectToAction("Index", "EventNews", requestModel);
+                 return this.RedirectToAction("Events", "Home", requestModel);
             }
 
             if (_settings.Features.Trails)
