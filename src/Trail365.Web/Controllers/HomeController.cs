@@ -25,6 +25,7 @@ namespace Trail365.Web.Controllers
         private readonly IServiceScopeFactory _serviceScopeFactory;
         private readonly IMemoryCache _cache;
 
+        private static readonly Blob[] EmptyImageList = new Blob[] { };
         public HomeController(TrailContext context, IOptionsMonitor<AppSettings> settingsMonitor, ILogger<HomeController> logger, IBackgroundTaskQueue queue, IServiceScopeFactory serviceScopeFactory, IMemoryCache cache)
         {
             _context = context ?? throw new ArgumentNullException(nameof(context));
@@ -56,12 +57,14 @@ namespace Trail365.Web.Controllers
             EventQueryFilter filter = new EventQueryFilter(model.Login.GetListAccessPermissionsForCurrentLogin(), restrictToPublishedEventsOnly: true)
             {
                 IncludePlaces = true,
-                IncludeImages = true,
+                IncludeImages = false,
                 IncludeTrails = includeTrails,
                 Take = _settings.MaxResultSize,
                 OrderBy = ordering,
                 OwnerID = restrictToOwner
             };
+            //don't show the past on our news stream!
+            filter.StartTimeUtcMinValue = DateTime.UtcNow.AddHours(-5);
 
             var eventList = _context.GetEventsByFilter(filter);
 
@@ -70,17 +73,17 @@ namespace Trail365.Web.Controllers
                 throw new NotImplementedException("Searchtext");
             }
 
-            var trailList = eventList.Where(e => e.Trail != null).Select(e => e.Trail).ToArray();
-            var imagesList = _context.GetRelatedPreviewImages(trailList);
 
             model.Events = eventList.Select(e =>
             {
                 bool hasTrailPermission = false;
+
                 if (e.Trail != null)
                 {
                     hasTrailPermission = model.Login.CanDo(e.Trail.ListAccess);
                 }
-                var tvm = e.ToEventViewModel(this.Url, model.Login, imagesList, hasTrailPermission).EnableEditLinkForPlaces().EnableDownloadLinkForTrail().EnableEditLinkForTrail();
+
+                var tvm = e.ToEventViewModel(this.Url, model.Login, EmptyImageList, hasTrailPermission).EnableEditLinkForTrail().HideChallenge();
                 return tvm;
             }).OrderByDescending(item => item.StartDate).ToList();
 
@@ -133,7 +136,7 @@ namespace Trail365.Web.Controllers
 
         public IActionResult Events(EventCollectionViewModel model)
         {
-            model = this.InitEventCollectionViewModel(model);
+            model = this.InitEventCollectionViewModel(model,includeTrails:true);
             return this.View("Events", model);
         }
 

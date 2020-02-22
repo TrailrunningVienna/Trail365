@@ -1,0 +1,65 @@
+@using Trail365
+@model Trail365.ViewModels.EventViewModel
+@{
+    var divID = $"{Model.ID}-Default";
+    var externalDetails = false;
+
+    string col_left = "col-3";
+    string col_right = "col-9";
+    string row = "row no-gutters";
+
+}
+<div id="@divID">
+
+    <a href="@Model.DetailsUrl" @Html.Raw(externalDetails ? "target='_blank'" : string.Empty) class="deal-link d-block">
+        <div class="@row">
+            <div class="col text-wrap">
+                <h4>@Model.Name</h4>
+            </div>
+        </div>
+
+
+        <div class="row">
+
+            <div class="@col_left">
+
+                <div class="row">
+                    <div class="col pr-0 pt-3">
+                        <p>Feb</p>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col pr-0">
+                        <div>29.</div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col pr-0">
+                        <div>10:15 Uhr</div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="@col_right pr-0">
+
+
+                @if (this.Model.Trail != null)
+                {
+                    <partial name="_TrailMetadata" model="@this.Model.Trail" />
+                }
+
+                <div class="row">
+                    <div class="col-12 pr-0">
+                        <p class="trail-preview-title">@Model.GetHumanizedPlaceOrDefault()</p>
+                    </div>
+                </div>
+
+                @HtmlHelperExtension.DisplayMultilineMarkdownAsRowOrNothing(this.Html, @Model.Excerpt, @Model.DetailsUrl)
+            </div>
+        </div>
+        @HtmlHelperExtension.EmptyRow(this.Html, 1)
+    </a>
+</div>

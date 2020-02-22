@@ -55,6 +55,16 @@ namespace Trail365.ViewModels
             return this;
         }
 
+        public EventViewModel HideChallenge()
+        {
+            if (this.Trail != null)
+            {
+                this.Trail.ShowChallenge = false;
+            }
+            return this;
+        }
+
+
         public EventViewModel EnableDownloadLinkForTrail()
         {
             if (this.Trail != null)

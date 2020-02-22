@@ -26,6 +26,8 @@ namespace Trail365.ViewModels
 
         public bool ShowDownloadLink { get; set; }
 
+        public bool ShowChallenge { get; set; } = true;
+
         public bool HideName { get; set; }
 
         public bool HideExcerpt { get; set; }

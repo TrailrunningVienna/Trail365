@@ -20,20 +20,20 @@
 
 @if (!hideIdentifierRow)
 {
-<div class="@row">
-    <div class="@col_left">Strecke:</div>
+    <div class="@row">
+        <div class="@col_left">Strecke:</div>
 
-    <div class="@col_right">
-        <a class="fg-link" asp-area="" asp-controller="TrailDetails" asp-action="Trail" asp-route-Id="@this.Model.ID">@Model.Name</a>
-    </div>
+        <div class="@col_right">
+            <a class="fg-link" asp-area="" asp-controller="TrailDetails" asp-action="Trail" asp-route-Id="@this.Model.ID">@Model.Name</a>
+        </div>
 
-    @if ((this.Model.Login.IsModeratorOrHigher) && (this.Model.ShowEditLink))
-    {
-    <div class="@col_right1">
-        <a class="fg-link" asp-area="Backend" asp-controller="Trails" asp-action="Edit" asp-route-Id="@this.Model.ID">[Edit]</a>
+        @if ((this.Model.Login.IsModeratorOrHigher) && (this.Model.ShowEditLink))
+        {
+            <div class="@col_right1">
+                <a class="fg-link" asp-area="Backend" asp-controller="Trails" asp-action="Edit" asp-route-Id="@this.Model.ID">[Edit]</a>
+            </div>
+        }
     </div>
-    }
-</div>
 }
 <div class="@row">
     <div class="@col_left">
@@ -43,9 +43,9 @@
     <div class="@col_right">
         @if (Model.DistanceKm.HasValue)
         {
-        <div class="">
-            <i class="fas fa-arrows-alt-h"></i>&nbsp;@Model.DistanceKm.Value.ToKmFormat()<span class="">&nbsp;km</span>
-        </div>
+            <div class="">
+                <i class="fas fa-arrows-alt-h"></i>&nbsp;@Model.DistanceKm.Value.ToKmFormat()<span class="">&nbsp;km</span>
+            </div>
         }
     </div>
 </div>
@@ -58,35 +58,38 @@
     <div class="@col_right">
         @if (Model.Ascent.HasValue)
         {
-        <div class="">
-            <i class="fas fa-arrow-up"></i>&nbsp;@Model.Ascent.ToIntFormat()<span class="">&nbsp;hm</span>
-        </div>
+            <div class="">
+                <i class="fas fa-arrow-up"></i>&nbsp;@Model.Ascent.ToIntFormat()<span class="">&nbsp;hm</span>
+            </div>
         }
         @if (Model.Descent.HasValue)
         {
-        <div class="">
-            <i class="fas fa-arrow-down"></i>&nbsp;@Model.Descent.ToIntFormat()<span class="">&nbsp;hm</span>
-        </div>
+            <div class="">
+                <i class="fas fa-arrow-down"></i>&nbsp;@Model.Descent.ToIntFormat()<span class="">&nbsp;hm</span>
+            </div>
         }
     </div>
 </div>
 
-<div class="@row">
-    <div class="@col_left d-none d-sm-block">Challenge:</div>
-    <div class="@col_left d-block d-sm-none">CH:</div>
-    <div class="@col_right">@Model.Challenge</div>
-</div>
+@if (this.Model.ShowChallenge)
+{
+    <div class="@row">
+        <div class="@col_left d-none d-sm-block">Challenge:</div>
+        <div class="@col_left d-block d-sm-none">CH:</div>
+        <div class="@col_right">@Model.Challenge</div>
+    </div>
+}
 
 @if (this.Model.CanDownload() && (this.Model.ShowDownloadLink))
 {
-<div class="@row">
-    <div class="@col_left">
-        Gpx Track:
+    <div class="@row">
+        <div class="@col_left">
+            Gpx Track:
+        </div>
+        <div class="@col_right">
+            <a class="fg-link" href="@Model.GpxUrl" target="_blank">
+                <p>Gpx Track</p>
+            </a>
+        </div>
     </div>
-    <div class="@col_right">
-        <a class="fg-link" href="@Model.GpxUrl" target="_blank">
-            <p>Gpx Track</p>
-        </a>
-    </div>
-</div>
 }
