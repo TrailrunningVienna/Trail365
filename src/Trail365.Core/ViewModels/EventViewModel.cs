@@ -177,6 +177,46 @@ namespace Trail365.ViewModels
             return null;
         }
 
+        public string StartTimeMonth()
+        {
+            if (this.StartTime.HasValue == false)
+            {
+                return string.Empty;
+            }
+            return System.Globalization.DateTimeFormatInfo.InvariantInfo.GetAbbreviatedMonthName(this.StartDate.Value.Month);
+        }
+        public string StartTimeWeekDay()
+        {
+            if (this.StartTime.HasValue == false)
+            {
+                return string.Empty;
+            }
+            return System.Globalization.DateTimeFormatInfo.InvariantInfo.GetAbbreviatedDayName(this.StartDate.Value.DayOfWeek);
+        }
+
+        public string StartTimeClock()
+        {
+            if (this.StartTime.HasValue == false)
+            {
+                return string.Empty;
+            }
+            if (this.FullDayEvent)
+            {
+                return string.Empty;
+            }
+            return this.StartTime.Value.ToString("HH:mm");
+        }
+
+        public string StartTimeDayOfMonth()
+        {
+            if (this.StartTime.HasValue == false)
+            {
+                return string.Empty;
+            }
+            return this.StartTime.Value.Day.ToString();
+        }
+
+
         public string GetHumanizedStartEndTime()
         {
             if (this.StartTime.HasValue == false)

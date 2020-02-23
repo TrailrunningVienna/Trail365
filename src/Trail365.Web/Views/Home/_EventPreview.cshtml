@@ -14,33 +14,18 @@
     <a href="@Model.DetailsUrl" @Html.Raw(externalDetails ? "target='_blank'" : string.Empty) class="deal-link d-block">
         <div class="@row">
             <div class="col text-wrap">
-                <h4>@Model.Name</h4>
+                <span class="name">@Model.Name</span>
             </div>
         </div>
-
 
         <div class="row">
 
             <div class="@col_left">
-
-                <div class="row">
-                    <div class="col pr-0 pt-3">
-                        <p>Feb</p>
-                    </div>
-                </div>
-
-                <div class="row">
-                    <div class="col pr-0">
-                        <div>29.</div>
-                    </div>
-                </div>
-
-                <div class="row">
-                    <div class="col pr-0">
-                        <div>10:15 Uhr</div>
-                    </div>
-                </div>
-
+                    <span class="d-inline-block text-center">
+                        <span class="month d-block position-relative">@Model.StartTimeMonth()</span>
+                        <span class="day d-block position-relative">@Model.StartTimeDayOfMonth()</span>
+                        <span class="time d-block position-relative">@Model.StartTimeWeekDay() @Model.StartTimeClock()</span>
+                    </span>
             </div>
 
             <div class="@col_right pr-0">
@@ -57,7 +42,8 @@
                     </div>
                 </div>
 
-                @HtmlHelperExtension.DisplayMultilineMarkdownAsRowOrNothing(this.Html, @Model.Excerpt, @Model.DetailsUrl)
+                @*@HtmlHelperExtension.DisplayMultilineMarkdownAsRowOrNothing(this.Html, @Model.Excerpt, @Model.DetailsUrl)*@
+
             </div>
         </div>
         @HtmlHelperExtension.EmptyRow(this.Html, 1)

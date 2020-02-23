@@ -212,6 +212,28 @@ div.square {
   position: relative;
 }
 
+span.name {
+  font-weight: 600;
+  font-size: 14px;
+}
+
+span.month {
+    color:aqua;
+    font-weight:normal;
+    font-size:12px;
+}
+
+span.day {
+  font-weight: 300;
+  font-size: 24px;
+}
+
+span.time {
+  font-weight: normal;
+  font-size: 12px;
+  color: #90949c;
+}
+
 span.neupreis-wrapper {
   border: solid 1px #c9c9c8;
   border-radius: 5px;
