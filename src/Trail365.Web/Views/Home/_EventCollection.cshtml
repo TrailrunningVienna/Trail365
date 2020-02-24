@@ -6,16 +6,18 @@
 
     @foreach (var singleEvent in Model.Events)
     {
-        <div class="row">
-            <div class="col-lg-6 mb-4">
+        @*<div class="row">
+            <div class="col-lg-6 mb-4">*@
+
                 <partial name="_EventPreview" model="@(singleEvent)" />
 
                 @if (singleEvent.ID != Model.Events.Last().ID)
                 {
                     @HtmlHelperExtension.EmptyRow(this.Html)
                 }
-            </div>
-        </div>
+
+            @*</div>
+        </div>*@
     }
 
 }

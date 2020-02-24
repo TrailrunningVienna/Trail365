@@ -3,49 +3,71 @@
 @{
     var divID = $"{Model.ID}-Default";
     var externalDetails = false;
-
-    string col_left = "col-3";
-    string col_right = "col-9";
     string row = "row no-gutters";
-
 }
 <div id="@divID">
 
     <a href="@Model.DetailsUrl" @Html.Raw(externalDetails ? "target='_blank'" : string.Empty) class="deal-link d-block">
-        <div class="@row">
-            <div class="col text-wrap">
-                <span class="name">@Model.Name</span>
-            </div>
-        </div>
+
 
         <div class="row">
 
-            <div class="@col_left">
-                    <span class="d-inline-block text-center">
-                        <span class="month d-block position-relative">@Model.StartTimeMonth()</span>
-                        <span class="day d-block position-relative">@Model.StartTimeDayOfMonth()</span>
-                        <span class="time d-block position-relative">@Model.StartTimeWeekDay() @Model.StartTimeClock()</span>
-                    </span>
+            <div class="col-3 pt-3">
+                <span class="d-inline-block text-center">
+                    <span class="month d-block position-relative">@Model.StartTimeMonth()</span>
+                    <span class="day d-block position-relative">@Model.StartTimeDayOfMonth()</span>
+                    <span class="time d-block position-relative">@Model.StartTimeWeekDay() @Model.StartTimeClock()</span>
+                </span>
             </div>
 
-            <div class="@col_right pr-0">
+            <div class="col-6 pr-0 pt-3 border-top">
+
+
+                <div class="@row">
+                    <div class="col text-wrap">
+                        <span class="name">@Model.Name</span>
+                    </div>
+                </div>
 
 
                 @if (this.Model.Trail != null)
                 {
-                    <partial name="_TrailMetadata" model="@this.Model.Trail" />
-                }
 
+                    <div class="@row pt-2">
+                        <div class="col">
+
+
+                            @if (Model.Trail.DistanceKm.HasValue)
+                            {
+                                <div class="">
+                                    <i class="fas fa-arrows-alt-h"></i>&nbsp;@Model.Trail.DistanceKm.Value.ToKmFormat()<span class="">&nbsp;km</span>
+                                </div>
+                            }
+                            @if (Model.Trail.Ascent.HasValue)
+                            {
+                                <div class="">
+                                    <i class="fas fa-arrow-up"></i>&nbsp;@Model.Trail.Ascent.ToIntFormat()<span class="">&nbsp;hm</span>
+                                </div>
+                            }
+                            @if (Model.Trail.Descent.HasValue)
+                            {
+                                <div class="">
+                                    <i class="fas fa-arrow-down"></i>&nbsp;@Model.Trail.Descent.ToIntFormat()<span class="">&nbsp;hm</span>
+                                </div>
+                            }
+
+                        </div>
+                    </div>
+                }
+            </div>
+            <div class="col-3 pt-3">
                 <div class="row">
-                    <div class="col-12 pr-0">
-                        <p class="trail-preview-title">@Model.GetHumanizedPlaceOrDefault()</p>
+                    <div class="col pr-0">
+                        <span class="trail-preview-title">@Model.GetHumanizedPlaceOrDefault()</span>
                     </div>
                 </div>
-
-                @*@HtmlHelperExtension.DisplayMultilineMarkdownAsRowOrNothing(this.Html, @Model.Excerpt, @Model.DetailsUrl)*@
-
             </div>
+
         </div>
-        @HtmlHelperExtension.EmptyRow(this.Html, 1)
     </a>
 </div>
