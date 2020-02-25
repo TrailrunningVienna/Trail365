@@ -79,7 +79,7 @@ namespace Trail365
         /// <param name="cellHtml"></param>
         /// <param name="hrefUrl"></param>
         /// <returns></returns>
-        private static StringBuilder GetRowStringBuilder(string cellHtml, string additionalColumnClasses, string hrefUrl)
+        private static StringBuilder GetRowStringBuilder(string cellHtml, string additionalColumnClasses, string additionalRowClasses, string hrefUrl)
         {
             //https://getbootstrap.com/docs/4.4/utilities/stretched-link/
             var colClass = "col preview-markdown multi-line";
@@ -94,6 +94,12 @@ namespace Trail365
                 colClass += " position-static";
                 rowClass += " position-relative";
             }
+
+            if (!string.IsNullOrEmpty(additionalRowClasses))
+            {
+                rowClass += " " + additionalRowClasses.Trim();
+            }
+
             StringBuilder sb = new StringBuilder();
             sb.AppendLine($"<div class=\"{rowClass}\">");
             sb.AppendLine($"<div class=\"{colClass}\">");
@@ -108,6 +114,11 @@ namespace Trail365
         }
 
         private static IHtmlContent DisplayMultilineMarkdownAsRow(IHtmlHelper html, string markDown, bool doNotCreateEmptyRow, string hrefUrl)
+        {
+            return DisplayMultilineMarkdownAsRow(html, markDown, doNotCreateEmptyRow, string.Empty, string.Empty, hrefUrl);
+        }
+
+        public static IHtmlContent DisplayMultilineMarkdownAsRow(IHtmlHelper html, string markDown, bool doNotCreateEmptyRow, string additionalColumnClasses, string additionalRowClasses, string hrefUrl)
         {
             string rawResult = string.Empty;
 
@@ -126,7 +137,7 @@ namespace Trail365
                     return html.Raw(string.Empty);
                 }
             }
-            var rawHtml = GetRowStringBuilder(rawResult, string.Empty, hrefUrl).ToString();
+            var rawHtml = GetRowStringBuilder(rawResult, additionalColumnClasses, additionalRowClasses, hrefUrl).ToString();
             return html.Raw(rawHtml);
         }
 
@@ -164,7 +175,7 @@ namespace Trail365
             {
                 margins += $" mt-{mt.Value}";
             }
-            var sb = GetRowStringBuilder($"<h4 class=\"mb-0 text-truncate\">{title}</h4>", margins.Trim(), hrefUrl);
+            var sb = GetRowStringBuilder($"<h4 class=\"mb-0 text-truncate\">{title}</h4>", margins.Trim(), string.Empty, hrefUrl);
             return html.Raw(sb.ToString());
         }
     }

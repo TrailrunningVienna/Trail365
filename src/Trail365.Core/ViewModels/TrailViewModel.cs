@@ -46,6 +46,7 @@ namespace Trail365.ViewModels
         public ChallengeLevel Challenge { get; set; } = ChallengeLevel.Advanced;
 
         public AccessLevel GpxDownloadAccess { get; set; }
+
         public AccessLevel ListAccess { get; set; }
 
         public bool CanDownload()

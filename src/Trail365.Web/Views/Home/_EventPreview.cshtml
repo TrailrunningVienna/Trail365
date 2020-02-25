@@ -7,19 +7,20 @@
 }
 <div id="@divID">
     <div class="row">
-        <div class="col-3 pt-3">
+        <div class="col-2 pt-3">
+
             <a href="@Model.DetailsUrl" @Html.Raw(externalDetails ? "target='_blank'" : string.Empty) class="deal-link d-block">
 
-                <span class="d-inline-block text-center">
-                    <span class="month d-block position-relative">@Model.StartTimeMonth()</span>
-                    <span class="day d-block position-relative">@Model.StartTimeDayOfMonth()</span>
-                    <span class="time d-block position-relative">@Model.StartTimeWeekDay() @Model.StartTimeClock()</span>
+                <span>
+                    <span class="month d-block position-relative text-center">@Model.StartTimeMonth()</span>
+                    <span class="day d-block position-relative text-center">@Model.StartTimeDayOfMonth()</span>
+                    <span class="time d-block position-relative text-center">@Model.StartTimeWeekDay() @Model.StartTimeClock()</span>
                 </span>
             </a>
 
         </div>
 
-        <div class="col-6 pr-0 pt-3 border-top">
+        <div class="col-7 pr-0 pt-3 border-top">
 
             <a href="@Model.DetailsUrl" @Html.Raw(externalDetails ? "target='_blank'" : string.Empty) class="deal-link d-block">
 
@@ -29,8 +30,12 @@
                     </div>
                 </div>
 
-                @if (this.Model.Trail != null)
-                {
+            </a>
+
+
+            @if (this.Model.Trail != null)
+            {
+                <a href="@this.Url.GetTrailDetailsUrl(Model.Trail.ID)" @Html.Raw(externalDetails ? "target='_blank'" : string.Empty) class="deal-link d-block">
 
                     <div class="@row pt-2">
                         <div class="col">
@@ -55,8 +60,18 @@
 
                         </div>
                     </div>
+                </a>
+            }
+            else
+            {
+                @if (!string.IsNullOrEmpty(this.Model.Excerpt))
+                {
+                    @HtmlHelperExtension.DisplayMultilineMarkdownAsRow(this.Html, this.Model.Excerpt, false, string.Empty, "pt-2", string.Empty)
                 }
-            </a>
+            }
+
+
+
 
         </div>
 
