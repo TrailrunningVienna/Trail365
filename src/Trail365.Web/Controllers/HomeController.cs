@@ -37,7 +37,7 @@ namespace Trail365.Web.Controllers
             _cache = cache ?? throw new ArgumentNullException(nameof(cache));
         }
 
-        public EventCollectionViewModel InitEventCollectionViewModel(EventCollectionViewModel model = null, LoginViewModel login = null, Guid? restrictToOwner = null, bool includeTrails = false, EventQueryOrdering ordering = EventQueryOrdering.AscendingStartDate)
+        public EventCollectionViewModel InitEventCollectionViewModel(EventCollectionViewModel model = null, LoginViewModel login = null, Guid? restrictToOwner = null, bool includeTrails = false)
         {
             if (model == null)
             {
@@ -52,6 +52,7 @@ namespace Trail365.Web.Controllers
             {
                 model.Login = LoginViewModel.CreateFromClaimsPrincipalOrDefault(this.User);
             }
+
             this.ViewData["Login"] = model.Login;
 
             EventQueryFilter filter = new EventQueryFilter(model.Login.GetListAccessPermissionsForCurrentLogin(), restrictToPublishedEventsOnly: true)
@@ -60,7 +61,7 @@ namespace Trail365.Web.Controllers
                 IncludeImages = false,
                 IncludeTrails = includeTrails,
                 Take = _settings.MaxResultSize,
-                OrderBy = ordering,
+                OrderBy = EventQueryOrdering.AscendingStartDate,
                 OwnerID = restrictToOwner
             };
             //don't show the past on our news stream!
@@ -85,7 +86,8 @@ namespace Trail365.Web.Controllers
 
                 var tvm = e.ToEventViewModel(this.Url, model.Login, EmptyImageList, hasTrailPermission).EnableEditLinkForTrail().HideChallenge();
                 return tvm;
-            }).OrderByDescending(item => item.StartDate).ToList();
+
+            }).OrderBy(item => item.StartDate).ToList();
 
             return model;
         }

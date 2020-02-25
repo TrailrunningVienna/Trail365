@@ -6,22 +6,22 @@
     string row = "row no-gutters";
 }
 <div id="@divID">
+    <div class="row">
+        <div class="col-3 pt-3">
+            <a href="@Model.DetailsUrl" @Html.Raw(externalDetails ? "target='_blank'" : string.Empty) class="deal-link d-block">
 
-    <a href="@Model.DetailsUrl" @Html.Raw(externalDetails ? "target='_blank'" : string.Empty) class="deal-link d-block">
-
-
-        <div class="row">
-
-            <div class="col-3 pt-3">
                 <span class="d-inline-block text-center">
                     <span class="month d-block position-relative">@Model.StartTimeMonth()</span>
                     <span class="day d-block position-relative">@Model.StartTimeDayOfMonth()</span>
                     <span class="time d-block position-relative">@Model.StartTimeWeekDay() @Model.StartTimeClock()</span>
                 </span>
-            </div>
+            </a>
 
-            <div class="col-6 pr-0 pt-3 border-top">
+        </div>
 
+        <div class="col-6 pr-0 pt-3 border-top">
+
+            <a href="@Model.DetailsUrl" @Html.Raw(externalDetails ? "target='_blank'" : string.Empty) class="deal-link d-block">
 
                 <div class="@row">
                     <div class="col text-wrap">
@@ -29,14 +29,11 @@
                     </div>
                 </div>
 
-
                 @if (this.Model.Trail != null)
                 {
 
                     <div class="@row pt-2">
                         <div class="col">
-
-
                             @if (Model.Trail.DistanceKm.HasValue)
                             {
                                 <div class="">
@@ -59,15 +56,22 @@
                         </div>
                     </div>
                 }
-            </div>
-            <div class="col-3 pt-3">
-                <div class="row">
-                    <div class="col pr-0">
-                        <span class="trail-preview-title">@Model.GetHumanizedPlaceOrDefault()</span>
-                    </div>
-                </div>
-            </div>
+            </a>
 
         </div>
-    </a>
+
+        <div class="col-3 pt-3">
+
+            @if (this.Model.Login.IsModeratorOrHigher)
+            {
+                <a class="fg-link" asp-area="Backend" asp-controller="Places" asp-action="Edit" asp-route-Id="@this.Model.Place.ID">
+                    @Model.GetHumanizedPlaceOrDefault()
+                </a>
+            }
+            else
+            {
+                <span>@Model.GetHumanizedPlaceOrDefault()</span>
+            }
+        </div>
+    </div>
 </div>
