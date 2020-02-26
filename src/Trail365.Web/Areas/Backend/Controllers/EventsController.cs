@@ -109,6 +109,43 @@ namespace Trail365.Web.Backend.Controllers
             return this.View(model);
         }
 
+
+        // GET: Backend/Events/Edit/5
+        public IActionResult CreateEvent()
+        {
+           
+
+            var login = LoginViewModel.CreateFromClaimsPrincipalOrDefault(this.User);
+
+            //EventQueryFilter filter = new EventQueryFilter(login.GetListAccessPermissionsForCurrentLogin(), restrictToPublishedEventsOnly: false)
+            //{
+            //    EventID = id,
+            //    IncludePlaces = true,
+            //    IncludeImages = true,
+            //    IncludeTrails = false,
+            //};
+
+            //var item = _context.GetEventsByFilter(filter).SingleOrDefault();
+
+            //if (item == null)
+            //{
+            //    return this.NotFound();
+            //}
+
+            var item = new Event();
+
+            this.ViewData.CreateAccessLevelSelectList("ReadAccess", item.ListAccess);
+
+            var placesLookupList = _context.GetPlacesForSelectList().ToArray();
+            this.ViewData.AddPlacesLookupValues("PlaceID", item.PlaceID, placesLookupList);
+            this.ViewData.AddPlacesLookupValues("EndPlaceID", item.EndPlaceID, placesLookupList);
+
+            this.ViewData.AddTrailsLookupValues("TrailID", item.TrailID, _context.GetTrails(false, false).ToArray());
+            this.ViewData.CreateEventStatusSelectList("Status", item.Status);
+            return this.View("Edit",EventBackendViewModel.CreateFromEntity(item));
+        }
+
+
         // GET: Backend/Events/Edit/5
         public IActionResult Edit(Guid? id)
         {
@@ -165,12 +202,21 @@ namespace Trail365.Web.Backend.Controllers
 
                     if (loaded == null)
                     {
-                        return base.NotFound();
-                    }
+                        //created...TODO ensure that is is really created and NOT a hack
+                        Event e = new Event();
+                        e.ID = viewModel.ID;
+                        viewModel.ApplyChangesTo(e);
+                        _context.Events.Add(e);
+                        _context.SaveChanges();
 
-                    viewModel.ApplyChangesTo(loaded);
-                    _context.Update(loaded);
-                    _context.SaveChanges();
+                        //return base.NotFound();
+                    }
+                    else
+                    {
+                        viewModel.ApplyChangesTo(loaded);
+                        _context.Update(loaded);
+                        _context.SaveChanges();
+                    }
                 }
                 catch (DbUpdateConcurrencyException)
                 {
