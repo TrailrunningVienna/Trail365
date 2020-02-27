@@ -25,7 +25,6 @@ namespace Trail365.Web.Controllers
         private readonly IServiceScopeFactory _serviceScopeFactory;
         private readonly IMemoryCache _cache;
 
-        private static readonly Blob[] EmptyImageList = null;
         public HomeController(TrailContext context, IOptionsMonitor<AppSettings> settingsMonitor, ILogger<HomeController> logger, IBackgroundTaskQueue queue, IServiceScopeFactory serviceScopeFactory, IMemoryCache cache)
         {
             _context = context ?? throw new ArgumentNullException(nameof(context));
@@ -37,60 +36,6 @@ namespace Trail365.Web.Controllers
             _cache = cache ?? throw new ArgumentNullException(nameof(cache));
         }
 
-        public EventCollectionViewModel InitEventCollectionViewModel(EventCollectionViewModel model = null, LoginViewModel login = null, Guid? restrictToOwner = null, bool includeTrails = false)
-        {
-            if (model == null)
-            {
-                model = new EventCollectionViewModel();
-            }
-
-            if (login != null)
-            {
-                model.Login = login;
-            }
-            else
-            {
-                model.Login = LoginViewModel.CreateFromClaimsPrincipalOrDefault(this.User);
-            }
-
-            this.ViewData["Login"] = model.Login;
-
-            EventQueryFilter filter = new EventQueryFilter(model.Login.GetListAccessPermissionsForCurrentLogin(), restrictToPublishedEventsOnly: true)
-            {
-                IncludePlaces = true,
-                IncludeImages = false,
-                IncludeTrails = includeTrails,
-                Take = _settings.MaxResultSize,
-                OrderBy = EventQueryOrdering.AscendingStartDate,
-                OwnerID = restrictToOwner
-            };
-            //don't show the past on our news stream!
-            filter.StartTimeUtcMinValue = DateTime.UtcNow.AddHours(-5);
-
-            var eventList = _context.GetEventsByFilter(filter);
-
-            if (model.HasSearchText())
-            {
-                throw new NotImplementedException("Searchtext");
-            }
-
-
-            model.Events = eventList.Select(e =>
-            {
-                bool hasTrailPermission = false;
-
-                if (e.Trail != null)
-                {
-                    hasTrailPermission = model.Login.CanDo(e.Trail.ListAccess);
-                }
-
-                var tvm = e.ToEventViewModel(this.Url, model.Login, EmptyImageList, hasTrailPermission).EnableEditLinkForTrail().HideChallenge();
-                return tvm;
-
-            }).OrderBy(item => item.StartDate).ToList();
-
-            return model;
-        }
 
         public HomeViewModel InitModel(HomeViewModel model = null, LoginViewModel login = null, Guid? restrictToOwner = null)
         {
@@ -136,12 +81,6 @@ namespace Trail365.Web.Controllers
             return this.View("Index", model);
         }
 
-        public IActionResult Events(EventCollectionViewModel model)
-        {
-            model = this.InitEventCollectionViewModel(model,includeTrails:true);
-            return this.View("Events", model);
-        }
-
         [Authorize()]
         public IActionResult MyTrails(HomeViewModel model)
         {
@@ -178,8 +117,7 @@ namespace Trail365.Web.Controllers
             //the view showed here is depending on the enabled/disabled feature (the first new-stream feature that is enabled or a default view
             if (_settings.Features.Events)
             {
-                // return this.RedirectToAction("Index", "EventNews", requestModel);
-                 return this.RedirectToAction("Events", "Home", requestModel);
+                return this.RedirectToAction("Index", "EventNews", requestModel);
             }
 
             if (_settings.Features.Trails)

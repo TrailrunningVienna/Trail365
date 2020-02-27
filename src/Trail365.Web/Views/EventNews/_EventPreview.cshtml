@@ -69,10 +69,6 @@
                     @HtmlHelperExtension.DisplayMultilineMarkdownAsRow(this.Html, this.Model.Excerpt, false, string.Empty, "pt-2", string.Empty)
                 }
             }
-
-
-
-
         </div>
 
         <div class="col-3 pt-3">
@@ -88,7 +84,7 @@
                 <span>@Model.GetHumanizedPlaceOrDefault()</span>
             }
             <p></p>
-            <p>@this.Model.GetMeetingPointOrDefault()</p>
+            <p class="time">@this.Model.GetMeetingPointOrDefault()</p>
 
         </div>
     </div>

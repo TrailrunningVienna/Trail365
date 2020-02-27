@@ -113,24 +113,8 @@ namespace Trail365.Web.Backend.Controllers
         // GET: Backend/Events/Edit/5
         public IActionResult CreateEvent()
         {
-           
 
             var login = LoginViewModel.CreateFromClaimsPrincipalOrDefault(this.User);
-
-            //EventQueryFilter filter = new EventQueryFilter(login.GetListAccessPermissionsForCurrentLogin(), restrictToPublishedEventsOnly: false)
-            //{
-            //    EventID = id,
-            //    IncludePlaces = true,
-            //    IncludeImages = true,
-            //    IncludeTrails = false,
-            //};
-
-            //var item = _context.GetEventsByFilter(filter).SingleOrDefault();
-
-            //if (item == null)
-            //{
-            //    return this.NotFound();
-            //}
 
             var item = new Event();
 
@@ -142,7 +126,9 @@ namespace Trail365.Web.Backend.Controllers
 
             this.ViewData.AddTrailsLookupValues("TrailID", item.TrailID, _context.GetTrails(false, false).ToArray());
             this.ViewData.CreateEventStatusSelectList("Status", item.Status);
-            return this.View("Edit",EventBackendViewModel.CreateFromEntity(item));
+            var viewModel = EventBackendViewModel.CreateFromEntity(item);
+            viewModel.Login = login;
+            return this.View("Edit", viewModel);
         }
 
 
@@ -203,8 +189,10 @@ namespace Trail365.Web.Backend.Controllers
                     if (loaded == null)
                     {
                         //created...TODO ensure that is is really created and NOT a hack
-                        Event e = new Event();
-                        e.ID = viewModel.ID;
+                        Event e = new Event
+                        {
+                            ID = viewModel.ID
+                        };
                         viewModel.ApplyChangesTo(e);
                         _context.Events.Add(e);
                         _context.SaveChanges();

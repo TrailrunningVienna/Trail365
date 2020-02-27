@@ -6,6 +6,7 @@ namespace Trail365.ViewModels
 {
     public class EventBackendViewModel
     {
+        public LoginViewModel Login { get; set; } = new LoginViewModel();
         public Event ApplyChangesTo(Event item)
         {
             if (item == null) throw new ArgumentNullException(nameof(item));

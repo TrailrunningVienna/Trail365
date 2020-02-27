@@ -30,6 +30,6 @@ namespace Trail365.Services
 
         public List<Blob> InsertedImages { get; private set; } = new List<Blob>();
 
-        public abstract Task Import(T data, ILogger logger, CancellationToken cancellationToken = default(CancellationToken));
+        public abstract Task Import(T data, ILogger logger, CancellationToken cancellationToken = default);
     }
 }
