@@ -1,0 +1,91 @@
+@using Trail365
+@using Trail365.Entities
+@model Trail365.ViewModels.TrailNewsViewModel
+@{
+    var divID = $"{Model.ID}-Default";
+    var detailsUrl = Url.GetTrailDetailsUrl(Model.ID);
+    var externalDetails = false;
+    //ChallengeLevel overall = ViewData.GetOverallChallengeOrDefault(Model.Challenge);
+    string row = "row no-gutters";
+}
+<div id="@divID">
+
+    <div class="row">
+
+        <div class="col-2 pt-3">
+            @if (Model.DistanceKm.HasValue)
+            {
+                <div class="">
+                    <i class="fas fa-arrows-alt-h"></i>&nbsp;@Model.DistanceKm.Value.ToKmFormat()<span class="">&nbsp;km</span>
+                </div>
+            }
+            @if (Model.Ascent.HasValue)
+            {
+                <div class="">
+                    <i class="fas fa-arrow-up"></i>&nbsp;@Model.Ascent.ToIntFormat()<span class="">&nbsp;hm</span>
+                </div>
+            }
+            @if (Model.Descent.HasValue)
+            {
+                <div class="">
+                    <i class="fas fa-arrow-down"></i>&nbsp;@Model.Descent.ToIntFormat()<span class="">&nbsp;hm</span>
+                </div>
+            }
+        </div>
+
+        <div class="col-7 pr-0 pt-3 border-top">
+
+            <a href="@detailsUrl" @Html.Raw(externalDetails ? "target='_blank'" : string.Empty) class="deal-link d-block">
+
+
+                    <div class="@row">
+                        <div class="col text-wrap">
+                            <span class="name">@Model.Name</span>
+                        </div>
+                    </div>
+                    @HtmlHelperExtension.EmptyRow(this.Html)
+
+
+                @HtmlHelperExtension.DisplayMultilineMarkdownAsRowOrNothing(this.Html, this.Model.Excerpt, detailsUrl)
+
+                <div class="row">
+                    <div class="col-6">
+                        @*<div class="trail-preview-wrapper">
+                            <img src="@(Model.GetSmallestPreviewUrlOrDefault())" class="img-fluid" />
+                        </div>*@
+                    </div>
+
+                    <div class="col-6">
+                        <div class="row">
+                            <div class="col-12">
+                                @*<div class="trail-preview-wrapper">
+                                    <img src="@(Model.GetChallengeElevationProfileUrlOrDefault(overall))" class="img-fluid" />
+                                </div>*@
+                            </div>
+                        </div>
+                        @*<partial name="_TrailMeasures" model="@(Model)" />*@
+                    </div>
+                </div>
+            </a>
+
+
+        </div>
+
+
+        <div class="col-3 pt-3">
+            @if (this.Model.Login.IsModeratorOrHigher && this.Model.StartPlace!=null)
+            {
+                <a class="fg-link" asp-area="Backend" asp-controller="Places" asp-action="Edit" asp-route-Id="@this.Model.StartPlace.ID">
+                    @Model.GetHumanizedPlaceOrDefault()
+                </a>
+            }
+            else
+            {
+                <span>@Model.GetHumanizedPlaceOrDefault()</span>
+            }
+            <p></p>
+            <p class="time">@this.Model.GetMeetingPointOrDefault()</p>
+        </div>
+
+    </div>
+    </div>

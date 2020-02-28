@@ -4,7 +4,7 @@ namespace Trail365.ViewModels
 {
     public class TrailCollectionViewModel
     {
-        public List<TrailViewModel> Items { get; set; }
+        public List<TrailNewsViewModel> Items { get; set; }
 
         public LoginViewModel Login { get; set; } = new LoginViewModel();
     }

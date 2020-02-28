@@ -30,44 +30,44 @@ namespace Trail365.Web.Controllers
         private readonly IBackgroundTaskQueue _queue;
         private readonly IServiceScopeFactory _serviceScopeFactory;
 
-        public TrailCollectionViewModel InitTrailCollectionViewModel(TrailCollectionViewModel model)
-        {
-            if (model == null)
-            {
-                model = new TrailCollectionViewModel();
-            }
+        //public TrailCollectionViewModel InitTrailCollectionViewModel(TrailCollectionViewModel model)
+        //{
+        //    if (model == null)
+        //    {
+        //        model = new TrailCollectionViewModel();
+        //    }
 
-            var includeImages = true;
-            var includeGpxBlob = true;
+        //    var includeImages = true;
+        //    var includeGpxBlob = true;
 
-            model.Login = LoginViewModel.CreateFromClaimsPrincipalOrDefault(this.User);
+        //    model.Login = LoginViewModel.CreateFromClaimsPrincipalOrDefault(this.User);
 
-            var trails = _context.GetTrailsByListAccessOrderByDateDescending(includeImages, includeGpxBlob, model.Login.GetListAccessPermissionsForCurrentLogin(), _settings.MaxResultSize, _cache, _settings.AbsoluteExpirationInSecondsRelativeToNow);
+        //    var trails = _context.GetTrailsByListAccessOrderByDateDescending(includeImages, includeGpxBlob, model.Login.GetListAccessPermissionsForCurrentLogin(), _settings.MaxResultSize, _cache, _settings.AbsoluteExpirationInSecondsRelativeToNow);
 
-            Blob[] imagesList = new Blob[] { };
+        //    Blob[] imagesList = new Blob[] { };
 
-            if (includeImages)
-            {
-                imagesList = _context.GetRelatedPreviewImages(trails.ToArray());
-            }
+        //    if (includeImages)
+        //    {
+        //        imagesList = _context.GetRelatedPreviewImages(trails.ToArray());
+        //    }
 
-            List<TrailViewModel> list = new List<TrailViewModel>();
+        //    List<TrailViewModel> list = new List<TrailViewModel>();
 
-            model.Items = trails.Select(t => t.ToTrailViewModel(model.Login, !includeImages, imagesList)).ToList();
+        //    model.Items = trails.Select(t => t.ToTrailViewModel(model.Login, !includeImages, imagesList)).ToList();
 
-            model.Items.ForEach(tvm =>
-           {
-               tvm.ShowDownloadLink = false;
-               tvm.ShowEditLink = false;
-           });
-            return model;
-        }
+        //    model.Items.ForEach(tvm =>
+        //   {
+        //       tvm.ShowDownloadLink = false;
+        //       tvm.ShowEditLink = false;
+        //   });
+        //    return model;
+        //}
 
-        public IActionResult Index(NewsRequestViewModel requestModel)
-        {
-            var model = this.InitTrailCollectionViewModel(null);
-            return this.View(model);
-        }
+        //public IActionResult Index(NewsRequestViewModel requestModel)
+        //{
+        //    var model = this.InitTrailCollectionViewModel(null);
+        //    return this.View(model);
+        //}
 
         private CreateTrailViewModel InitCreateTrailViewModel(CreateTrailViewModel model = null)
         {

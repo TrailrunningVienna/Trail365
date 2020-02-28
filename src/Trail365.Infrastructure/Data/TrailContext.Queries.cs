@@ -549,18 +549,18 @@ namespace Trail365.Data
             return this.GetTrailsByFilter(filter);
         }
 
-        public List<Trail> GetTrailsByListAccessOrderByDateDescending(bool includeImages, bool includeGpxBlob, AccessLevel[] allowedLevels, int topN, IMemoryCache cache, int cacheDurationSeconds)
+        public List<Trail> GetTrailsByListAccessOrderByDateDescending(bool includeImages, bool includeGpxBlob, bool includePlaces, AccessLevel[] allowedLevels, int topN, IMemoryCache cache, int cacheDurationSeconds)
         {
             if (cache == null) throw new ArgumentNullException(nameof(cache));
-            return this.InternalGetTrailsByListAccessOrderByDateDescending(includeImages, includeGpxBlob, allowedLevels, topN, cache, cacheDurationSeconds);
+            return this.InternalGetTrailsByListAccessOrderByDateDescending(includeImages, includeGpxBlob, includePlaces, allowedLevels, topN, cache, cacheDurationSeconds);
         }
 
         public List<Trail> GetTrailsByListAccessOrderByDateDescending(bool includeImages, bool includeGpxBlob, AccessLevel[] allowedLevels, int topN)
         {
-            return this.InternalGetTrailsByListAccessOrderByDateDescending(includeImages, includeGpxBlob, allowedLevels, topN, null, 0);
+            return this.InternalGetTrailsByListAccessOrderByDateDescending(includeImages, includeGpxBlob, false, allowedLevels, topN, null, 0);
         }
 
-        internal List<Trail> InternalGetTrailsByListAccessOrderByDateDescending(bool includeImages, bool includeGpxBlob, AccessLevel[] allowedLevels, int topN, IMemoryCache cache, int cacheDurationSeconds)
+        internal List<Trail> InternalGetTrailsByListAccessOrderByDateDescending(bool includeImages, bool includeGpxBlob, bool includePlaces, AccessLevel[] allowedLevels, int topN, IMemoryCache cache, int cacheDurationSeconds)
         {
             var levelArgs = allowedLevels.OrderBy(l => l).Select(l => l.ToString().ToLowerInvariant());
             var coreArgs = new string[] { includeImages.ToString(), includeGpxBlob.ToString(), topN.ToString() };
@@ -591,7 +591,7 @@ namespace Trail365.Data
                 {
                     Take = topN,
                     IncludeImages = includeImages,
-                    IncludePlaces = false,
+                    IncludePlaces = includePlaces,
                     OrderBy = TrailQueryOrdering.DescendingCreationOrModificationDate,
                     IncludeGpxBlob = includeGpxBlob
                 };
