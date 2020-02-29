@@ -8,13 +8,14 @@
     string col_left = "col-3";
     string col_right = "col-3";
     string col_middle = "col-6";
-    string col_dyn = "col-xs-12 col-sm-6 col-md-4 col-lg-3";
+    string col_dyn = "col-xs-12 col-sm-4 col-md-3 col-lg-2";
+    string col_dyn_wide = "col-xs-12 col-sm-12 col-md-12 col-lg-12";
 }
 <div id="@divID">
+
     <div class="row no-gutters">
 
         <div class="@col_left pt-3 p">
-
             <a href="@Model.DetailsUrl" @Html.Raw(externalDetails ? "target='_blank'" : string.Empty) class="deal-link d-block">
                 <span>
                     <span class="month d-block position-relative text-center">@Model.StartTimeMonth()</span>
@@ -41,6 +42,15 @@
                     //a single row that contains MULTIPLE columns that may be stacked or not, depending on device size, and number of columns*@
                 }
 
+
+                @if (!string.IsNullOrEmpty(this.Model.CoverImageUrl))
+                {
+                    <div class="@col_dyn">
+                        <img class="img-responsive cover-news-image" src="@Model.CoverImageUrl" />
+                    </div>
+                }
+
+
                 @if (this.Model.Trail != null)
                 {
                     <div class="@col_dyn">
@@ -65,59 +75,30 @@
                     </div>
                 }
 
-                @if (!string.IsNullOrEmpty(this.Model.Excerpt) && false)
+                @if (!string.IsNullOrEmpty(this.Model.Excerpt))
                 {
-                    <div class="col-xs-12">
+                    <div class="@col_dyn_wide">
                         @HtmlHelperExtension.DisplayMultilineMarkdownAsRow(this.Html, this.Model.Excerpt, false, string.Empty, "pt-2", this.Model.DetailsUrl)
                     </div>
                 }
 
 
-                @if (!string.IsNullOrEmpty(this.Model.CoverImageUrl))
-                {
-                    <div class="@col_dyn">
-                        <img class="img-responsive cover-news-image" src="@Model.CoverImageUrl" />
-                    </div>
-                }
-
-
-                @if (!string.IsNullOrEmpty(this.Model.CoverImageUrl))
-                {
-                    <div class="@col_dyn">
-                        <img class="img-responsive cover-news-image" src="@Model.CoverImageUrl" />
-                    </div>
-                }
-
-
-                @if (!string.IsNullOrEmpty(this.Model.CoverImageUrl))
-                {
-                    <div class="@col_dyn">
-                        <img class="img-responsive cover-news-image" src="@Model.CoverImageUrl" />
-                    </div>
-                }
-
-                @if (!string.IsNullOrEmpty(this.Model.CoverImageUrl))
-                {
-                    <div class="@col_dyn">
-                        <img class="img-responsive cover-news-image" src="@Model.CoverImageUrl" />
-                    </div>
-                }
-
 
 
             </div>
 
-
-                </div>
-
-            <div class="@col_right pt-3">
-                <span class="place">@Model.GetHumanizedPlaceOrDefault()</span>
-                @if (this.Model.Login.IsModeratorOrHigher && this.Model.Place != null)
-                {
-                    <a class="fg-link" asp-area="Backend" asp-controller="Places" asp-action="Edit" asp-route-Id="@this.Model.Place.ID">[Edit]</a>
-                }
-                <p><span class="meetingpoint">@this.Model.GetMeetingPointOrDefault()</span></p>
-            </div>
 
         </div>
+
+        <div class="@col_right pt-3">
+            <span class="place">@Model.GetHumanizedPlaceOrDefault()</span>
+            @if (this.Model.Login.IsModeratorOrHigher && this.Model.Place != null)
+            {
+                <a class="fg-link" asp-area="Backend" asp-controller="Places" asp-action="Edit" asp-route-Id="@this.Model.Place.ID">[Edit]</a>
+            }
+            <p><span class="meetingpoint">@this.Model.GetMeetingPointOrDefault()</span></p>
+        </div>
+
+    </div>
+
 </div>
