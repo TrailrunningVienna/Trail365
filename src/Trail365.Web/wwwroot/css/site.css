@@ -223,6 +223,10 @@ span.meetingpoint {
   color: #90949c;
 }
 
+div.trail-meta {
+  font-size: 12px;
+}
+
 span.name {
   font-weight: 600;
   font-size: 14px;

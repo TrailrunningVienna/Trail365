@@ -15,19 +15,19 @@
         <div class="col-2 pt-3">
             @if (Model.DistanceKm.HasValue)
             {
-                <div class="">
+                <div class="trail-meta">
                     <i class="fas fa-arrows-alt-h"></i>&nbsp;@Model.DistanceKm.Value.ToKmFormat()<span class="">&nbsp;km</span>
                 </div>
             }
             @if (Model.Ascent.HasValue)
             {
-                <div class="">
+                <div class="trail-meta">
                     <i class="fas fa-arrow-up"></i>&nbsp;@Model.Ascent.ToIntFormat()<span class="">&nbsp;hm</span>
                 </div>
             }
             @if (Model.Descent.HasValue)
             {
-                <div class="">
+                <div class="trail-meta">
                     <i class="fas fa-arrow-down"></i>&nbsp;@Model.Descent.ToIntFormat()<span class="">&nbsp;hm</span>
                 </div>
             }
