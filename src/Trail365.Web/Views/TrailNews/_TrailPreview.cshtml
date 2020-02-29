@@ -73,18 +73,14 @@
 
 
         <div class="col-3 pt-3">
+
+            <span class="place">@Model.GetHumanizedPlaceOrDefault()</span>
+
             @if (this.Model.Login.IsModeratorOrHigher && this.Model.StartPlace!=null)
             {
-                <a class="fg-link" asp-area="Backend" asp-controller="Places" asp-action="Edit" asp-route-Id="@this.Model.StartPlace.ID">
-                    @Model.GetHumanizedPlaceOrDefault()
-                </a>
+              <a class="fg-link" asp-area="Backend" asp-controller="Places" asp-action="Edit" asp-route-Id="@this.Model.StartPlace.ID">[Edit]</a>
             }
-            else
-            {
-                <span>@Model.GetHumanizedPlaceOrDefault()</span>
-            }
-            <p></p>
-            <p class="time">@this.Model.GetMeetingPointOrDefault()</p>
+            <p><span class="meetingpoint">@this.Model.GetMeetingPointOrDefault()</span></p>
         </div>
 
     </div>

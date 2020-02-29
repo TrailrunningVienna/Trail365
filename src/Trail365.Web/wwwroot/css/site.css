@@ -212,6 +212,17 @@ div.square {
   position: relative;
 }
 
+span.place {
+  font-weight: normal;
+  font-size: 11px;
+}
+
+span.meetingpoint {
+  font-weight: normal;
+  font-size: 10px;
+  color: #90949c;
+}
+
 span.name {
   font-weight: 600;
   font-size: 14px;
