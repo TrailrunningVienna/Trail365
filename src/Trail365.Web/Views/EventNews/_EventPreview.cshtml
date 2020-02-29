@@ -8,11 +8,12 @@
     string col_left = "col-3";
     string col_right = "col-3";
     string col_middle = "col-6";
+    string col_dyn = "col-xs-12 col-sm-6 col-md-4 col-lg-3";
 }
 <div id="@divID">
-    <div class="row">
+    <div class="row no-gutters">
 
-        <div class="@col_left pt-3">
+        <div class="@col_left pt-3 p">
 
             <a href="@Model.DetailsUrl" @Html.Raw(externalDetails ? "target='_blank'" : string.Empty) class="deal-link d-block">
                 <span>
@@ -32,63 +33,91 @@
                         <span class="name">@Model.Name</span>
                     </div>
                 </div>
-
             </a>
 
-            @if (this.Model.Trail != null)
-            {
-                <a href="@this.Url.GetTrailDetailsUrl(Model.Trail.ID)" @Html.Raw(externalDetails ? "target='_blank'" : string.Empty) class="deal-link d-block">
 
-                    <div class="@row pt-2">
-                        <div class="col">
-                            @if (Model.Trail.DistanceKm.HasValue)
-                            {
-                                <div class="trail-meta">
-                                    <i class="fas fa-arrows-alt-h"></i>&nbsp;@Model.Trail.DistanceKm.Value.ToKmFormat()<span class="">&nbsp;km</span>
-                                </div>
-                            }
-                            @if (Model.Trail.Ascent.HasValue)
-                            {
-                                <div class="trail-meta">
-                                    <i class="fas fa-arrow-up"></i>&nbsp;@Model.Trail.Ascent.ToIntFormat()<span class="">&nbsp;hm</span>
-                                </div>
-                            }
-                            @if (Model.Trail.Descent.HasValue)
-                            {
-                                <div class="trail-meta">
-                                    <i class="fas fa-arrow-down"></i>&nbsp;@Model.Trail.Descent.ToIntFormat()<span class="">&nbsp;hm</span>
-                                </div>
-                            }
-                        </div>
-                    </div>
-                </a>
-            }
-            else
-            {
-                @if (!string.IsNullOrEmpty(this.Model.Excerpt))
-                {
-                    @HtmlHelperExtension.DisplayMultilineMarkdownAsRow(this.Html, this.Model.Excerpt, false, string.Empty, "pt-2", this.Model.DetailsUrl)
+            <div class="@row">
+                @{
+                    //a single row that contains MULTIPLE columns that may be stacked or not, depending on device size, and number of columns*@
                 }
 
-                @*@if (!string.IsNullOrEmpty(this.Model.CoverImageUrl))
+                @if (this.Model.Trail != null)
                 {
-                    <div class="@row pt-2">
-                        <div class="col">
-                            <img class="img-responsive cover-news-image" src="@Model.CoverImageUrl" />
-                        </div>
+                    <div class="@col_dyn">
+                        @if (Model.Trail.DistanceKm.HasValue)
+                        {
+                            <div class="trail-meta">
+                                <i class="fas fa-arrows-alt-h"></i>&nbsp;@Model.Trail.DistanceKm.Value.ToKmFormat()<span class="">&nbsp;km</span>
+                            </div>
+                        }
+                        @if (Model.Trail.Ascent.HasValue)
+                        {
+                            <div class="trail-meta">
+                                <i class="fas fa-arrow-up"></i>&nbsp;@Model.Trail.Ascent.ToIntFormat()<span class="">&nbsp;hm</span>
+                            </div>
+                        }
+                        @if (Model.Trail.Descent.HasValue)
+                        {
+                            <div class="trail-meta">
+                                <i class="fas fa-arrow-down"></i>&nbsp;@Model.Trail.Descent.ToIntFormat()<span class="">&nbsp;hm</span>
+                            </div>
+                        }
                     </div>
-                }*@
-            }
-        </div>
+                }
 
-        <div class="@col_right pt-3">
-            <span class="place">@Model.GetHumanizedPlaceOrDefault()</span>
-            @if (this.Model.Login.IsModeratorOrHigher && this.Model.Place != null)
-            {
-                <a class="fg-link" asp-area="Backend" asp-controller="Places" asp-action="Edit" asp-route-Id="@this.Model.Place.ID">[Edit]</a>
-            }
-            <p><span class="meetingpoint">@this.Model.GetMeetingPointOrDefault()</span></p>
-        </div>
+                @if (!string.IsNullOrEmpty(this.Model.Excerpt) && false)
+                {
+                    <div class="col-xs-12">
+                        @HtmlHelperExtension.DisplayMultilineMarkdownAsRow(this.Html, this.Model.Excerpt, false, string.Empty, "pt-2", this.Model.DetailsUrl)
+                    </div>
+                }
 
-    </div>
+
+                @if (!string.IsNullOrEmpty(this.Model.CoverImageUrl))
+                {
+                    <div class="@col_dyn">
+                        <img class="img-responsive cover-news-image" src="@Model.CoverImageUrl" />
+                    </div>
+                }
+
+
+                @if (!string.IsNullOrEmpty(this.Model.CoverImageUrl))
+                {
+                    <div class="@col_dyn">
+                        <img class="img-responsive cover-news-image" src="@Model.CoverImageUrl" />
+                    </div>
+                }
+
+
+                @if (!string.IsNullOrEmpty(this.Model.CoverImageUrl))
+                {
+                    <div class="@col_dyn">
+                        <img class="img-responsive cover-news-image" src="@Model.CoverImageUrl" />
+                    </div>
+                }
+
+                @if (!string.IsNullOrEmpty(this.Model.CoverImageUrl))
+                {
+                    <div class="@col_dyn">
+                        <img class="img-responsive cover-news-image" src="@Model.CoverImageUrl" />
+                    </div>
+                }
+
+
+
+            </div>
+
+
+                </div>
+
+            <div class="@col_right pt-3">
+                <span class="place">@Model.GetHumanizedPlaceOrDefault()</span>
+                @if (this.Model.Login.IsModeratorOrHigher && this.Model.Place != null)
+                {
+                    <a class="fg-link" asp-area="Backend" asp-controller="Places" asp-action="Edit" asp-route-Id="@this.Model.Place.ID">[Edit]</a>
+                }
+                <p><span class="meetingpoint">@this.Model.GetMeetingPointOrDefault()</span></p>
+            </div>
+
+        </div>
 </div>
