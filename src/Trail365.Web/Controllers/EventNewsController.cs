@@ -45,7 +45,7 @@ namespace Trail365.Web.Controllers
             EventQueryFilter filter = new EventQueryFilter(model.Login.GetListAccessPermissionsForCurrentLogin(), restrictToPublishedEventsOnly: true)
             {
                 IncludePlaces = true,
-                IncludeImages = false,
+                IncludeImages = true, //we need coverImage
                 IncludeTrails = includeTrails,
                 Take = _settings.MaxResultSize,
                 OrderBy = EventQueryOrdering.AscendingStartDate,

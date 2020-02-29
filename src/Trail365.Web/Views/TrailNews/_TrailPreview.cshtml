@@ -5,14 +5,17 @@
     var divID = $"{Model.ID}-Default";
     var detailsUrl = Url.GetTrailDetailsUrl(Model.ID);
     var externalDetails = false;
-    //ChallengeLevel overall = ViewData.GetOverallChallengeOrDefault(Model.Challenge);
     string row = "row no-gutters";
+    string col_left = "col-3";
+    string col_right = "col-3";
+    string col_middle = "col-6";
+
 }
 <div id="@divID">
 
     <div class="row">
 
-        <div class="col-2 pt-3">
+        <div class="@col_left pt-3">
             @if (Model.DistanceKm.HasValue)
             {
                 <div class="trail-meta">
@@ -33,7 +36,7 @@
             }
         </div>
 
-        <div class="col-7 pr-0 pt-3 border-top">
+        <div class="@col_middle pr-0 pt-3 border-top">
 
             <a href="@detailsUrl" @Html.Raw(externalDetails ? "target='_blank'" : string.Empty) class="deal-link d-block">
 
@@ -71,9 +74,7 @@
 
         </div>
 
-
-        <div class="col-3 pt-3">
-
+        <div class="@col_right pt-3">
             <span class="place">@Model.GetHumanizedPlaceOrDefault()</span>
 
             @if (this.Model.Login.IsModeratorOrHigher && this.Model.StartPlace!=null)

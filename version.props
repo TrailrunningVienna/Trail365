@@ -2,7 +2,7 @@
   <PropertyGroup>
     <MajorVersion>0</MajorVersion>
     <MinorVersion>16</MinorVersion>
-    <PatchVersion>13</PatchVersion>
+    <PatchVersion>14</PatchVersion>
     <PreReleaseLabel>preview</PreReleaseLabel>
     <VersionPrefix>$(MajorVersion).$(MinorVersion).$(PatchVersion)</VersionPrefix>
     <VersionSuffix Condition="'$(PreReleaseLabel)' == ''"></VersionSuffix>

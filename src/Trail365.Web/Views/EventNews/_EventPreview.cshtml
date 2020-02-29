@@ -4,24 +4,26 @@
     var divID = $"{Model.ID}-Default";
     var externalDetails = false;
     string row = "row no-gutters";
+
+    string col_left = "col-3";
+    string col_right = "col-3";
+    string col_middle = "col-6";
 }
 <div id="@divID">
     <div class="row">
 
-        <div class="col-2 pt-3">
+        <div class="@col_left pt-3">
 
             <a href="@Model.DetailsUrl" @Html.Raw(externalDetails ? "target='_blank'" : string.Empty) class="deal-link d-block">
-
                 <span>
                     <span class="month d-block position-relative text-center">@Model.StartTimeMonth()</span>
                     <span class="day d-block position-relative text-center">@Model.StartTimeDayOfMonth()</span>
                     <span class="time d-block position-relative text-center">@Model.StartTimeWeekDay() @Model.StartTimeClock()</span>
                 </span>
             </a>
-
         </div>
 
-        <div class="col-7 pr-0 pt-3 border-top">
+        <div class="@col_middle pr-0 pt-3 border-top">
 
             <a href="@Model.DetailsUrl" @Html.Raw(externalDetails ? "target='_blank'" : string.Empty) class="deal-link d-block">
 
@@ -32,7 +34,6 @@
                 </div>
 
             </a>
-
 
             @if (this.Model.Trail != null)
             {
@@ -66,15 +67,22 @@
             {
                 @if (!string.IsNullOrEmpty(this.Model.Excerpt))
                 {
-                    @HtmlHelperExtension.DisplayMultilineMarkdownAsRow(this.Html, this.Model.Excerpt, false, string.Empty, "pt-2", string.Empty)
+                    @HtmlHelperExtension.DisplayMultilineMarkdownAsRow(this.Html, this.Model.Excerpt, false, string.Empty, "pt-2", this.Model.DetailsUrl)
                 }
+
+                @*@if (!string.IsNullOrEmpty(this.Model.CoverImageUrl))
+                {
+                    <div class="@row pt-2">
+                        <div class="col">
+                            <img class="img-responsive cover-news-image" src="@Model.CoverImageUrl" />
+                        </div>
+                    </div>
+                }*@
             }
         </div>
 
-        <div class="col-3 pt-3">
-
+        <div class="@col_right pt-3">
             <span class="place">@Model.GetHumanizedPlaceOrDefault()</span>
-
             @if (this.Model.Login.IsModeratorOrHigher && this.Model.Place != null)
             {
                 <a class="fg-link" asp-area="Backend" asp-controller="Places" asp-action="Edit" asp-route-Id="@this.Model.Place.ID">[Edit]</a>

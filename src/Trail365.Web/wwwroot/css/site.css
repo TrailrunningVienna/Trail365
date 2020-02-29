@@ -727,6 +727,15 @@ img.story-detail-image {
   width: 100%;
 }
 
+img.cover-news-image {
+  object-fit: cover;
+  height: 60px;
+  max-width: 80px;
+  width: 100%;
+}
+
+
+
 img.story-album-image {
   margin-top: 8px;
   vertical-align: middle;
