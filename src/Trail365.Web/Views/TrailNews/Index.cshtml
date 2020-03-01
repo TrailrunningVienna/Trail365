@@ -5,3 +5,14 @@
 }
 
 <partial name="_ListIndexTrails" model="@Model" />
+
+@if (this.Model.Items.Any())
+{
+    <div class="row mt-4 mt-lg-2 mb-1">
+        <div class="col">
+            &nbsp;
+        </div>
+    </div>
+    <partial name="_TrailCollection" model="@Model" />
+}
+
