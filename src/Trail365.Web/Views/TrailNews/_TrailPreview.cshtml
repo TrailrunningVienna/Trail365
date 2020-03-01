@@ -6,16 +6,16 @@
     var detailsUrl = Url.GetTrailDetailsUrl(Model.ID);
     var externalDetails = false;
     string row = "row no-gutters";
-    string col_left = "col-3";
+    string col_left = "col-2";
     string col_right = "col-3";
-    string col_middle = "col-6";
+    string col_middle = "col-7";
 
 }
 <div id="@divID">
 
     <div class="row no-gutters">
 
-        <div class="@col_left pt-3">
+        <div class="@col_left pt-3 pl-2">
             @if (Model.DistanceKm.HasValue)
             {
                 <div class="trail-meta">

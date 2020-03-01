@@ -5,9 +5,9 @@
     var externalDetails = false;
     string row = "row no-gutters";
 
-    string col_left = "col-3";
+    string col_left = "col-2";
     string col_right = "col-3";
-    string col_middle = "col-6";
+    string col_middle = "col-7";
     string col_dyn = "col-xs-12 col-sm-4 col-md-3 col-lg-2";
     string col_dyn_wide = "col-xs-12 col-sm-12 col-md-12 col-lg-12";
 }
@@ -15,7 +15,7 @@
 
     <div class="row no-gutters">
 
-        <div class="@col_left pt-3 p">
+        <div class="@col_left pt-3 pr-2">
             <a href="@Model.DetailsUrl" @Html.Raw(externalDetails ? "target='_blank'" : string.Empty) class="deal-link d-block">
                 <span>
                     <span class="month d-block position-relative text-center">@Model.StartTimeMonth()</span>
