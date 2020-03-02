@@ -2,16 +2,17 @@
 
 @using Trail365
 @using Trail365.Configuration
-@model Trail365.ViewModels.NewsCollectionViewModel
+
+@model Trail365.ViewModels.EventCollectionViewModel
+
 @{
     ViewData["Title"] = "Events";
     ViewData["UnreadMessages"] = 0;
-    ViewData["OpenGraphTags"] = Model.CreateOpenGraphTags(this.Url, _settings.CurrentValue.FacebookSettings?.AppId);
+    //ViewData["OpenGraphTags"] = Model.CreateOpenGraphTags(this.Url, _settings.CurrentValue.FacebookSettings?.AppId);
     ViewData["NoConsent"] = Model.NoConsent;
-
 }
 
-@if (this.Model.News.Count > 0)
+@if (this.Model.Events.Any())
 {
     <div class="row mt-4 mt-lg-2 mb-1">
         <div class="col">
@@ -19,7 +20,7 @@
         </div>
     </div>
 
-    <partial name="_ListIndexNews" model="@Model" />
+    <partial name="_EventCollection" model="@Model" />
 }
 
 @if ((false) && (_settings.CurrentValue.Features.ShareOnFacebook) && (!this.Model.Scraping))

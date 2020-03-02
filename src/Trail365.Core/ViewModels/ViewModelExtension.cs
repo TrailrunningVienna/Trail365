@@ -83,7 +83,7 @@ namespace Trail365.ViewModels
                 ListAccess = story.ListAccess,
                 Excerpt = story.Excerpt,
                 TitleImageUrl = story.CoverImage?.Url,
-                TitleImageSize = (story.CoverImage==null ? System.Drawing.Size.Empty : story.CoverImage.GetImageSizeOrDefault())
+                TitleImageSize = (story.CoverImage == null ? System.Drawing.Size.Empty : story.CoverImage.GetImageSizeOrDefault())
             };
 
             vm.Login = login ?? throw new ArgumentNullException(nameof(login));
@@ -255,5 +255,47 @@ namespace Trail365.ViewModels
 
             return vm;
         }
+
+
+        public static TrailNewsViewModel ToTrailNewsViewModel(this Trail trail, LoginViewModel login)
+        {
+            if (trail == null) throw new ArgumentNullException(nameof(trail));
+
+            var vm = new TrailNewsViewModel
+            {
+                Name = trail.Name,
+                Description = trail.Description,
+                ID = trail.ID,
+                //Created = trail.CreatedUtc.ToLocalTime(),
+                //Modified = trail.ModifiedUtc,
+                //GpxUrl = trail.GpxBlob?.Url,
+                //GpxDownloadAccess = trail.GpxDownloadAccess,
+                //ListAccess = trail.ListAccess,
+                Excerpt = trail.Excerpt, //TODO if taril.Excerpt is empty, try to generate one from description!
+                Ascent = trail.AscentMeters,
+                Descent = trail.DescentMeters,
+            };
+
+            if (trail.StartPlace != null)
+            {
+                vm.StartPlace = trail.StartPlace.ToPlaceViewModel();
+            }
+
+            if (trail.EndPlace != null)
+            {
+                vm.EndPlace = trail.EndPlace.ToPlaceViewModel();
+            }
+
+            vm.Login = login ?? throw new ArgumentNullException(nameof(login));
+
+            if (trail.DistanceMeters.HasValue)
+            {
+                vm.DistanceKm = Convert.ToDouble(trail.DistanceMeters.Value) / 1000.000;
+            }
+
+
+            return vm;
+        }
+
     }
 }

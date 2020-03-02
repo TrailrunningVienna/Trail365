@@ -36,56 +36,6 @@ namespace Trail365.Web.Controllers
             _cache = cache ?? throw new ArgumentNullException(nameof(cache));
         }
 
-        public EventCollectionViewModel InitEventCollectionViewModel(EventCollectionViewModel model = null, LoginViewModel login = null, Guid? restrictToOwner = null, bool includeTrails = false, EventQueryOrdering ordering = EventQueryOrdering.AscendingStartDate)
-        {
-            if (model == null)
-            {
-                model = new EventCollectionViewModel();
-            }
-
-            if (login != null)
-            {
-                model.Login = login;
-            }
-            else
-            {
-                model.Login = LoginViewModel.CreateFromClaimsPrincipalOrDefault(this.User);
-            }
-            this.ViewData["Login"] = model.Login;
-
-            EventQueryFilter filter = new EventQueryFilter(model.Login.GetListAccessPermissionsForCurrentLogin(), restrictToPublishedEventsOnly: true)
-            {
-                IncludePlaces = true,
-                IncludeImages = true,
-                IncludeTrails = includeTrails,
-                Take = _settings.MaxResultSize,
-                OrderBy = ordering,
-                OwnerID = restrictToOwner
-            };
-
-            var eventList = _context.GetEventsByFilter(filter);
-
-            if (model.HasSearchText())
-            {
-                throw new NotImplementedException("Searchtext");
-            }
-
-            var trailList = eventList.Where(e => e.Trail != null).Select(e => e.Trail).ToArray();
-            var imagesList = _context.GetRelatedPreviewImages(trailList);
-
-            model.Events = eventList.Select(e =>
-            {
-                bool hasTrailPermission = false;
-                if (e.Trail != null)
-                {
-                    hasTrailPermission = model.Login.CanDo(e.Trail.ListAccess);
-                }
-                var tvm = e.ToEventViewModel(this.Url, model.Login, imagesList, hasTrailPermission).EnableEditLinkForPlaces().EnableDownloadLinkForTrail().EnableEditLinkForTrail();
-                return tvm;
-            }).OrderByDescending(item => item.StartDate).ToList();
-
-            return model;
-        }
 
         public HomeViewModel InitModel(HomeViewModel model = null, LoginViewModel login = null, Guid? restrictToOwner = null)
         {
@@ -129,12 +79,6 @@ namespace Trail365.Web.Controllers
         {
             model = this.InitModel(model);
             return this.View("Index", model);
-        }
-
-        public IActionResult Events(EventCollectionViewModel model)
-        {
-            model = this.InitEventCollectionViewModel(model);
-            return this.View("Events", model);
         }
 
         [Authorize()]

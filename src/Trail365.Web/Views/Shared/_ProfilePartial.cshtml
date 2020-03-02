@@ -3,27 +3,37 @@
 @using Trail365.Configuration
 @model Trail365.ViewModels.ProfileSettingsViewModel
 
-<div class="row">
+    <div class="row">
 
-    @if ((_settings.CurrentValue.Features.UserTrailUpload && (this.Model.Login.IsLoggedIn)) || (_settings.CurrentValue.Features.AdminTrailUpload && (this.Model.Login.IsAdmin)))
-    {
+        @if ((_settings.CurrentValue.Features.UserTrailUpload && (this.Model.Login.IsLoggedIn)) || (_settings.CurrentValue.Features.AdminTrailUpload && (this.Model.Login.IsAdmin)))
+        {
+            <div class="col-4 pr-0">
+                <a class="btn btn-lg btn-secondary w-100" asp-controller="Trail" asp-action="CreateTrail">
+                    <i class="fa fa-new-deal">&nbsp;</i>Trail uploaden
+                </a>
+            </div>
+        }
 
-        <div class="col-6 pr-0">
-            <a class="btn btn-lg btn-secondary w-100" asp-controller="Trail" asp-action="CreateTrail">
-                <i class="fa fa-new-deal">&nbsp;</i>Trail uploaden
-            </a>
-        </div>
-    }
+        @if ((_settings.CurrentValue.Features.UserStories && (this.Model.Login.IsLoggedIn)) || (_settings.CurrentValue.Features.AdminStories && (this.Model.Login.IsAdmin)))
+        {
+            <div class="col-4 pr-0">
+                <a class="btn btn-lg btn-secondary w-100" asp-controller="StoryUpload" asp-action="MultiBlockUpload">
+                    <i class="fa fa-new-deal">&nbsp;</i>Story uploaden
+                </a>
+            </div>
+        }
 
-    @if ((_settings.CurrentValue.Features.UserStories && (this.Model.Login.IsLoggedIn)) || (_settings.CurrentValue.Features.AdminStories && (this.Model.Login.IsAdmin)))
-    {
-        <div class="col-6 pr-0">
-            <a class="btn btn-lg btn-secondary w-100" asp-controller="StoryUpload" asp-action="MultiBlockUpload">
-                <i class="fa fa-new-deal">&nbsp;</i>Story uploaden
-            </a>
-        </div>
-    }
-</div>
+        @if (this.Model.Login.IsModeratorOrHigher)
+        {
+            <div class="col-4 pr-0">
+                <a class="btn btn-lg btn-secondary w-100" asp-area="Backend"  asp-controller="Events" asp-action="CreateEvent">
+                    <i class="fa fa-new-deal">&nbsp;</i>Event erstellen
+                </a>
+            </div>
+        }
+
+
+    </div>
 
 @if (Model.Login.BackendAvailable)
 {

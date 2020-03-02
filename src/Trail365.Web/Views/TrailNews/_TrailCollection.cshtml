@@ -1,0 +1,14 @@
+@using Trail365
+@model Trail365.ViewModels.TrailCollectionViewModel
+
+@if (Model.Items.Any())
+{
+    @foreach (var trail in Model.Items)
+    {
+        <partial name="_TrailPreview" model="@(trail)" />
+        @if (trail.ID != Model.Items.Last().ID)
+        {
+            @HtmlHelperExtension.EmptyRow(this.Html);
+        }
+    }
+}

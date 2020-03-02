@@ -6,8 +6,7 @@ namespace Trail365.ViewModels
     {
         public Guid? ID { get; set; }
         public bool? NoConsent { get; set; }
-
         public bool? Scraping { get; set; }
-
+        public bool? IgnoreCache { get; set; }
     }
 }

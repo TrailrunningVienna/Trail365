@@ -7,6 +7,8 @@ using System.Linq;
 using System.Threading;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using Trail365.Configuration;
 using Trail365.Data;
 using Trail365.Entities;
 using Trail365.Graphics;
@@ -17,14 +19,18 @@ namespace Trail365.Services
     public sealed class ScrapingService
     {
         private readonly BlobService BlobService;
+
         private readonly ILogger Logger;
 
+        private readonly AppSettings Settings;
         public MapScraper Scraper { get; private set; }
-        public ScrapingService(BlobService blobService, ILogger<ScrapingService> logger, MapScraper scraper)
+
+        public ScrapingService(BlobService blobService, ILogger<ScrapingService> logger, MapScraper scraper, IOptionsMonitor<AppSettings> settings)
         {
-            BlobService = blobService ?? throw new ArgumentNullException(nameof(blobService));
-            Logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            this.BlobService = blobService ?? throw new ArgumentNullException(nameof(blobService));
+            this.Logger = logger ?? throw new ArgumentNullException(nameof(logger));
             this.Scraper = scraper ?? throw new ArgumentNullException(nameof(scraper));
+            this.Settings = settings.CurrentValue ?? throw new ArgumentNullException(nameof(settings));
         }
 
         /// <summary>
@@ -274,7 +280,15 @@ namespace Trail365.Services
                 sizePart = $"&height={size.Height}&width={size.Width}";
             }
 
-            UriBuilder builder = new UriBuilder("https://trailexplorer-qa.azurewebsites.net/Index")
+            if (string.IsNullOrEmpty(this.Settings.TrailExplorerBaseUrl))
+            {
+                throw new InvalidOperationException($"AppSettings.{nameof(AppSettings.TrailExplorerBaseUrl)} not defined");
+            }
+
+            Uri baseUri = new UriBuilder(this.Settings.TrailExplorerBaseUrl).Uri;
+
+            Uri api = new Uri(baseUri, "/Index");
+            UriBuilder builder = new UriBuilder(api.ToString())
             {
                 Query = $"mode=snapshot&style=outdoor{sizePart}{debugPart}{sourcePart}"
             };

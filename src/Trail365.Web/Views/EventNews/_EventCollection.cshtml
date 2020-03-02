@@ -1,0 +1,15 @@
+@using Trail365
+@model Trail365.ViewModels.EventCollectionViewModel
+
+@if (Model.Events.Any())
+{
+    @foreach (var singleEvent in Model.Events)
+    {
+        <partial name="_EventPreview" model="@(singleEvent)" />
+
+        @if (singleEvent.ID != Model.Events.Last().ID)
+        {
+            @HtmlHelperExtension.EmptyRow(this.Html)
+        }
+    }
+}

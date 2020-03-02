@@ -1,6 +1,6 @@
 using MSS.GraphQL.Facebook;
 
-namespace Trail365.Web
+namespace Trail365.Services
 {
     public class FacebookEventData
     {

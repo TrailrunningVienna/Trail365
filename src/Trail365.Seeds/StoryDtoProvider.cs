@@ -78,6 +78,19 @@ namespace Trail365.Seeds
         }
 
 
+        public static StoryDto CreateChecklistAsStory(Guid? proposedID=null)
+        {
+            StoryDto dto = new StoryDto
+            {
+                ID = proposedID ?? Guid.NewGuid(),
+                Name = $"Checkliste",
+                ListAccess = AccessLevel.Public,
+            };
+            dto.AppendExcerpt("Unsere Regeln - our rules!");
+            dto.AppendText(System.IO.File.ReadAllText(Markdown.ChecklistFile));
+            return dto;
+        }
+
         public static StoryDto CreateUniquePicturestory()
         {
             StoryDto dto = new StoryDto
@@ -134,7 +147,8 @@ namespace Trail365.Seeds
             return CreateFromStoryDtos(
                   CreateUniquePicturestory(),
                   CreateExcerptandTextStoryWithoutTitleAndImages(Guid.NewGuid()),
-                  CreateUnique16Picturestory()
+                  CreateUnique16Picturestory(),
+                  CreateChecklistAsStory()
                 );
         }
         public StoryDto[] All { get; private set; }

@@ -13,7 +13,7 @@ using Trail365.Data;
 using Trail365.Services;
 using Trail365.Tasks;
 
-namespace Trail365.Web
+namespace Trail365.Web.Tasks
 {
     public class FacebookSyncTask : BackgroundTask
     {

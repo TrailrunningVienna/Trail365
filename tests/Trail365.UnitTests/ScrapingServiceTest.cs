@@ -43,36 +43,5 @@ namespace Trail365.UnitTests
                 Assert.True(trailToTest.MediumPreviewImageID.HasValue);
             }
         }
-
-        //[SkippableTheory]
-        //[InlineData(640)]
-        //[InlineData(320)]
-        //[InlineData(160)]
-        //[InlineData(1024)]
-        //public void ShouldScrapeUsingBrowserless(int squareLength)
-        //{
-        //    Skip.If(true);
-        //    PuppeteerScraper scraper = PuppeteerScraper.Create();
-        //    //scraper.FullPage = true;
-        //    var uri = new System.UriBuilder("https://trailexplorer-qa.azurewebsites.net/Index?mode=snapshot&style=outdoor&height=920&width=920&debug=true&gpxsource=https%3A%2F%2Fmssdev.blob.core.windows.net%2Fpublicblob%2Fgpx%2F440bcd3601374035bd426b3221df4291.gpx").Uri;
-
-        //    var resultAsPng = scraper.ScreenshotAsync(uri, new System.Drawing.Size(squareLength, squareLength)).GetAwaiter().GetResult();
-        //    System.IO.File.WriteAllBytes($"c:\\work\\previewBrowserless{squareLength}.png", resultAsPng);
-        //}
-
-        //[SkippableTheory]
-        //[InlineData(640)]
-        //[InlineData(320)]
-        //[InlineData(160)]
-        //[InlineData(1024)]
-        //public void ShouldScrapeUsingLocalChromium(int squareLength)
-        //{
-        //    Skip.If(true);
-        //    MapScraper scraper = PuppeteerScraper.Create();
-        //    var uri = new System.UriBuilder("https://trailexplorer-qa.azurewebsites.net/Index?mode=snapshot&style=outdoor&height=920&width=920&debug=true&gpxsource=https%3A%2F%2Fmssdev.blob.core.windows.net%2Fpublicblob%2Fgpx%2F440bcd3601374035bd426b3221df4291.gpx").Uri;
-
-        //    var resultAsPng = scraper.ScreenshotAsync(uri, new System.Drawing.Size(squareLength, squareLength)).GetAwaiter().GetResult();
-        //    System.IO.File.WriteAllBytes($"c:\\work\\previewLocal{squareLength}.png", resultAsPng);
-        //}
     }
 }

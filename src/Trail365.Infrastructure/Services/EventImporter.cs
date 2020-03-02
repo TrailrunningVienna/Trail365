@@ -7,7 +7,7 @@ using Microsoft.Extensions.Logging;
 using Trail365.Data;
 using Trail365.Entities;
 
-namespace Trail365.Web
+namespace Trail365.Services
 {
     public abstract class EventImporter<T>
     {
@@ -30,6 +30,6 @@ namespace Trail365.Web
 
         public List<Blob> InsertedImages { get; private set; } = new List<Blob>();
 
-        public abstract Task Import(T data, ILogger logger, CancellationToken cancellationToken = default(CancellationToken));
+        public abstract Task Import(T data, ILogger logger, CancellationToken cancellationToken = default);
     }
 }

@@ -14,13 +14,16 @@ namespace Trail365.Web.Controllers
         private readonly TrailContext _context;
         private readonly IMemoryCache _cache;
         private readonly AppSettings _settings;
-        public StoryViewModel InitStoryViewModel(Guid storyID)
+        public StoryViewModel InitStoryViewModel(Guid storyID, bool ignoreCache)
         {
             var login = LoginViewModel.CreateFromClaimsPrincipalOrDefault(this.User);
             StoryQueryFilter sqf = StoryQueryFilter.GetByID(storyID, true, login.GetListAccessPermissionsForCurrentLogin());
 
-            sqf.Cache = _cache;
-            sqf.AbsoluteExpiration = TimeSpan.FromSeconds(_settings.AbsoluteExpirationInSecondsRelativeToNow);
+            if (!ignoreCache)
+            {
+                sqf.Cache = _cache;
+                sqf.AbsoluteExpiration = TimeSpan.FromSeconds(_settings.AbsoluteExpirationInSecondsRelativeToNow);
+            }
 
             var story = _context.GetStoriesByFilter(sqf).SingleOrDefault();
 
@@ -36,7 +39,7 @@ namespace Trail365.Web.Controllers
         {
             if (requestModel.ID.HasValue == false) return base.BadRequest();
 
-            var model = this.InitStoryViewModel(requestModel.ID.Value);
+            var model = this.InitStoryViewModel(requestModel.ID.Value, requestModel.IgnoreCache ?? false);
 
             if (requestModel.Scraping.HasValue)
             {

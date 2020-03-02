@@ -1,13 +1,10 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Options;
 using Trail365.Configuration;
 using Trail365.Data;
-using Trail365.Entities;
-using Trail365.Internal;
 using Trail365.ViewModels;
 
 namespace Trail365.Web.Controllers
@@ -26,68 +23,67 @@ namespace Trail365.Web.Controllers
             _cache = cache ?? throw new ArgumentNullException(nameof(cache));
         }
 
-        public NewsCollectionViewModel InitNewsCollectionViewModel(bool scraping)
+
+        public EventCollectionViewModel InitEventCollectionViewModel(EventCollectionViewModel model = null, LoginViewModel login = null, Guid? restrictToOwner = null, bool includeTrails = false)
         {
-            var model = new NewsCollectionViewModel
+            if (model == null)
             {
-                Login = LoginViewModel.CreateFromClaimsPrincipalOrDefault(this.User)
+                model = new EventCollectionViewModel();
+            }
+
+            if (login != null)
+            {
+                model.Login = login;
+            }
+            else
+            {
+                model.Login = LoginViewModel.CreateFromClaimsPrincipalOrDefault(this.User);
+            }
+
+            this.ViewData["Login"] = model.Login;
+
+            EventQueryFilter filter = new EventQueryFilter(model.Login.GetListAccessPermissionsForCurrentLogin(), restrictToPublishedEventsOnly: true)
+            {
+                IncludePlaces = true,
+                IncludeImages = true, //we need coverImage
+                IncludeTrails = includeTrails,
+                Take = _settings.MaxResultSize,
+                OrderBy = EventQueryOrdering.AscendingStartDate,
+                OwnerID = restrictToOwner
             };
 
-            if (scraping)
+            //don't show the past on our news stream!
+            filter.StartTimeUtcMinValue = DateTime.UtcNow.AddHours(-5);
+
+            var eventList = _context.GetEventsByFilter(filter);
+
+            if (model.HasSearchText())
             {
-                model.Scraping = true;
-                return model;
+                throw new NotImplementedException("Searchtext");
             }
 
-            Features features = _settings.Features;
-            List<Tuple<Event, int>> fullEventList;
-
-            fullEventList = _context.GetEventStreamForNews(_settings.MaxPromotionSize, _settings.MaxResultSize, DateTime.UtcNow, _cache, model.Login.GetListAccessPermissionsForCurrentLogin(), _settings.AbsoluteExpirationInSecondsRelativeToNow).ToList().ToList();
-
-            Guard.Assert(fullEventList.Select(n => n.Item1.ID).Distinct().Count() == fullEventList.Count, "distinct alarm 3");
-
-            List<NewsViewModel> list = new List<NewsViewModel>();
-
-            var eventNews = this.Url.Transform(model.Login, fullEventList).ToList();
-            eventNews.ForEach(evm =>
+            model.Events = eventList.Select(e =>
             {
-                Guard.AssertNotNull(evm.EventItem);
-                if (evm.EventItem.Place != null)
+                bool hasTrailPermission = false;
+
+                if (e.Trail != null)
                 {
-                    evm.EventItem.Place.ShowEditLink = false;
+                    hasTrailPermission = model.Login.CanDo(e.Trail.ListAccess);
                 }
-                if (evm.EventItem.EndPlace != null)
-                {
-                    evm.EventItem.EndPlace.ShowEditLink = false;
-                }
-                if (evm.EventItem.Trail != null)
-                {
-                    evm.EventItem.Trail.ShowDownloadLink = false;
-                    evm.EventItem.Trail.ShowEditLink = false;
-                }
-            });
 
-            list.AddRange(eventNews);
+                var tvm = e.ToEventViewModel(this.Url, model.Login, null, hasTrailPermission).EnableEditLinkForTrail().HideChallenge();
+                return tvm;
 
-            model.News.Clear();
+            }).OrderBy(item => item.StartDate).ToList();
 
-            model.News.AddRange(list.OrderByDescending(n => n.Priority).ThenByDescending(n => n.Time));
-
-            Guard.Assert(list.Where(n => !n.OriginID.HasValue).Count() == 0, "originID expected");
-
-            if (list.Select(n => n.OriginID.Value).Distinct().Count() != list.Count)
-            {
-                list.ForEach(n => System.Diagnostics.Debug.WriteLine(n.OriginID));
-                //Guard.Assert(list.Select(n => n.OriginID.Value).Distinct().Count() == list.Count, "distinct alarm 2");
-            }
             return model;
         }
 
         public IActionResult Index(NewsRequestViewModel requestModel)
         {
-            var model = this.InitNewsCollectionViewModel(requestModel?.Scraping ?? false);
+            var model = this.InitEventCollectionViewModel(null, includeTrails: true);
             model.NoConsent = requestModel?.NoConsent ?? false;
-            return this.View("News", model);
+            return this.View("Index", model);
         }
     }
 }

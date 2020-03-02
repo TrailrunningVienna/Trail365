@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -29,45 +28,6 @@ namespace Trail365.Web.Controllers
         private readonly IMemoryCache _cache;
         private readonly IBackgroundTaskQueue _queue;
         private readonly IServiceScopeFactory _serviceScopeFactory;
-
-        public TrailCollectionViewModel InitTrailCollectionViewModel(TrailCollectionViewModel model)
-        {
-            if (model == null)
-            {
-                model = new TrailCollectionViewModel();
-            }
-
-            var includeImages = true;
-            var includeGpxBlob = true;
-
-            model.Login = LoginViewModel.CreateFromClaimsPrincipalOrDefault(this.User);
-
-            var trails = _context.GetTrailsByListAccessOrderByDateDescending(includeImages, includeGpxBlob, model.Login.GetListAccessPermissionsForCurrentLogin(), _settings.MaxResultSize, _cache, _settings.AbsoluteExpirationInSecondsRelativeToNow);
-
-            Blob[] imagesList = new Blob[] { };
-
-            if (includeImages)
-            {
-                imagesList = _context.GetRelatedPreviewImages(trails.ToArray());
-            }
-
-            List<TrailViewModel> list = new List<TrailViewModel>();
-
-            model.Items = trails.Select(t => t.ToTrailViewModel(model.Login, !includeImages, imagesList)).ToList();
-
-            model.Items.ForEach(tvm =>
-           {
-               tvm.ShowDownloadLink = false;
-               tvm.ShowEditLink = false;
-           });
-            return model;
-        }
-
-        public IActionResult Index(NewsRequestViewModel requestModel)
-        {
-            var model = this.InitTrailCollectionViewModel(null);
-            return this.View(model);
-        }
 
         private CreateTrailViewModel InitCreateTrailViewModel(CreateTrailViewModel model = null)
         {

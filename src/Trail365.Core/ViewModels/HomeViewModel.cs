@@ -8,13 +8,13 @@ namespace Trail365.ViewModels
 {
     public class HomeViewModel
     {
-        public TrailCollectionViewModel ToCollection()
-        {
-            return new TrailCollectionViewModel
-            {
-                Items = this.IndexTrails,
-            };
-        }
+        //public TrailCollectionViewModel ToCollection()
+        //{
+        //    return new TrailCollectionViewModel
+        //    {
+        //        Items = this.IndexTrails,
+        //    };
+        //}
 
         [HiddenInput]
         public LoginViewModel Login { get; set; } = new LoginViewModel();

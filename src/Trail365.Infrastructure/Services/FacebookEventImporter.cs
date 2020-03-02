@@ -11,7 +11,7 @@ using Trail365.Entities;
 using Trail365.Internal;
 using Trail365.Services;
 
-namespace Trail365.Web
+namespace Trail365.Services
 {
     public class FacebookEventImporter : EventImporter<FacebookEventData>
     {

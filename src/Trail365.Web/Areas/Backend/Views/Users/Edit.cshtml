@@ -100,23 +100,48 @@
         </div>
     </div>
 
-    @if (_settings.CurrentValue.Features.UserProfile)
+    @if (Model.Login.IsAdmin)
     {
-        foreach (var role in EntityExtension.GetAllRoleFlags())
-        {
-            <div class="row">
-                <div class="col-6">
-                    <h5>@role.ToString()</h5>
-                    @*<input class="w-100" placeholder="PLZ" />*@
-                </div>
-                <div class="col-3 text-right">
-                    <small class="fg-grey">@(Model.Login.UserRoles.HasFlag(role) ? "Freigabe" : "Gesperrt")</small><br />
-                    <input class="apple-switch-small ml-0" readonly />
-                </div>
+        <div class="row">
+            <div class="col-6">
+                <h5>Administrator</h5>
             </div>
-        }
+            <div class="col-3 pl-0 text-right">
+                <small class="fg-grey">@(Model.IsAdministrator ? "Freigabe" : "Gesperrt")</small><br />
+                <input asp-for="IsAdministrator" class="apple-switch-small ml-0" />
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-6">
+                <h5>Moderator</h5>
+            </div>
+            <div class="col-3 pl-0 text-right">
+                <small class="fg-grey">@(Model.IsModerator ? "Freigabe" : "Gesperrt")</small><br />
+                <input asp-for="IsModerator" class="apple-switch-small ml-0" />
+            </div>
+        </div>
     }
 
+    <div class="row">
+        <div class="col-6">
+            <h5>Member</h5>
+        </div>
+        <div class="col-3 pl-0 text-right">
+            <small class="fg-grey">@(Model.IsMember ? "Freigabe" : "Gesperrt")</small><br />
+            <input asp-for="IsMember" class="apple-switch-small ml-0" />
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-6">
+            <h5>User</h5>
+        </div>
+        <div class="col-3 pl-0 text-right">
+            <small class="fg-grey">@(Model.IsUser ? "Freigabe" : "Gesperrt")</small><br />
+            <input asp-for="IsUser" class="apple-switch-small ml-0" />
+        </div>
+    </div>
 
     <div class="row">
         <div class="col-4">

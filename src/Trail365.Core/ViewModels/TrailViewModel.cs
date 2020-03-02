@@ -7,56 +7,10 @@ using Trail365.Internal;
 
 namespace Trail365.ViewModels
 {
-    public class TrailViewModel
+
+    public class TrailViewModel : TrailViewModelBase
     {
-        public string GetHumanizedMetadata()
-        {
-            if ((this.DistanceKm.HasValue) && (this.Ascent.HasValue))
-            {
-                return $"{Convert.ToInt32(this.DistanceKm.Value).ToString()} km, {Convert.ToInt32(this.Ascent.Value).ToString()}HM (aufsteigend)";
-            }
-            if (this.DistanceKm.HasValue)
-            {
-                return $"{Convert.ToInt32(this.DistanceKm.Value).ToString()} km";
-            }
-            return string.Empty;
-        }
-
-        public bool ShowEditLink { get; set; }
-
-        public bool ShowDownloadLink { get; set; }
-
-        public bool HideName { get; set; }
-
-        public bool HideExcerpt { get; set; }
-
-        public LoginViewModel Login { get; set; } = new LoginViewModel();
-
-        /// <summary>
-        /// default to false;
-        /// </summary>
-        public bool NoConsent { get; set; }
-
-        /// <summary>
-        /// true if the calling request is coming from social media for scraping
-        /// </summary>
-        public bool Scraping { get; set; }
-        public ChallengeLevel Challenge { get; set; } = ChallengeLevel.Advanced;
-
-        public AccessLevel GpxDownloadAccess { get; set; }
-        public AccessLevel ListAccess { get; set; }
-
-        public bool CanDownload()
-        {
-            Guard.AssertNotNull(this.Login);
-            return this.Login.CanDo(this.GpxDownloadAccess);
-        }
-
-        public bool CanEdit()
-        {
-            Guard.AssertNotNull(this.Login);
-            return this.Login.IsAdmin || this.Login.IsModerator;
-        }
+        public string PreviewUrl { get; set; }
 
         public Dictionary<string, string> CreateOpenGraphTags(IUrlHelper helper, Size imageSize, string appID)
         {
@@ -89,9 +43,58 @@ namespace Trail365.ViewModels
             return ogDict;
         }
 
-        public Guid ID { get; set; } = Guid.NewGuid();
+        public string GetHumanizedMetadata()
+        {
+            if ((this.DistanceKm.HasValue) && (this.Ascent.HasValue))
+            {
+                return $"{Convert.ToInt32(this.DistanceKm.Value).ToString()} km, {Convert.ToInt32(this.Ascent.Value).ToString()}HM (aufsteigend)";
+            }
+            if (this.DistanceKm.HasValue)
+            {
+                return $"{Convert.ToInt32(this.DistanceKm.Value).ToString()} km";
+            }
+            return string.Empty;
+        }
 
-        public string Name { get; set; }
+        public bool ShowEditLink { get; set; }
+
+        public bool ShowDownloadLink { get; set; }
+
+        public bool ShowChallenge { get; set; } = true;
+
+        public bool HideName { get; set; }
+
+        public bool HideExcerpt { get; set; }
+
+
+        /// <summary>
+        /// default to false;
+        /// </summary>
+        public bool NoConsent { get; set; }
+
+        /// <summary>
+        /// true if the calling request is coming from social media for scraping
+        /// </summary>
+        public bool Scraping { get; set; }
+
+        public ChallengeLevel Challenge { get; set; } = ChallengeLevel.Advanced;
+
+        public AccessLevel GpxDownloadAccess { get; set; }
+
+        public AccessLevel ListAccess { get; set; }
+
+        public bool CanDownload()
+        {
+            Guard.AssertNotNull(this.Login);
+            return this.Login.CanDo(this.GpxDownloadAccess);
+        }
+
+        public bool CanEdit()
+        {
+            Guard.AssertNotNull(this.Login);
+            return this.Login.IsAdmin || this.Login.IsModerator;
+        }
+
 
         /// <summary>
         /// specially used in Track-Creation and upload scenarios
@@ -187,7 +190,6 @@ namespace Trail365.ViewModels
 
         public string ElevationProfile_Proficiency_Url { get; set; }
 
-        public string PreviewUrl { get; set; }
 
         public string SmallPreviewUrl { get; set; }
 
@@ -213,23 +215,14 @@ namespace Trail365.ViewModels
             return v.ToDateFormatForDefault();
         }
 
-        public string Description { get; set; }
-
         /// <summary>
         /// Gpx is stored on external systems, this is the Link!
         /// </summary>
         public string GpxUrl { get; set; }
 
-        public string Excerpt { get; set; }
-
-        public double? DistanceKm { get; set; }
-
-        public int? Ascent { get; set; }
-        public int? Descent { get; set; }
-
-        public string GetTrailAnalyzerUrl(IUrlHelper url)
+        public string GetTrailAnalyzerUrl(string trailExplorerBaseUrl, IUrlHelper url)
         {
-            return url.GetTrailExplorerUrlOrDefault(this.GpxUrl);
+            return url.GetTrailExplorerUrlOrDefault(trailExplorerBaseUrl, this.GpxUrl);
         }
     }
 }

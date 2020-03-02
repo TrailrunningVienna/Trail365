@@ -35,5 +35,11 @@
         itemIndex += items.Count;
         continue;
     }
+
+    if (currentItem.BlockType == StoryBlockType.Text)
+    {
+        @HtmlHelperExtension.DisplayMultilineMarkdownAsRowOrNothing(this.Html, currentItem.Content, string.Empty);
+    }
+
     itemIndex += 1;
 }
