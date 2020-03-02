@@ -14,15 +14,16 @@ Issues currently are managed in this [Github repository](https://github.com/Trai
 - [icon8](https://icons8.com/icons/set)
 
 ## Progress
-Date|Status
----|---
-21.08.2019|start deployment (GitFlow Rules) from branch 'master' to app-service 'trail365' on D1WindowsProduction 
-22.08.2019|start deployment from branch 'develop' to app-service 'trail365-qa' on D1WindowsStaging
-04.09.2019|v0.0.210 released to master/prod
-05.09.2019|System.Drawing.Common (windows) replaced with another X-Plat Drawing Engine, refactoring to MSS.Core.Graphics
-04.11.2019|v0.2.0 event sync with FB
-08.11.2019|v0.3.0 backend and API improvements for Tracks (track database online) 
-05.01.2020|v0.9.0 migrate to asp net core 3.1
+Date|Version|Status
+---|---|---
+21.08.2019||start deployment (GitFlow Rules) from branch 'master' to app-service 'trail365' on D1WindowsProduction 
+22.08.2019||start deployment from branch 'develop' to app-service 'trail365-qa' on D1WindowsStaging
+04.09.2019|v0.0.210| released to master/prod
+05.09.2019||System.Drawing.Common (windows) replaced with another X-Plat Drawing Engine, refactoring to MSS.Core.Graphics
+04.11.2019|v0.2.0|event sync with FB
+08.11.2019|v0.3.0|backend and API improvements for Tracks (track database online) 
+05.01.2020|v0.9.0|migrate to asp net core 3.1
+02.03.2020|v0.20.0|Newststream for Events and Trails simplified and shortened, layout refinements
 
 ## TODO 
 
