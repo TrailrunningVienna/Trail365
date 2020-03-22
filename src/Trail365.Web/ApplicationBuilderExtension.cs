@@ -235,7 +235,10 @@ namespace Trail365.Web
             }
             else
             {
-                app.UseStaticFileDeliveryForGpx(settings); //proxy over blobstorage
+                if (settings.CloudStorageEnabled)
+                {
+                    app.UseStaticFileDeliveryForGpx(settings); //proxy over blobstorage
+                }
             }
             return app;
         }
