@@ -18,7 +18,7 @@ namespace Trail365.Configuration
         public string GetResolvedCloudStorageConnectionString()
         {
             var rawConnectionString = string.Format("{0}", this.CloudStorage);
-            return System.Environment.ExpandEnvironmentVariables(rawConnectionString);
+            return System.Environment.ExpandEnvironmentVariables(rawConnectionString).Trim();
         }
 
         public static bool TryGetSqliteFileInfo(string connectionStringresolved, out System.IO.FileInfo file)
