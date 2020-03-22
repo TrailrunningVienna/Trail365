@@ -21,6 +21,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using TrackExplorer.Core;
 using Trail365.Configuration;
 using Trail365.Data;
 using Trail365.Services;
@@ -85,6 +86,15 @@ namespace Trail365.Web
             services.AddAuthorization();
 
             services.AddControllers();
+
+            services.AddSingleton<CoordinateClassifier>((isp) =>
+            {
+                LookupDataProvider ldp = new VectorTileLookupDataProvider(@"https://trex.blob.core.windows.net/tiles");
+                CoordinateClassifier classifier = new LookupCoordinateClassifier(ldp);
+                return classifier;
+            });
+
+
 
             services.Configure<CookiePolicyOptions>(options =>
             {
