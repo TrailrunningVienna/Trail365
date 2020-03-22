@@ -97,6 +97,11 @@ namespace Trail365.Configuration
         /// </summary>
         public int CloudStorageMaxAgeSeconds { get; set; } = 60 * 60 * 24 * 7;  //TODO rename, it is also used for FileSystemBlob!
 
+        /// <summary>
+        /// Default = 24h
+        /// </summary>
+        public int MaxAgeInSecondsForStaticAssets { get; set; } = 60 * 60 * 24;
+
         public bool HasInstrumentationKey()
         {
             return !string.IsNullOrEmpty(this.APPINSIGHTS_INSTRUMENTATIONKEY);
