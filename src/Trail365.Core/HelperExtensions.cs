@@ -365,6 +365,8 @@ namespace Trail365
             }
         }
 
+        public static string GetStorageProxyBaseUrl(this IUrlHelper url) => url.AbsoluteUrl(RouteName.StorageProxyRoute);
+
         public static string GetApiTrailBaseUrl(this IUrlHelper url) => url.AbsoluteUrl(RouteName.TrailsApi);
 
         public static string GetUserOnBackendLink(this IUrlHelper url, Guid id) => url.AbsoluteUrl($"Backend/Users/Details/{id.ToString()}");

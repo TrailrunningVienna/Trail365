@@ -39,5 +39,7 @@ namespace Trail365
         public const string StoryIndex = "story/index";
 
         public const string BackendStoriesIndex = "backend/stories/index";
+
+        public const string StorageProxyRoute = "gpxproxy";
     }
 }
