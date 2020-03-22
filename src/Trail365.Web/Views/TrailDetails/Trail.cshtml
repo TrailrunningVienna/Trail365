@@ -19,6 +19,20 @@
         allPictures = new string[] { this.Url.GetDefaultEmptyImageUrl() };
     }
     this.ViewBag.HideIdentifierRow = true; //_TrailMetadata behavior
+    string downloadUrl=null;
+    string downloadAttrib=null;
+    if (this.Model.CanDownload())
+    {
+        if (_settings.CurrentValue.TryGetActiveCloudStorageContainerName(out string containerName))
+        {
+            this.Model.GetDownloadUrl(this.Url, containerName, out downloadUrl, out downloadAttrib);
+        }
+        else
+        {
+            downloadUrl = this.Model.GpxUrl;
+            downloadAttrib = this.Model.GpxDownloadFileName;
+        }
+    }
 }
 
 <div class="row">
@@ -90,7 +104,7 @@
 {
     <div class="row mt-2">
         <div class="col-12">
-            <a class="btn btn-lg btn-primary w-100" href="@Model.GpxUrl" download="mygpx.gpx">Gpx-DownloadD</a>
+            <a class="btn btn-lg btn-primary w-100" href="@downloadUrl" download="@downloadAttrib">Gpx-Download</a>
         </div>
     </div>
 }

@@ -1,9 +1,40 @@
+using System;
 using System.IO;
 
 namespace Trail365.Configuration
 {
     public class AppSettings
     {
+
+        public bool TryGetActiveCloudStorageContainerName(out string containerName)
+        {
+            //multiple usecases: Cloud enabled but config not completed/working
+            //cloud not used
+            containerName = null;
+            if (this.CloudStorageEnabled == false)
+            {
+                return false;
+            }
+            containerName = System.Environment.ExpandEnvironmentVariables(string.Format("{0}", this.CloudStorageRootContainerName));
+            if (string.IsNullOrEmpty(containerName)) throw new InvalidOperationException("containerName for CloudStorage not defined");
+            return true;
+        }
+
+        public bool TryGetActiveCloudStorageConnectionString(out string connectionString)
+        {
+            //multiple usecases: Cloud enabled but config not completed/working
+            //cloud not used
+            connectionString = null;
+            if (this.CloudStorageEnabled == false)
+            {
+                return false;
+            }
+
+            string expandedConnectionString = this.ConnectionStrings.GetResolvedCloudStorageConnectionString();
+            if (string.IsNullOrEmpty(expandedConnectionString)) throw new InvalidOperationException("connectionString for CloudStorage not defined");
+            return true;
+        }
+
         public bool TryGetResolvedBackupDirectory(out DirectoryInfo directory)
         {
             directory = null;

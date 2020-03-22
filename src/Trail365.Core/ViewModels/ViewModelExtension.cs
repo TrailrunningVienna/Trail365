@@ -198,6 +198,11 @@ namespace Trail365.ViewModels
                 Descent = trail.DescentMeters,
             };
 
+            if (trail.GpxBlob != null)
+            {
+                vm.GpxDownloadFileName = trail.GpxBlob.OriginalFileName;
+            }
+
             vm.Login = login ?? throw new ArgumentNullException(nameof(login));
 
             if (trail.DistanceMeters.HasValue)
