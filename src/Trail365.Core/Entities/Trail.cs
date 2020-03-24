@@ -41,6 +41,11 @@ namespace Trail365.Entities
 
         public Blob GpxBlob { get; set; }
 
+
+        public Guid? AnalyzerBlobID { get; set; }
+
+        public Blob AnalyzerBlob { get; set; }
+
         /// <summary>
         /// userID of the owner, null if "system" or "undefined"
         /// </summary>

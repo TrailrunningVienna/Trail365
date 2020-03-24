@@ -43,6 +43,38 @@ namespace Trail365.Web.Controllers
             return this.RedirectToAction("Trail", "TrailDetails", new { id = trail.ID });
         }
 
+        [Authorize(Roles = "Admin,Moderator")]
+        public IActionResult CalculateTrailClassification(Guid? id)
+        {
+            if (id == null)
+            {
+                return this.NotFound();
+            }
+
+            Trail trail = null;
+
+            using (var t = _context.DependencyTracker(nameof(this.CalculateTrailClassification)))
+            {
+                trail = _context.Trails.Find(id);
+            }
+
+            if (trail == null)
+            {
+                return this.NotFound();
+            }
+
+            var task = BackgroundTaskFactory.CreateTask<TrailAnalyzerTask>(this._serviceScopeFactory, this.Url);
+            task.Trail = trail;
+            task.Queue(this._queue);
+
+            this.TempData["Info"] = $"Trail Klassifizierung für '{trail.Name}' wurde im Hintergrund gestartet! Das Ergebnis sollte in wenigen Minuten für alle User sichtbar sein.";
+
+            return this.RedirectToAction("Trail", "TrailDetails", new { id = trail.ID });
+        }
+
+
+
+
         public TrailPreviewController(TrailContext context, IServiceScopeFactory serviceScopeFactory, IBackgroundTaskQueue queue)
         {
             _context = context ?? throw new ArgumentNullException(nameof(context));

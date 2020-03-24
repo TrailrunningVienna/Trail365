@@ -55,7 +55,7 @@ namespace TrackExplorer.Core
                 MultiLineString ms = new MultiLineString(lol.ToArray());
                 AttributesTable attribs = new AttributesTable();
                 if (!string.IsNullOrEmpty(c))
-                attribs.Add("outdoor_class", c);
+                    attribs.Add("outdoor_class", c);
                 output.Add(new Feature(ms, attribs));
             }
             return output;
@@ -189,6 +189,16 @@ namespace TrackExplorer.Core
             }
             return sb.ToString();
         }
+
+
+        public static void SerializeFeatureCollectionIntoGeoJson(this FeatureCollection featureCollection, Stream targetStream)
+        {
+            using (var writer = new StreamWriter(targetStream,leaveOpen:true))
+            {
+                SerializeFeatureCollectionIntoGeoJson(featureCollection, writer);
+            }
+        }
+
 
         public static void SerializeFeatureCollectionIntoGeoJson(this FeatureCollection featureCollection, TextWriter writer)
         {

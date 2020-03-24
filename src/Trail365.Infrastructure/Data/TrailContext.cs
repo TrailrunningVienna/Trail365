@@ -104,6 +104,12 @@ namespace Trail365.Data
                 .HasForeignKey(t => t.GpxBlobID)
                 .HasConstraintName("FK_Trail_GpxBlob");
 
+            modelBuilder.Entity<Trail>()
+                .HasOne(t => t.AnalyzerBlob)
+                .WithMany()
+                .HasForeignKey(t => t.AnalyzerBlobID)
+                .HasConstraintName("FK_Trail_AnalyzerBlob");
+
             modelBuilder.Entity<Event>()
                 .HasOne(e => e.Place)
                 .WithMany()

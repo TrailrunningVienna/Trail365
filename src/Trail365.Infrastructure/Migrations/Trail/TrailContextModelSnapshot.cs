@@ -318,6 +318,9 @@ namespace Trail365.Migrations
                     b.Property<int?>("AltitudeAtStart")
                         .HasColumnType("INTEGER");
 
+                    b.Property<Guid?>("AnalyzerBlobID")
+                        .HasColumnType("TEXT");
+
                     b.Property<int?>("AscentMeters")
                         .HasColumnType("INTEGER");
 
@@ -412,6 +415,8 @@ namespace Trail365.Migrations
 
                     b.HasKey("ID");
 
+                    b.HasIndex("AnalyzerBlobID");
+
                     b.HasIndex("ElevationProfileImageID");
 
                     b.HasIndex("EndPlaceID");
@@ -481,6 +486,11 @@ namespace Trail365.Migrations
 
             modelBuilder.Entity("Trail365.Entities.Trail", b =>
                 {
+                    b.HasOne("Trail365.Entities.Blob", "AnalyzerBlob")
+                        .WithMany()
+                        .HasForeignKey("AnalyzerBlobID")
+                        .HasConstraintName("FK_Trail_AnalyzerBlob");
+
                     b.HasOne("Trail365.Entities.Blob", "ElevationProfileImage")
                         .WithMany()
                         .HasForeignKey("ElevationProfileImageID")
