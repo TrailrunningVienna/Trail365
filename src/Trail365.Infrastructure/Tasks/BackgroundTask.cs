@@ -6,6 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Trail365.Data;
+using Trail365.Internal;
 
 namespace Trail365.Tasks
 {
@@ -78,16 +79,16 @@ namespace Trail365.Tasks
 
                             if (!string.IsNullOrEmpty(this.Caption))
                             {
-                                suffix = $" ({this.Caption})";
+                                suffix = $"{this.Caption}";
                             }
 
                             try
                             {
-                                engineLogger.LogTrace(TaskStarted, $"{currentTaskName}{suffix} started.");
+                                engineLogger.LogTrace(TaskStarted, $"Task started {suffix}".Trim() + ".");
                                 var sw = Stopwatch.StartNew();
                                 await this.Execute(cts);
                                 sw.Stop();
-                                engineLogger.LogInformation(TaskSuccess, $"{currentTaskName}{suffix} completed with success in {sw.ElapsedMilliseconds} ms.");
+                                engineLogger.LogInformation(TaskSuccess, $"Task {suffix}".Trim() + $" completed with success in {sw.Elapsed.ToFormattedDuration()}.");
                             }
                             catch (Exception ex)
                             {

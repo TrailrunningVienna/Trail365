@@ -145,7 +145,6 @@ namespace Trail365.Web
                     dictionary.Add(nameof(settings.GitHubAuthentication), settings.GitHubAuthentication);
 
                     dictionary.Add(nameof(settings.AllowRobots), settings.AllowRobots);
-                    dictionary.Add(nameof(settings.DisableImageDelivery), settings.DisableImageDelivery);
                     dictionary.Add(nameof(settings.MaxResultSize), settings.MaxResultSize);
                     dictionary.Add(nameof(settings.MaxPromotionSize), settings.MaxPromotionSize);
 
