@@ -26,6 +26,8 @@ using Trail365.Configuration;
 using Trail365.Data;
 using Trail365.Services;
 using Trail365.Tasks;
+using System.Collections;
+using System.Collections.Generic;
 
 namespace Trail365.Web
 {
@@ -146,6 +148,23 @@ namespace Trail365.Web
             services.AddSingleton<IBackgroundTaskQueue, BackgroundTaskQueue>();
         }
 
+        public static JObject EntryToJson(HealthReportEntry report)
+        {
+            List<JProperty> properties = new List<JProperty>()
+            {
+               new JProperty("status", report.Status.ToString()),
+            };
+            if (!string.IsNullOrEmpty(report.Description))
+            {
+                properties.Add(new JProperty("description", report.Description));
+            }
+            if (report.Data.Count > 0)
+            {
+                properties.Add(new JProperty("settings", new JObject(report.Data.Select(p => new JProperty(p.Key, p.Value)))));
+            }
+            return new JObject(properties.ToArray());
+        }
+
         /// <summary>
         ///
         /// </summary>
@@ -156,18 +175,42 @@ namespace Trail365.Web
         private static Task DefaultApiInfoHealthResponse(HttpContext httpContext, HealthReport result)
         {
             httpContext.Response.ContentType = "application/json";
-            var json = new JObject(
+
+            var items = result.Entries.Select(re => new Tuple<string, JObject>(re.Key, EntryToJson(re.Value)));
+            var jItems = items.Select(i => new JProperty(i.Item1, i.Item2));
+
+            List<object> rootItems = new List<object>()
+            {
                 new JProperty("Status", result.Status.ToString()),
                 new JProperty("Version", Helper.GetProductVersionFromEntryAssembly()),
                 new JProperty("ProcessUpTime", Helper.GetUptime()),
                 new JProperty("ProcessStartTime", Helper.GetStartTime()),
-                new JProperty("results", new JObject(result.Entries.Select(pair =>
-                    new JProperty(pair.Key, new JObject(
-                        new JProperty("status", pair.Value.Status.ToString()),
-                        new JProperty("description", pair.Value.Description),
-                        new JProperty("data", new JObject(pair.Value.Data.Select(p => new JProperty(p.Key, p.Value))))))))));
+            };
+
+            rootItems.Add(new JProperty("components", new JObject(jItems)));
+
+            var json = new JObject(rootItems.ToArray());
+
             return httpContext.Response.WriteAsync(json.ToString(Formatting.Indented));
         }
+
+        //private static Task DefaultApiInfoHealthResponse(HttpContext httpContext, HealthReport result)
+        //{
+        //    httpContext.Response.ContentType = "application/json";
+        //    var json = new JObject(
+        //        new JProperty("Status", result.Status.ToString()),
+        //        new JProperty("Version", Helper.GetProductVersionFromEntryAssembly()),
+        //        new JProperty("ProcessUpTime", Helper.GetUptime()),
+        //        new JProperty("ProcessStartTime", Helper.GetStartTime()),
+        //        new JProperty("results", new JObject(result.Entries.Select(pair =>
+        //            new JProperty(pair.Key, new JObject(
+        //                new JProperty("status", pair.Value.Status.ToString()),
+        //                new JProperty("description", pair.Value.Description),
+        //                new JProperty("data", new JObject(pair.Value.Data.Select(p => new JProperty(p.Key, p.Value))))))))));
+
+        //    return httpContext.Response.WriteAsync(json.ToString(Formatting.Indented));
+        //}
+
 
         public static void ConfigureRobotsTxt(IWebHostEnvironment environment, bool allowRobots)
         {
@@ -335,7 +378,7 @@ namespace Trail365.Web
             app.UseHealthChecks("/health", new HealthCheckOptions()
             {
                 // This custom writer formats the detailed status as JSON.
-                ResponseWriter = DefaultApiInfoHealthResponse
+                ResponseWriter = DefaultApiInfoHealthResponse,
             });
 
             app.UseAuthorization(); //The call to app.UseAuthorization() must appear between app.UseRouting() and app.UseEndpoints(...).

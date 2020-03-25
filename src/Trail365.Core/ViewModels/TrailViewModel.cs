@@ -221,6 +221,11 @@ namespace Trail365.ViewModels
         public string GpxUrl { get; set; }
 
         /// <summary>
+        /// gpx converted into geoJson and some classifications applied!
+        /// </summary>
+        public string AnalyzerUrl { get; set; }
+
+        /// <summary>
         /// proposed filename on the client side download (html "download" attribute)
         /// </summary>
         public string GpxDownloadFileName { get; set; }
@@ -243,7 +248,7 @@ namespace Trail365.ViewModels
 
         public string GetTrailAnalyzerUrl(string trailExplorerBaseUrl, IUrlHelper url)
         {
-            return url.GetTrailExplorerUrlOrDefault(trailExplorerBaseUrl, this.GpxUrl);
+            return url.GetTrailExplorerUrlOrDefault(trailExplorerBaseUrl, this.AnalyzerUrl);
         }
     }
 }

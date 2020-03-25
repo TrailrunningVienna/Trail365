@@ -9,6 +9,7 @@ using System.Net.Http.Headers;
 using System.Security.Claims;
 using System.Text.Encodings.Web;
 using System.Text.Json;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -30,6 +31,24 @@ using Trail365.Services;
 
 namespace Trail365.Web
 {
+    public class AppSettingsHealthCheck : IHealthCheck
+    {
+
+        Task<HealthCheckResult> IHealthCheck.CheckHealthAsync(HealthCheckContext context, CancellationToken cancellationToken)
+        {
+            var healthCheckResultHealthy = false;
+
+            if (healthCheckResultHealthy)
+            {
+                return Task.FromResult(
+                    HealthCheckResult.Healthy("A healthy result."));
+            }
+
+            return Task.FromResult(
+                HealthCheckResult.Unhealthy("An unhealthy result."));
+        }
+    }
+
     public static class ServiceCollectionExtension
     {
         public static IServiceCollection ConfigureServices(this IServiceCollection services, IConfiguration configuration)
@@ -92,7 +111,72 @@ namespace Trail365.Web
 
             IWebHostEnvironment thisEnv = services.BuildServiceProvider().GetRequiredService<IWebHostEnvironment>();
 
-            IHealthChecksBuilder healthChecksBuilder = services.AddHealthChecks();
+            IHealthChecksBuilder healthChecksBuilder = services.AddHealthChecks();//.AddCheck("AppSettings", new AppSettingsHealthCheck());
+
+
+            //healthChecksBuilder.AddCheck("AppSettings", () =>
+            //{
+            //    var isp = healthChecksBuilder.Services.BuildServiceProvider();
+            //    AppSettings settings = isp.GetRequiredService<IOptions<AppSettings>>().Value;
+            //    IWebHostEnvironment env = isp.GetRequiredService<IWebHostEnvironment>();
+
+            //    Dictionary<string, object> dictionary = new Dictionary<string, object>
+            //    {
+            //       // { nameof(settings.BackgroundServiceDisabled), settings.BackgroundServiceDisabled.ToString() }
+            //    };
+
+            //    if (env.IsDevelopment())
+            //    {
+            //    }
+
+            //    ReadOnlyDictionary<string, object> roDict = new ReadOnlyDictionary<string, object>(dictionary);
+
+            //    HealthCheckResult r = new HealthCheckResult(HealthStatus.Degraded, description: string.Format("XXXX{0}", env.EnvironmentName), data: roDict);
+            //    return r;
+            //});
+
+
+            healthChecksBuilder.AddCheck("TrailExplorer", () =>
+            {
+                var isp = healthChecksBuilder.Services.BuildServiceProvider();
+                AppSettings settings = isp.GetRequiredService<IOptions<AppSettings>>().Value;
+                IWebHostEnvironment env = isp.GetRequiredService<IWebHostEnvironment>();
+
+                Dictionary<string, object> dictionary = new Dictionary<string, object>
+                {
+                    { nameof(settings.TrailExplorerBaseUrl), $"{settings.TrailExplorerBaseUrl}" }
+                };
+
+                var proposedHealthStatatus = HealthStatus.Healthy;
+                string proposedDescription = null;
+
+                if (env.IsDevelopment())
+                {
+                    if (settings.Features.TrailAnalyzer)
+                    {
+                        if (string.IsNullOrEmpty(settings.TrailExplorerBaseUrl))
+                        {
+                            proposedHealthStatatus = HealthStatus.Degraded;
+                            proposedDescription = $"Feature '{nameof(settings.Features.TrailAnalyzer)}' is enabled but setting '{nameof(settings.TrailExplorerBaseUrl)}' is empty";
+                        }
+                    }
+
+                    if (settings.SyncEnabled)
+                    {
+                        if (string.IsNullOrEmpty(settings.BackupDirectory))
+                        {
+                            proposedHealthStatatus = HealthStatus.Degraded;
+                            proposedDescription = "BackupDirectory not defined but Sync is enabled!";
+                        }
+                    }
+
+                }
+                ReadOnlyDictionary<string, object> roDict = new ReadOnlyDictionary<string, object>(dictionary);
+                HealthCheckResult r = new HealthCheckResult(proposedHealthStatatus, proposedDescription, data: roDict);
+                return r;
+            });
+
+
 
             healthChecksBuilder.AddCheck("App", () =>
             {
@@ -105,12 +189,14 @@ namespace Trail365.Web
                     { nameof(settings.BackgroundServiceDisabled), settings.BackgroundServiceDisabled.ToString() }
                 };
 
+                var proposedHealthStatatus = HealthStatus.Healthy;
+
                 if (env.IsDevelopment())
                 {
                     dictionary.Add(nameof(settings.HasInstrumentationKey), settings.HasInstrumentationKey());
                     dictionary.Add(nameof(settings.RunMigrationsAtStartup), settings.RunMigrationsAtStartup);
                     dictionary.Add(nameof(settings.PuppeteerEnabled), settings.PuppeteerEnabled);
-                    dictionary.Add(nameof(settings.TrailExplorerBaseUrl), $"{settings.TrailExplorerBaseUrl}");
+                    //dictionary.Add(nameof(settings.TrailExplorerBaseUrl), $"{settings.TrailExplorerBaseUrl}");
 
                     dictionary.Add(nameof(settings.GoogleAuthentication), settings.GoogleAuthentication);
                     dictionary.Add(nameof(settings.FacebookAuthentication), settings.FacebookAuthentication);
@@ -148,7 +234,7 @@ namespace Trail365.Web
                     dictionary.Add("ResolvedTaskDBConnectionString", settings.ConnectionStrings.GetResolvedTaskDBConnectionString());
                 }
                 ReadOnlyDictionary<string, object> roDict = new ReadOnlyDictionary<string, object>(dictionary);
-                HealthCheckResult r = new HealthCheckResult(HealthStatus.Healthy, description: string.Format("{0}", env.EnvironmentName), data: roDict);
+                HealthCheckResult r = new HealthCheckResult(proposedHealthStatatus, description: string.Format("{0}", env.EnvironmentName), data: roDict);
                 return r;
             });
 
