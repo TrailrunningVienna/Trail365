@@ -4,6 +4,7 @@ using Xunit;
 
 namespace Trail365.UnitTests
 {
+    [Trait("Category", "BuildVerification")]
     public class VectorTileLookupDataProviderTest
     {
         [Fact]
@@ -16,7 +17,6 @@ namespace Trail365.UnitTests
             var gpxFileBoundaries = gpxFileFeatureCollection.GetBoundaries();
             var mvtLocationUri = MvtTiles.GetDirectoryUri();
             string url = mvtLocationUri.ToString(); //@"https://trex.blob.core.windows.net/tiles";
-
             VectorTileLookupDataProvider provider = new VectorTileLookupDataProvider(url, "outdoor", 12);
 
             //Act
