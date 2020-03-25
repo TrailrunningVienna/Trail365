@@ -1,33 +1,25 @@
 using System;
 using System.Globalization;
 using System.IO;
-using System.Linq;
 using System.Net;
-using System.Threading.Tasks;
 using Microsoft.ApplicationInsights;
 using Microsoft.ApplicationInsights.Channel;
 using Microsoft.ApplicationInsights.WindowsServer.TelemetryChannel;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using TrackExplorer.Core;
 using Trail365.Configuration;
 using Trail365.Data;
 using Trail365.Services;
 using Trail365.Tasks;
-using System.Collections;
-using System.Collections.Generic;
 
 namespace Trail365.Web
 {
@@ -148,68 +140,7 @@ namespace Trail365.Web
             services.AddSingleton<IBackgroundTaskQueue, BackgroundTaskQueue>();
         }
 
-        public static JObject EntryToJson(HealthReportEntry report)
-        {
-            List<JProperty> properties = new List<JProperty>()
-            {
-               new JProperty("status", report.Status.ToString()),
-            };
-            if (!string.IsNullOrEmpty(report.Description))
-            {
-                properties.Add(new JProperty("description", report.Description));
-            }
-            if (report.Data.Count > 0)
-            {
-                properties.Add(new JProperty("settings", new JObject(report.Data.Select(p => new JProperty(p.Key, p.Value)))));
-            }
-            return new JObject(properties.ToArray());
-        }
 
-        /// <summary>
-        ///
-        /// </summary>
-        /// <param name="httpContext"></param>
-        /// <param name="result"></param>
-        /// <param name="settings">in case of Environment==Development we print out some settings</param>
-        /// <returns></returns>
-        private static Task DefaultApiInfoHealthResponse(HttpContext httpContext, HealthReport result)
-        {
-            httpContext.Response.ContentType = "application/json";
-
-            var items = result.Entries.Select(re => new Tuple<string, JObject>(re.Key, EntryToJson(re.Value)));
-            var jItems = items.Select(i => new JProperty(i.Item1, i.Item2));
-
-            List<object> rootItems = new List<object>()
-            {
-                new JProperty("Status", result.Status.ToString()),
-                new JProperty("Version", Helper.GetProductVersionFromEntryAssembly()),
-                new JProperty("ProcessUpTime", Helper.GetUptime()),
-                new JProperty("ProcessStartTime", Helper.GetStartTime()),
-            };
-
-            rootItems.Add(new JProperty("components", new JObject(jItems)));
-
-            var json = new JObject(rootItems.ToArray());
-
-            return httpContext.Response.WriteAsync(json.ToString(Formatting.Indented));
-        }
-
-        //private static Task DefaultApiInfoHealthResponse(HttpContext httpContext, HealthReport result)
-        //{
-        //    httpContext.Response.ContentType = "application/json";
-        //    var json = new JObject(
-        //        new JProperty("Status", result.Status.ToString()),
-        //        new JProperty("Version", Helper.GetProductVersionFromEntryAssembly()),
-        //        new JProperty("ProcessUpTime", Helper.GetUptime()),
-        //        new JProperty("ProcessStartTime", Helper.GetStartTime()),
-        //        new JProperty("results", new JObject(result.Entries.Select(pair =>
-        //            new JProperty(pair.Key, new JObject(
-        //                new JProperty("status", pair.Value.Status.ToString()),
-        //                new JProperty("description", pair.Value.Description),
-        //                new JProperty("data", new JObject(pair.Value.Data.Select(p => new JProperty(p.Key, p.Value))))))))));
-
-        //    return httpContext.Response.WriteAsync(json.ToString(Formatting.Indented));
-        //}
 
 
         public static void ConfigureRobotsTxt(IWebHostEnvironment environment, bool allowRobots)
@@ -318,10 +249,11 @@ namespace Trail365.Web
                 console = System.Console.Out;
             }
 
-            //in Docker we must assume that every app start means a fresh container without data
-            //each DBFile must be restored from the persistent storage location
-            if (settings.SyncEnabled)
+
+            if (settings.SyncEnabled && !string.IsNullOrEmpty(settings.BackupDirectory)) //health status has warning if status is not consistent
             {
+                //in Docker we must assume that every app start means a fresh container without data
+                //each DBFile must be restored from the persistent storage location
                 app.UseSqliteBackupSync(settings, console);
             }
 
@@ -378,7 +310,7 @@ namespace Trail365.Web
             app.UseHealthChecks("/health", new HealthCheckOptions()
             {
                 // This custom writer formats the detailed status as JSON.
-                ResponseWriter = DefaultApiInfoHealthResponse,
+                ResponseWriter = HealthChecksExtension.DefaultApiInfoHealthResponse,
             });
 
             app.UseAuthorization(); //The call to app.UseAuthorization() must appear between app.UseRouting() and app.UseEndpoints(...).

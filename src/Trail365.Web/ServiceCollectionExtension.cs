@@ -9,14 +9,12 @@ using System.Net.Http.Headers;
 using System.Security.Claims;
 using System.Text.Encodings.Web;
 using System.Text.Json;
-using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OAuth;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.Azure.Storage;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -31,23 +29,6 @@ using Trail365.Services;
 
 namespace Trail365.Web
 {
-    public class AppSettingsHealthCheck : IHealthCheck
-    {
-
-        Task<HealthCheckResult> IHealthCheck.CheckHealthAsync(HealthCheckContext context, CancellationToken cancellationToken)
-        {
-            var healthCheckResultHealthy = false;
-
-            if (healthCheckResultHealthy)
-            {
-                return Task.FromResult(
-                    HealthCheckResult.Healthy("A healthy result."));
-            }
-
-            return Task.FromResult(
-                HealthCheckResult.Unhealthy("An unhealthy result."));
-        }
-    }
 
     public static class ServiceCollectionExtension
     {
@@ -111,8 +92,7 @@ namespace Trail365.Web
 
             IWebHostEnvironment thisEnv = services.BuildServiceProvider().GetRequiredService<IWebHostEnvironment>();
 
-            IHealthChecksBuilder healthChecksBuilder = services.AddHealthChecks();//.AddCheck("AppSettings", new AppSettingsHealthCheck());
-
+            IHealthChecksBuilder healthChecksBuilder = services.AddHealthChecks();
 
             //healthChecksBuilder.AddCheck("AppSettings", () =>
             //{
@@ -135,48 +115,10 @@ namespace Trail365.Web
             //    return r;
             //});
 
-
-            healthChecksBuilder.AddCheck("TrailExplorer", () =>
-            {
-                var isp = healthChecksBuilder.Services.BuildServiceProvider();
-                AppSettings settings = isp.GetRequiredService<IOptions<AppSettings>>().Value;
-                IWebHostEnvironment env = isp.GetRequiredService<IWebHostEnvironment>();
-
-                Dictionary<string, object> dictionary = new Dictionary<string, object>
-                {
-                    { nameof(settings.TrailExplorerBaseUrl), $"{settings.TrailExplorerBaseUrl}" }
-                };
-
-                var proposedHealthStatatus = HealthStatus.Healthy;
-                string proposedDescription = null;
-
-                if (env.IsDevelopment())
-                {
-                    if (settings.Features.TrailAnalyzer)
-                    {
-                        if (string.IsNullOrEmpty(settings.TrailExplorerBaseUrl))
-                        {
-                            proposedHealthStatatus = HealthStatus.Degraded;
-                            proposedDescription = $"Feature '{nameof(settings.Features.TrailAnalyzer)}' is enabled but setting '{nameof(settings.TrailExplorerBaseUrl)}' is empty";
-                        }
-                    }
-
-                    if (settings.SyncEnabled)
-                    {
-                        if (string.IsNullOrEmpty(settings.BackupDirectory))
-                        {
-                            proposedHealthStatatus = HealthStatus.Degraded;
-                            proposedDescription = "BackupDirectory not defined but Sync is enabled!";
-                        }
-                    }
-
-                }
-                ReadOnlyDictionary<string, object> roDict = new ReadOnlyDictionary<string, object>(dictionary);
-                HealthCheckResult r = new HealthCheckResult(proposedHealthStatatus, proposedDescription, data: roDict);
-                return r;
-            });
-
-
+            healthChecksBuilder.AddTrailExplorerFeatureStatus();
+            healthChecksBuilder.AddBackupFeatureStatus();
+            healthChecksBuilder.AddBlobFeatureStatus();
+            healthChecksBuilder.AddBackgroundServiceStatus();
 
             healthChecksBuilder.AddCheck("App", () =>
             {
@@ -238,40 +180,6 @@ namespace Trail365.Web
                 return r;
             });
 
-            healthChecksBuilder.AddCheck("Blob", () =>
-            {
-                var isp = healthChecksBuilder.Services.BuildServiceProvider();
-                AppSettings settings = isp.GetRequiredService<IOptions<AppSettings>>().Value;
-                IWebHostEnvironment env = isp.GetRequiredService<IWebHostEnvironment>();
-
-                Dictionary<string, object> dictionary = new Dictionary<string, object>
-                {
-                    { nameof(settings.CloudStorageEnabled), settings.CloudStorageEnabled }
-                };
-
-                if (env.IsDevelopment())
-                {
-                    string accountName = "N/A";
-
-                    if (settings.CloudStorageEnabled)
-                    {
-                        if (CloudStorageAccount.TryParse(settings.ConnectionStrings.GetResolvedCloudStorageConnectionString(), out var account))
-                        {
-                            accountName = account.Credentials.AccountName;
-                        }
-                    }
-                    dictionary.Add("CloudStorageRootContainerName", settings.CloudStorageRootContainerName);
-                    dictionary.Add("CloudStorageMaxAgeSeconds", settings.CloudStorageMaxAgeSeconds);
-                    dictionary.Add("CloudStorageAccount", accountName);
-                    dictionary.Add(nameof(settings.FileSystemBlobServiceBrowserEnabled), settings.FileSystemBlobServiceBrowserEnabled);
-                    dictionary.Add(nameof(settings.FileSystemBlobServiceRequestPath), settings.FileSystemBlobServiceRequestPath);
-                    dictionary.Add(nameof(settings.FileSystemBlobServiceRootDirectory), settings.FileSystemBlobServiceRootDirectory);
-                }
-
-                ReadOnlyDictionary<string, object> roDict = new ReadOnlyDictionary<string, object>(dictionary);
-                HealthCheckResult r = new HealthCheckResult(HealthStatus.Healthy, description: "binary large objects settings", data: roDict);
-                return r;
-            });
 
             healthChecksBuilder.AddCheck("Globalization", () =>
             {

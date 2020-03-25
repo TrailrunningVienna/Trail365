@@ -13,7 +13,7 @@ namespace Trail365.Tasks
     {
         public string Caption { get; set; }
 
-        internal ILogger logger = NullLogger.Instance;
+        internal ILogger QueueLogger = NullLogger.Instance;
 
         public BackgroundTaskContext Context { get; set; }
 
@@ -25,26 +25,30 @@ namespace Trail365.Tasks
         public void Queue(IBackgroundTaskQueue queue, bool disabledLogging = false)
         {
             if (queue == null) throw new ArgumentNullException(nameof(queue));
+
             if (this.Context == null)
             {
                 throw new InvalidOperationException("Context must be set");
             }
-            queue.QueueBackgroundWorkItem(this.CreateWorkItemForQueue(this.Context, disabledLogging));
+            queue.QueueBackgroundWorkItem(this.CreateWorkItemForQueue(this.Context, this.QueueLogger, disabledLogging));
         }
 
         private static readonly EventId TaskStarted = new EventId(300, nameof(TaskStarted));
         private static readonly EventId TaskSuccess = new EventId(301, nameof(TaskSuccess));
         private static readonly EventId TaskError = new EventId(301, nameof(TaskError));
 
-        private Func<CancellationToken, Task> CreateWorkItemForQueue(BackgroundTaskContext context, bool logDisabled)
+        private Func<CancellationToken, Task> CreateWorkItemForQueue(BackgroundTaskContext context, ILogger logger, bool logDisabled)
         {
             if (context == null) throw new ArgumentNullException(nameof(context));
             if (logger == null) throw new InvalidOperationException(nameof(logger));
+
             Func<CancellationToken, Task> result = async (cts) =>
             {
                 using (var scope = context.ServiceScopeFactory.CreateScope())
                 {
                     context.ServiceProvider = scope.ServiceProvider;
+
+                    string currentTaskName = this.GetType().Name;
 
                     using (var loggerFactory = new LoggerFactory())
                     {
@@ -54,8 +58,8 @@ namespace Trail365.Tasks
                         {
                             loggerFactory.AddProvider(loggerProvider);
 
-                            var engineLogger = loggerFactory.CreateLogger(nameof(BackgroundTask)); //logging to TaskLog but as a Engine Category, not as a Task-Implementation Category!
-
+                            //var engineLogger = loggerFactory.CreateLogger(nameof(BackgroundTask)); //logging to TaskLog but as a Engine Category, not as a Task-Implementation Category!
+                            var engineLogger = loggerFactory.CreateLogger(currentTaskName); //WM 03/2020 logging with the final category => user context!
                             try
                             {
                                 this.OnBeforeExecute();
@@ -67,18 +71,19 @@ namespace Trail365.Tasks
                                 return;
                             }
 
-                            string currentTaskName = this.GetType().Name;
-                            context.DefaultLogger = context.LoggerFactory.CreateLogger(currentTaskName);
+                            //context.DefaultLogger = context.LoggerFactory.CreateLogger(currentTaskName);
+                            context.DefaultLogger = engineLogger;
+
                             string suffix = string.Empty;
 
                             if (!string.IsNullOrEmpty(this.Caption))
                             {
-                                suffix = $" {this.Caption}";
+                                suffix = $" ({this.Caption})";
                             }
 
                             try
                             {
-                                engineLogger.LogInformation(TaskStarted, $"{currentTaskName}{suffix} started.");
+                                engineLogger.LogTrace(TaskStarted, $"{currentTaskName}{suffix} started.");
                                 var sw = Stopwatch.StartNew();
                                 await this.Execute(cts);
                                 sw.Stop();

@@ -7,6 +7,14 @@ namespace Trail365.Tasks
 {
     public static class BackgroundTaskFactory
     {
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="serviceScopeFactory"></param>
+        /// <param name="urlHelper"></param>
+        /// <param name="logger">fallback logger used by the task engine</param>
+        /// <returns></returns>
         public static T CreateTask<T>(IServiceScopeFactory serviceScopeFactory, IUrlHelper urlHelper, ILogger logger = null) where T : BackgroundTask, new()
         {
             var t = new T();
@@ -16,10 +24,12 @@ namespace Trail365.Tasks
                 ServiceScopeFactory = serviceScopeFactory
             };
             t.Context = cntx;
+
             if (logger != null)
             {
-                t.logger = logger;
+                t.QueueLogger = logger;
             }
+
             return t;
         }
     }
