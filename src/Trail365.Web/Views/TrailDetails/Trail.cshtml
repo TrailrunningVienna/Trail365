@@ -93,9 +93,18 @@
 {
     <div class="row mt-2">
         <div class="col-12">
-            <a class="btn btn-lg btn-primary w-100" href="@Model.GetTrailAnalyzerUrl(_settings.CurrentValue.TrailExplorerBaseUrl, this.Url)" target="_blank">
-                Trail-Analyse
-            </a>
+            @if (string.IsNullOrEmpty(this.Model.AnalyzerUrl))
+            {
+                <a class="btn btn-lg btn-primary w-100 disabled">
+                    Trail-Analyse
+                </a>
+            }
+            else
+            {
+                <a class="btn btn-lg btn-primary w-100" href="@Model.GetTrailAnalyzerUrl(_settings.CurrentValue.TrailExplorerBaseUrl, this.Url)" target="_blank">
+                    Trail-Analyse
+                </a>
+            }
         </div>
     </div>
 }

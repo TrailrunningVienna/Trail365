@@ -55,11 +55,9 @@ namespace Trail365.Tasks
                     {
                         context.LoggerFactory = loggerFactory;
                         var dbContext = context.ServiceProvider.GetRequiredService<TaskContext>();
-                        using (ILoggerProvider loggerProvider = new BackgroundTaskLoggingProvider(dbContext, logDisabled))
+                        using (BackgroundTaskLoggingProvider loggerProvider = new BackgroundTaskLoggingProvider(dbContext, logDisabled))
                         {
                             loggerFactory.AddProvider(loggerProvider);
-
-                            //var engineLogger = loggerFactory.CreateLogger(nameof(BackgroundTask)); //logging to TaskLog but as a Engine Category, not as a Task-Implementation Category!
                             var engineLogger = loggerFactory.CreateLogger(currentTaskName); //WM 03/2020 logging with the final category => user context!
                             try
                             {
@@ -72,7 +70,6 @@ namespace Trail365.Tasks
                                 return;
                             }
 
-                            //context.DefaultLogger = context.LoggerFactory.CreateLogger(currentTaskName);
                             context.DefaultLogger = engineLogger;
 
                             string suffix = string.Empty;
@@ -85,6 +82,7 @@ namespace Trail365.Tasks
                             try
                             {
                                 engineLogger.LogTrace(TaskStarted, $"Task started {suffix}".Trim() + ".");
+                                loggerProvider.Flush(); //start must be visible immediately
                                 var sw = Stopwatch.StartNew();
                                 await this.Execute(cts);
                                 sw.Stop();

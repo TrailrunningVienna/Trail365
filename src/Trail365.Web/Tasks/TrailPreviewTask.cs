@@ -45,7 +45,7 @@ namespace Trail365.Web.Tasks
             var scopedTrail = await scopedDB.Trails.Include(t => t.GpxBlob).Where(t => t.ID == this.Trail.ID).SingleOrDefaultAsync();
             await this.CalculateTrailPreview(scopedTrail, scopedDB, scopedScrapingService, this.Context.Url, this.Context.DefaultLogger);
             var dbchanges = await scopedDB.SaveChangesAsync();
-            this.Context.DefaultLogger.LogTrace($"{nameof(TrailPreviewTask)}.DBContext.SaveChanges={dbchanges} ({this.Trail.Name})");
+            this.Context.DefaultLogger.LogTrace($"DBContext.SaveChanges={dbchanges} ({this.Trail.Name})");
         }
 
         private async Task CalculateTrailPreview(Trail trail, TrailContext _context, ScrapingService _scrapingService, IUrlHelper url, ILogger logger)
