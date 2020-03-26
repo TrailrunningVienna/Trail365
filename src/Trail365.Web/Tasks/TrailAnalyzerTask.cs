@@ -11,7 +11,6 @@ using Microsoft.Extensions.Logging;
 using NetTopologySuite.Features;
 using NetTopologySuite.Geometries;
 using NetTopologySuite.IO;
-using TrackExplorer.Core;
 using Trail365.Data;
 using Trail365.Entities;
 using Trail365.Internal;

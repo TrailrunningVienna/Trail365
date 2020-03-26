@@ -8,9 +8,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using NetTopologySuite.Features;
 using NetTopologySuite.Geometries;
-using TrackExplorer.Core.TileParser;
+using Trail365.TileParser;
 
-namespace TrackExplorer.Core
+namespace Trail365
 {
     public class VectorTileLookupDataProvider : LookupDataProvider
     {

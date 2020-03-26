@@ -1,7 +1,6 @@
 using NetTopologySuite.Geometries;
 using Xunit;
 using NetTopologySuite.Features;
-using TrackExplorer.Core;
 
 namespace Trail365.UnitTests
 {

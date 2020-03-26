@@ -6,7 +6,7 @@ using NetTopologySuite.Features;
 using NetTopologySuite.Geometries;
 using Trail365.Internal;
 
-namespace TrackExplorer.Core
+namespace Trail365
 {
 
     public class LookupCoordinateClassifier : CoordinateClassifier

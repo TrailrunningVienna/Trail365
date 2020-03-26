@@ -1,7 +1,7 @@
 using System;
 using NetTopologySuite.Geometries;
 
-namespace TrackExplorer.Core.TileParser
+namespace Trail365.TileParser
 {
     public static class CoordinateExtensions
     {

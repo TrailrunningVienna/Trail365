@@ -1,4 +1,3 @@
-using TrackExplorer.Core;
 using Xunit;
 using Trail365.Web.Tasks;
 

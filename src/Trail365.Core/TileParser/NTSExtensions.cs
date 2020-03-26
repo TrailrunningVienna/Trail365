@@ -4,7 +4,7 @@ using NetTopologySuite.Geometries;
 using NetTopologySuite.Operation.Distance;
 using Trail365.Internal;
 
-namespace TrackExplorer.Core
+namespace Trail365
 {
     public static class NTSExtensions
     {

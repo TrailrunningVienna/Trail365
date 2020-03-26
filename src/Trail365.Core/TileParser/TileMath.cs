@@ -1,7 +1,7 @@
 using System;
 using System.Drawing;
 
-namespace TrackExplorer.Core.TileParser
+namespace Trail365.TileParser
 {
 
 

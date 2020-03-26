@@ -1,7 +1,7 @@
 using NetTopologySuite.Features;
 using NetTopologySuite.Geometries;
 
-namespace TrackExplorer.Core
+namespace Trail365
 {
     // API Design: NO async patterns on the public surface, assuming that this is called isnide web-requests and there is a higher level task management running
     // this class may be also running as a worker where the engine is handling concurrency and the code can be written in old sync way

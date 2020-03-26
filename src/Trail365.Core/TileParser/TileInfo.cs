@@ -1,7 +1,7 @@
 using System.Drawing;
 using System;
 
-namespace TrackExplorer.Core.TileParser
+namespace Trail365.TileParser
 {
     public class TileInfo
     {

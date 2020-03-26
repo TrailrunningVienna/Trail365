@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace TrackExplorer.Core.TileParser
+namespace Trail365.TileParser
 {
     public class VTPolygon
     {

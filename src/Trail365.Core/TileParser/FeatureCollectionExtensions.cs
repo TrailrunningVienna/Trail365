@@ -8,7 +8,7 @@ using NetTopologySuite.Geometries;
 using NetTopologySuite.IO;
 using Newtonsoft.Json;
 
-namespace TrackExplorer.Core
+namespace Trail365
 {
     public static class FeatureCollectionExtensions
     {

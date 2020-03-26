@@ -4,7 +4,7 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace TrackExplorer.Core
+namespace Trail365
 {
     // API Design: some async pattern implemented because the class is handling resources/tasks where async make sense (lot of waitings)
 

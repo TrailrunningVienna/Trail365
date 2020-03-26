@@ -1,7 +1,7 @@
 using System;
 using NetTopologySuite.Geometries;
 
-namespace TrackExplorer.Core
+namespace Trail365
 {
     public class CoordinateClassification
     {

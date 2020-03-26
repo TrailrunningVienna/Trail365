@@ -15,7 +15,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using TrackExplorer.Core;
 using Trail365.Configuration;
 using Trail365.Data;
 using Trail365.Services;

@@ -1,4 +1,4 @@
-namespace TrackExplorer.Core.TileParser
+namespace Trail365.TileParser
 {
     [ProtoBuf.ProtoContract(Name = @"tile")]
     public sealed class Tile : ProtoBuf.IExtensible

@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace TrackExplorer.Core.TileParser
+namespace Trail365.TileParser
 {
     public static class EnumerableExtensions
     {

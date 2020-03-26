@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 
-namespace TrackExplorer.Core
+namespace Trail365
 {
     public static class UriExtensions
     {
