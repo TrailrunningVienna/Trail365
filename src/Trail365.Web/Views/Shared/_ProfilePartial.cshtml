@@ -49,18 +49,25 @@
 
 @if (Model.Login.IsModeratorOrHigher)
 {
-    <div class="row">
-        <div class="col-6 mt-4">
-            <a class="btn btn-lg btn-secondary w-100" asp-area="Api" asp-controller="Management" asp-action="Backup" asp-route-enforceLogging="true">
-                <i class="fa fa-settings">&nbsp;</i>Backup
-            </a>
-        </div>
-        <div class="col-6 mt-4">
-            <a class="btn btn-lg btn-secondary w-100" asp-area="Api" asp-controller="Management" asp-action="StartFacebookSync">
-                <i class="fa fa-settings">&nbsp;</i>Facebook Sync
-            </a>
-        </div>
+<div class="row">
+    <div class="col-4 mt-4">
+        <a class="btn btn-lg btn-secondary w-100" asp-area="Api" asp-controller="Management" asp-action="Backup" asp-route-enforceLogging="true">
+            <i class="fa fa-settings">&nbsp;</i>Backup
+        </a>
     </div>
+    <div class="col-4 mt-4">
+        <a class="btn btn-lg btn-secondary w-100" asp-area="Api" asp-controller="Management" asp-action="StartFacebookSync">
+            <i class="fa fa-settings">&nbsp;</i>Facebook Sync
+        </a>
+    </div>
+
+    <div class="col-4 mt-4">
+        <a class="btn btn-lg btn-secondary w-100" asp-area="Api" asp-controller="Management" asp-action="LogCleanup">
+            <i class="fa fa-settings">&nbsp;</i>Log Cleanup
+        </a>
+    </div>
+
+</div>
 
 
     <div class="row">

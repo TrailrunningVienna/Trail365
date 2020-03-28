@@ -1,9 +1,9 @@
 <Project>
   <PropertyGroup>
     <MajorVersion>0</MajorVersion>
-    <MinorVersion>21</MinorVersion>
-    <PatchVersion>2</PatchVersion>
-    <PreReleaseLabel></PreReleaseLabel>
+    <MinorVersion>22</MinorVersion>
+    <PatchVersion>0</PatchVersion>
+    <PreReleaseLabel>12</PreReleaseLabel>
     <VersionPrefix>$(MajorVersion).$(MinorVersion).$(PatchVersion)</VersionPrefix>
     <VersionSuffix Condition="'$(PreReleaseLabel)' == ''"></VersionSuffix>
     <VersionSuffix Condition="'$(PreReleaseLabel)' != ''">-$(PreReleaseLabel)</VersionSuffix>

@@ -9,8 +9,8 @@ using Trail365.Data;
 namespace Trail365.Migrations
 {
     [DbContext(typeof(TrailContext))]
-    [Migration("20200124093501_v0.12.0")]
-    partial class v0120
+    [Migration("20200324061412_v0.22")]
+    partial class v022
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -320,6 +320,9 @@ namespace Trail365.Migrations
                     b.Property<int?>("AltitudeAtStart")
                         .HasColumnType("INTEGER");
 
+                    b.Property<Guid?>("AnalyzerBlobID")
+                        .HasColumnType("TEXT");
+
                     b.Property<int?>("AscentMeters")
                         .HasColumnType("INTEGER");
 
@@ -414,6 +417,8 @@ namespace Trail365.Migrations
 
                     b.HasKey("ID");
 
+                    b.HasIndex("AnalyzerBlobID");
+
                     b.HasIndex("ElevationProfileImageID");
 
                     b.HasIndex("EndPlaceID");
@@ -483,6 +488,11 @@ namespace Trail365.Migrations
 
             modelBuilder.Entity("Trail365.Entities.Trail", b =>
                 {
+                    b.HasOne("Trail365.Entities.Blob", "AnalyzerBlob")
+                        .WithMany()
+                        .HasForeignKey("AnalyzerBlobID")
+                        .HasConstraintName("FK_Trail_AnalyzerBlob");
+
                     b.HasOne("Trail365.Entities.Blob", "ElevationProfileImage")
                         .WithMany()
                         .HasForeignKey("ElevationProfileImageID")

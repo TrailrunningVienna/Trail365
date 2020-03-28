@@ -51,6 +51,11 @@ namespace Trail365
                 contentType = SupportedMimeType.ImagePng;
             }
 
+            if (ext == "geojson")
+            {
+                contentType = "application/json"; 
+            }
+
             if (ext == "jpg")
             {
                 contentType = SupportedMimeType.ImageJpg;

@@ -53,6 +53,10 @@ namespace Trail365.Data
         /// currently only the minimum: "ElevationProfileImage" and "SmallPreview"
         /// </summary>
         public bool IncludeImages { get; set; }
+
+        /// <summary>
+        /// GPXBlob AND Analyzer-Blob should be loaded!
+        /// </summary>
         public bool IncludeGpxBlob { get; set; }
 
         public string GetCommandText()

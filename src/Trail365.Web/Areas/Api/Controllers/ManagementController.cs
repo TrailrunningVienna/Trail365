@@ -44,21 +44,21 @@ namespace Trail365.Web.Api.Controllers
 
             var task = BackgroundTaskFactory.CreateTask<BackupTask>(this._serviceScopeFactory, this.Url, _logger); //we disable TaskLoggingSystem for this, so we should inject ILogger/ApplicationInsight at leat for the Infrastructure!
             task.Queue(this._queue, NoLogging); //logging to TaskLog disabled to prevent endless changes by the sync system:
-            return base.Ok(new { Status = "Ok", Comment = "Task Scheduled" });
+            return base.Ok(new { Status = "Ok", Comment = "Backu scheduled" });
         }
 
         [Route("fbsync")]
         public IActionResult StartFacebookSync()
         {
             BackgroundTaskFactory.CreateTask<FacebookSyncTask>(this._serviceScopeFactory, this.Url, this._logger).Queue(this._queue);
-            return base.Ok(new { Status = "Ok",Comment = "Task scheduled" });
+            return base.Ok(new { Status = "Ok", Comment = "Facebbook sync scheduled" });
         }
 
         [Route("seedstories")]
         public IActionResult SeedStories([FromServices] TrailContext context, [FromServices]BlobService blobService)
         {
             context.SeedStories(StoryDtoProvider.UniqueStories(), blobService, this.Url, StoryStatus.Default);
-            return base.Ok(new { Status = "Ok", Comment ="Completed" });
+            return base.Ok(new { Status = "Ok", Comment = "Story seeding completed" });
         }
 
         [Route("seedplaces")]
@@ -66,8 +66,17 @@ namespace Trail365.Web.Api.Controllers
         {
             var dtoProvider = PlaceDtoProvider.CreateInstance();
             context.SeedPlaces(dtoProvider, this.Url);
-            return base.Ok(new { Status = "Ok", Comment = "Completed" });
+            return base.Ok(new { Status = "Ok", Comment = "Place seeding completed" });
         }
+
+
+        [Route("logcleanup")]
+        public IActionResult LogCleanup()
+        {
+            BackgroundTaskFactory.CreateTask<TaskLogCleanupTask>(this._serviceScopeFactory, this.Url, this._logger).Queue(this._queue, disabledLogging: true);
+            return base.Ok(new { Status = "Ok", Comment = " LogCleanup scheduled" });
+        }
+
 
 
         [Route("seedevents")]
@@ -75,10 +84,8 @@ namespace Trail365.Web.Api.Controllers
         {
             var dtoProvider = EventDtoProvider.CreateFromEventDtos(EventDtoProvider.VipavaValley(), EventDtoProvider.IATF2020());
             context.SeedEvents(dtoProvider, blobService, this.Url);
-            return base.Ok(new { Status = "Ok", Comment = "Completed" });
+            return base.Ok(new { Status = "Ok", Comment = "Event seeding completed" });
         }
-
-
 
     }
 }

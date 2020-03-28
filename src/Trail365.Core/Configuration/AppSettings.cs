@@ -60,6 +60,7 @@ namespace Trail365.Configuration
         /// <summary>
         /// we user IMemoryCache instead and this value is used as AbsoluteExpiration
         /// Default is 15
+        /// used for Inmemorycache inside storynews
         /// </summary>
         public int AbsoluteExpirationInSecondsRelativeToNow { get; set; } = 15;
 
@@ -141,8 +142,6 @@ namespace Trail365.Configuration
         public string SeedingApplicationUrl { get; set; }
 
         public bool FacebookAuthentication { get; set; }
-
-        public bool DisableImageDelivery { get; set; } = false;
 
         public bool GoogleAuthentication { get; set; }
 

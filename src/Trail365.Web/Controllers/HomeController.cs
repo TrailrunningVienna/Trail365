@@ -201,14 +201,6 @@ namespace Trail365.Web.Controllers
             return this.RedirectToAction(nameof(Index));
         }
 
-        [HttpGet("log-cleanup")]
-        public IActionResult LogClear()
-        {
-            BackgroundTaskFactory.CreateTask<TaskLogCleanupTask>(this._serviceScopeFactory, this.Url, this._logger).Queue(this._queue, disabledLogging: true);
-            this.TempData["Info"] = $"TaskLogCleanupTask wurde im Hintergrund gestartet!";
-            return this.RedirectToAction(nameof(Index));
-        }
-
         public IActionResult Impressum()
         {
             return this.View();

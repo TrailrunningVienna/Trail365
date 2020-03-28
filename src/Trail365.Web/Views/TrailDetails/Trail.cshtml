@@ -93,9 +93,18 @@
 {
     <div class="row mt-2">
         <div class="col-12">
-            <a class="btn btn-lg btn-primary w-100" href="@Model.GetTrailAnalyzerUrl(_settings.CurrentValue.TrailExplorerBaseUrl, this.Url)" target="_blank">
-                Trail-Analyse
-            </a>
+            @if (string.IsNullOrEmpty(this.Model.AnalyzerUrl))
+            {
+                <a class="btn btn-lg btn-primary w-100 disabled">
+                    Trail-Analyse
+                </a>
+            }
+            else
+            {
+                <a class="btn btn-lg btn-primary w-100" href="@Model.GetTrailAnalyzerUrl(_settings.CurrentValue.TrailExplorerBaseUrl, this.Url)" target="_blank">
+                    Trail-Analyse
+                </a>
+            }
         </div>
     </div>
 }
@@ -121,12 +130,19 @@
     </div>
 
     <div class="row mt-2">
-        <div class="col-12">
+        <div class="col-6">
             <a class="btn btn-lg btn-primary" asp-area="" asp-controller="TrailPreview" asp-action="CalculateTrailPreview" asp-route-ID="@Model.ID">
                 Vorschau berechnen
             </a>
         </div>
+
+        <div class="col-6">
+            <a class="btn btn-lg btn-primary" asp-area="" asp-controller="TrailPreview" asp-action="CalculateTrailClassification" asp-route-ID="@Model.ID">
+                Klassifizierung berechnen
+            </a>
+        </div>
     </div>
+
 }
 
 @if (_settings.CurrentValue.Features.ShareOnFacebook && !Model.Scraping)

@@ -16,6 +16,15 @@ namespace Trail365.Tasks
         {
         }
 
+        public void Flush()
+        {
+            lock (_lockItem)
+            {
+                _context.SaveChanges();
+                _currentLogItem = null;
+            }
+        }
+
         public BackgroundTaskLoggingProvider(TaskContext context, bool disabled)
         {
             this._context = context ?? throw new ArgumentNullException(nameof(context));
@@ -27,6 +36,7 @@ namespace Trail365.Tasks
             if (_disabled) return;
             if (s == null) s = string.Empty;
             string levelAsString = level.ToString();
+
             lock (_lockItem)
             {
                 if (_currentLogItem != null)
