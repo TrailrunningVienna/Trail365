@@ -124,8 +124,8 @@ namespace Trail365.Web
                     }
                 }
                 //TODO check consistensy for AzureBlob vs. local Blob!
-                dictionary.Add("CloudStorageRootContainerName", settings.CloudStorageRootContainerName);
-                dictionary.Add("CloudStorageMaxAgeSeconds", settings.CloudStorageMaxAgeSeconds);
+                dictionary.Add(nameof(settings.CloudStorageContainerName), settings.CloudStorageContainerName);
+                dictionary.Add(nameof(settings.CloudStorageMaxAgeSeconds), settings.CloudStorageMaxAgeSeconds);
                 dictionary.Add("CloudStorageAccount", accountName);
                 dictionary.Add(nameof(settings.FileSystemBlobServiceBrowserEnabled), settings.FileSystemBlobServiceBrowserEnabled);
                 dictionary.Add(nameof(settings.FileSystemBlobServiceRequestPath), settings.FileSystemBlobServiceRequestPath);

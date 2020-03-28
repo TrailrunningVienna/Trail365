@@ -13,7 +13,7 @@ namespace Trail365.FileProvider
         {
             if (settings.CloudStorageEnabled == false) throw new InvalidOperationException("CloudService not enabled, AzureBlobService should not be added to DI");
             string expandedConnectionString = settings.ConnectionStrings.GetResolvedCloudStorageConnectionString();
-            string containerName = Environment.ExpandEnvironmentVariables(string.Format("{0}", settings.CloudStorageRootContainerName));
+            string containerName = Environment.ExpandEnvironmentVariables(string.Format("{0}", settings.CloudStorageContainerName));
 
             CloudBlobClient blobClient = null;
             if (AzureBlobService.TryCreateBlobClient(expandedConnectionString, out var cl))

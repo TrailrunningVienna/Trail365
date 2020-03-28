@@ -23,7 +23,7 @@ namespace Trail365.UnitTests
         public static Dictionary<string, string> ConfigureAzureBlobService(this Dictionary<string, string> configuration, string connectionString, string containerName)
         {
             configuration.Add($"ConnectionStrings:{nameof(ConnectionStrings.CloudStorage)}", connectionString);
-            configuration.Add(nameof(AppSettings.CloudStorageRootContainerName), containerName);
+            configuration.Add(nameof(AppSettings.CloudStorageContainerName), containerName);
             configuration[nameof(AppSettings.CloudStorageEnabled)] = true.ToString();
             configuration.Add(nameof(AppSettings.FileSystemBlobServiceRootDirectory), string.Empty);
             return configuration;
