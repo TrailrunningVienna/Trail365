@@ -160,13 +160,21 @@ namespace Trail365.Seeds
             return ev1;
         }
 
-        public static EventDtoProvider CreateDummyForPublicSeeds()
+        public static EventDtoProvider CreateDummyForPublicSeeds(int count)
         {
+            if (count < 1) throw new ArgumentNullException(nameof(count));
             List<EventDto> list = new List<EventDto>();
 
-            for (int i = 1; i < 5; i++)
+            Random r = new Random();
+                
+            for (int i = 1; i < count; i++)
             {
-                var startUtc = DateTime.UtcNow.AddDays((i * 2) + 1).AddMinutes(i * 3); //SHOULD include Time-Part, MUST be in Utc
+                string sequence = DateTime.Now.Ticks.ToString().PadLeft(12, '0').Substring(4);
+                int time = r.Next(0, 48);
+                int hour = Convert.ToInt32(Math.Floor((double)time/2));
+                int minute = 30 *(time % 2);
+
+                var startUtc = DateTime.UtcNow.Date.AddDays((i * 2) + 1).AddHours(hour);
 
                 var ev1 = new EventDto
                 {
