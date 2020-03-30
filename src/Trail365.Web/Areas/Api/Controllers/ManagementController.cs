@@ -57,8 +57,9 @@ namespace Trail365.Web.Api.Controllers
         [Route("seedstories")]
         public IActionResult SeedStories([FromServices] TrailContext context, [FromServices]BlobService blobService)
         {
-            context.SeedStories(StoryDtoProvider.UniqueStories(), blobService, this.Url, StoryStatus.Default);
-            return base.Ok(new { Status = "Ok", Comment = "Story seeding completed" });
+            var dtoProvider = StoryDtoProvider.UniqueStories();
+            context.SeedStories(dtoProvider, blobService, this.Url, StoryStatus.Default);
+            return base.Ok(new { Status = "Ok", Comment = $"Story seeding completed ({dtoProvider.All.Length})" });
         }
 
         [Route("seedplaces")]
@@ -66,7 +67,7 @@ namespace Trail365.Web.Api.Controllers
         {
             var dtoProvider = PlaceDtoProvider.CreateInstance();
             context.SeedPlaces(dtoProvider, this.Url);
-            return base.Ok(new { Status = "Ok", Comment = "Place seeding completed" });
+            return base.Ok(new { Status = "Ok", Comment = $"Place seeding completed ({dtoProvider.All.Length})" });
         }
 
 
@@ -84,8 +85,19 @@ namespace Trail365.Web.Api.Controllers
         {
             var dtoProvider = EventDtoProvider.CreateDummyForPublicSeeds(250);
             context.SeedEvents(dtoProvider, blobService, this.Url);
-            return base.Ok(new { Status = "Ok", Comment = "Event seeding completed" });
+            return base.Ok(new { Status = "Ok", Comment = $"Event seeding completed ({dtoProvider.All.Length})" });
         }
+
+
+        [Route("seedtrails")]
+        public IActionResult SeedTrails([FromServices] TrailContext context, [FromServices]BlobService blobService)
+        {
+            var dtoProvider = TrailDtoProvider.CreateDummyForPublicSeeds(75);
+            context.SeedTrails(dtoProvider, blobService, this.Url);
+            return base.Ok(new { Status = "Ok", Comment = $"Trail seeding completed ({dtoProvider.All.Length})" });
+        }
+
+
 
     }
 }
