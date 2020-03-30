@@ -82,7 +82,7 @@ namespace Trail365.Web.Api.Controllers
         [Route("seedevents")]
         public IActionResult SeedEvents([FromServices] TrailContext context, [FromServices]BlobService blobService)
         {
-            var dtoProvider = EventDtoProvider.CreateFromEventDtos(EventDtoProvider.VipavaValley(), EventDtoProvider.IATF2020());
+            var dtoProvider = EventDtoProvider.CreateDummyForPublicSeeds(250);
             context.SeedEvents(dtoProvider, blobService, this.Url);
             return base.Ok(new { Status = "Ok", Comment = "Event seeding completed" });
         }

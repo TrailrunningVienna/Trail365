@@ -122,7 +122,7 @@ namespace Trail365.Web.Controllers
 
             if (_settings.Features.Trails)
             {
-                return this.RedirectToAction("Index", "Trail", requestModel);
+                return this.RedirectToAction("Index","TrailNews", requestModel);
             }
 
             if (_settings.Features.Stories)

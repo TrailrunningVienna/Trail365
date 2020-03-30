@@ -166,24 +166,26 @@ namespace Trail365.Seeds
             List<EventDto> list = new List<EventDto>();
 
             Random r = new Random();
-                
+            int daysToAdd = 0;
             for (int i = 1; i < count; i++)
             {
                 string sequence = DateTime.Now.Ticks.ToString().PadLeft(12, '0').Substring(4);
                 int time = r.Next(0, 48);
-                int hour = Convert.ToInt32(Math.Floor((double)time/2));
-                int minute = 30 *(time % 2);
+                int hour = Convert.ToInt32(Math.Floor((double)time / 2));
+                int minute = 30 * (time % 2);
 
-                var startUtc = DateTime.UtcNow.Date.AddDays((i * 2) + 1).AddHours(hour);
+                daysToAdd += r.Next(0, 2);
 
+                var startUtc = DateTime.UtcNow.Date.AddDays(daysToAdd).AddHours(hour).AddMinutes(minute);
+                var duration = TimeSpan.FromHours(r.Next(2, 72) / 2);
                 var ev1 = new EventDto
                 {
-                    Name = $"Demo Event ##{i}",
-                    Excerpt = $"Demo Event Excerpt ##{i}" + System.Environment.NewLine + "lorem ipsum second row on Event",
+                    Name = $"Demo Event ##{i:000000}",
+                    Excerpt = $"Demo Event Excerpt ##{i:000000}" + System.Environment.NewLine + "lorem ipsum second row on Event",
                     ListAccess = AccessLevel.Public,
                     StartTimeUtc = startUtc,
-                    EndTimeUtc = startUtc.AddDays(i - 1).AddHours(i),
-                    ExternalID = "externID",
+                    EndTimeUtc = startUtc.Add(duration),
+                    ExternalID = $"externID{i:000000}",
                     ExternalSource = "externSource",
                 };
                 list.Add(ev1);
