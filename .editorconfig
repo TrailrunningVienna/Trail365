@@ -29,7 +29,7 @@ indent_size = 4
 # .NET Coding Conventions
 
 # Organize usings
-dotnet_sort_system_directives_first = true:warning
+dotnet_sort_system_directives_first = true
 
 # this. preferences
 dotnet_style_qualification_for_field = false:silent

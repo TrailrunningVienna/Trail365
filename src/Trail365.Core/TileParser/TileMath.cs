@@ -72,27 +72,17 @@ namespace Trail365.TileParser
             return p;
         }
 
-        ////public TileMap WorldToTilePos(double lon, double lat, int zoom)
-        ////{
-        ////    PointF p = new Point();
-        ////    p.X = (float)((lon + 180.0) / 360.0 * (1 << zoom));
-        ////    p.Y = (float)((1.0 - Math.Log(Math.Tan(lat * Math.PI / 180.0) +
-        ////        1.0 / Math.Cos(lat * Math.PI / 180.0)) / Math.PI) / 2.0 * (1 << zoom));
+        private static readonly double PIDiv180 = Math.PI / 180.0;
 
-        ////    return p;
-        ////}
-
-        //public PointF TileToWorldPos(double tile_x, double tile_y, int zoom)
-        //{
-        //    PointF p = new Point();
-        //    double n = Math.PI - ((2.0 * Math.PI * tile_y) / Math.Pow(2.0, zoom));
-
-        //    p.X = (float)((tile_x / Math.Pow(2.0, zoom) * 360.0) - 180.0);
-        //    p.Y = (float)(180.0 / Math.PI * Math.Atan(Math.Sinh(n)));
-
-        //    return p;
-        //}
-
+        public static double GetDistanceInMeters(double longitude, double latitude, double otherLongitude, double otherLatitude)
+        {
+            var d1 = latitude * (PIDiv180);
+            var num1 = longitude * (PIDiv180);
+            var d2 = otherLatitude * (PIDiv180);
+            var num2 = otherLongitude * (PIDiv180) - num1;
+            var d3 = Math.Pow(Math.Sin((d2 - d1) / 2.0), 2.0) + Math.Cos(d1) * Math.Cos(d2) * Math.Pow(Math.Sin(num2 / 2.0), 2.0);
+            return 6376500.0 * (2.0 * Math.Atan2(Math.Sqrt(d3), Math.Sqrt(1.0 - d3)));
+        }
 
     }
 }
