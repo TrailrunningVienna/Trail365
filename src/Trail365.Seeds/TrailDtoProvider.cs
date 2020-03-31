@@ -11,37 +11,6 @@ namespace Trail365.Seeds
     public class TrailDtoProvider
     {
 
-        private static readonly string[] WordsForName = new string[] { "Ultra", "Trail", "Sky", "Marathon", "2050", "in", "goes", "on", "Buschberg", "25km", "the", "Classic", "Vienna", "lorem",
-                                                                        "ipsum", "dolor", "sit", "omnis", "natus" , "45 km", "quia", "consequuntur", "magni", "Hochwechsel" ,"XXIV.", "a"};
-
-        private static string LoremIpsum = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris rutrum arcu id lacus porttitor faucibus ut ut enim. Ut egestas consectetur rutrum. Cras euismod tellus ac tortor finibus, a facilisis eros ultrices. Maecenas tincidunt mauris a efficitur auctor. Nunc porttitor posuere orci eget semper. Etiam iaculis ligula a diam commodo.";
-        private static readonly string[] WordsForExcerpt = LoremIpsum.Split(new string[] { " ", ".", "," }, StringSplitOptions.RemoveEmptyEntries);
-
-        public static string GetExcerptDummy()
-        {
-            Random r = new Random();
-            int words = r.Next(0, 20);
-            List<string> wordList = new List<string>();
-            while (wordList.Count < words)
-            {
-                int wordIndex = r.Next(0, WordsForExcerpt.Length - 1);
-                wordList.Add(WordsForExcerpt[wordIndex]);
-            }
-            return string.Join(" ", wordList);
-        }
-        public static string GetNameDummy()
-        {
-            Random r = new Random();
-            int words = r.Next(2, 6);
-            List<string> wordList = new List<string>();
-            while (wordList.Count < words)
-            {
-                int wordIndex = r.Next(0, WordsForName.Length - 1);
-                wordList.Add(WordsForName[wordIndex]);
-            }
-            return string.Join(" ", wordList);
-        }
-
         public static TrailDtoProvider CreateDummyForPublicSeeds(int count)
         {
             if (count < 1) throw new ArgumentNullException(nameof(count));
@@ -74,12 +43,12 @@ namespace Trail365.Seeds
 
                 var trail = new TrailDto
                 {
-                    Name = GetNameDummy(),
+                    Name = TextSeedingHelper.GetNameDummy(),
                     Gpx = gpxContent,
                     GpxDownloadAccess = AccessLevel.Public,
                     ListAccess = AccessLevel.Public,
-                    Description = $"description for unique test trail {i:000000}",
-                    Excerpt = GetExcerptDummy(),
+                    Description = $"description for unique test trail {i:000000} using {gpxSourceName}",
+                    Excerpt = TextSeedingHelper.GetExcerptDummy(),
                 };
                 list.Add(trail);
             }

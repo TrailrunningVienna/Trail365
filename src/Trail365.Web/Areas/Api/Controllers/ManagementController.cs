@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -85,6 +86,25 @@ namespace Trail365.Web.Api.Controllers
         {
             var dtoProvider = EventDtoProvider.CreateDummyForPublicSeeds(250);
             context.SeedEvents(dtoProvider, blobService, this.Url);
+
+
+            var allTrails = context.Trails.ToArray();
+            if (allTrails.Length > 0)
+            {
+                Random r = new Random();
+                dtoProvider.All.ToList().ForEach(s =>
+                {
+                    var ev = context.Events.Single(e => e.ID == s.ID);
+                    int nextTrail = r.Next(-allTrails.Length, allTrails.Length - 1);
+
+                    if (nextTrail > -1)
+                    {
+                        ev.TrailID = allTrails[nextTrail].ID;
+                        context.Events.Update(ev);
+                    }
+                });
+            }
+            context.SaveChanges();
             return base.Ok(new { Status = "Ok", Comment = $"Event seeding completed ({dtoProvider.All.Length})" });
         }
 
@@ -96,8 +116,6 @@ namespace Trail365.Web.Api.Controllers
             context.SeedTrails(dtoProvider, blobService, this.Url);
             return base.Ok(new { Status = "Ok", Comment = $"Trail seeding completed ({dtoProvider.All.Length})" });
         }
-
-
 
     }
 }
