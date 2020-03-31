@@ -7,9 +7,10 @@ namespace Trail365.Seeds
     {
 
         private static readonly string[] WordsForName = new string[] { "Ultra", "Trail", "Sky", "Marathon", "2050", "in", "goes", "on", "Buschberg", "25km", "the", "Classic", "Vienna", "lorem",
-                                                                        "ipsum", "dolor", "sit", "omnis", "natus" , "45 km", "quia", "consequuntur", "magni", "Hochwechsel" ,"XXIV.", "a"};
+                                                                        "Ipsum", "dolor", "sit", "Omnis", "Natus" , "45 km", "quia", "consequuntur", "Magni", "Hochwechsel" ,"XXIV.", "a"};
 
         private static string LoremIpsum = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris rutrum arcu id lacus porttitor faucibus ut ut enim. Ut egestas consectetur rutrum. Cras euismod tellus ac tortor finibus, a facilisis eros ultrices. Maecenas tincidunt mauris a efficitur auctor. Nunc porttitor posuere orci eget semper. Etiam iaculis ligula a diam commodo.";
+
         private static readonly string[] WordsForExcerpt = LoremIpsum.Split(new string[] { " ", ".", "," }, StringSplitOptions.RemoveEmptyEntries);
 
         public static string GetExcerptDummy()
@@ -23,7 +24,7 @@ namespace Trail365.Seeds
 
                 if ((wordList.Count > 0) && (wordList.Count % linebreak) == 0)
                 {
-                    wordList.Add("." + Environment.NewLine);
+                    wordList.Add("." + Environment.NewLine+Environment.NewLine); //markdown, 2 newlines!
                     continue;
                 }
 
