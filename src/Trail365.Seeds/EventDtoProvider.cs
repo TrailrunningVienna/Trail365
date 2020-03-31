@@ -180,8 +180,8 @@ namespace Trail365.Seeds
                 var duration = TimeSpan.FromHours(r.Next(2, 72) / 2);
                 var ev1 = new EventDto
                 {
-                    Name = $"Demo Event ##{i:000000}",
-                    Excerpt = $"Demo Event Excerpt ##{i:000000}" + System.Environment.NewLine + "lorem ipsum second row on Event",
+                    Name = TrailDtoProvider.GetNameDummy(),
+                    Excerpt = TrailDtoProvider.GetExcerptDummy(),
                     ListAccess = AccessLevel.Public,
                     StartTimeUtc = startUtc,
                     EndTimeUtc = startUtc.Add(duration),

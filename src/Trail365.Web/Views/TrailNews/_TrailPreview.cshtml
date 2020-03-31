@@ -25,13 +25,13 @@
             @if (Model.Ascent.HasValue)
             {
                 <div class="trail-meta">
-                    <i class="fas fa-arrow-up"></i>&nbsp;@Model.Ascent.ToIntFormat()<span class="">&nbsp;hm</span>
+                    <i class="fas fa-arrow-up"></i>&nbsp;@Model.Ascent.ToIntFormat()<span class="">&nbsp;m</span>
                 </div>
             }
             @if (Model.Descent.HasValue)
             {
                 <div class="trail-meta">
-                    <i class="fas fa-arrow-down"></i>&nbsp;@Model.Descent.ToIntFormat()<span class="">&nbsp;hm</span>
+                    <i class="fas fa-arrow-down"></i>&nbsp;@Model.Descent.ToIntFormat()<span class="">&nbsp;m</span>
                 </div>
             }
         </div>
