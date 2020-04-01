@@ -1,40 +1,28 @@
 using System;
-using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
-using System.Linq;
 using System.Net;
-using System.Threading.Tasks;
 using Microsoft.ApplicationInsights;
 using Microsoft.ApplicationInsights.Channel;
 using Microsoft.ApplicationInsights.WindowsServer.TelemetryChannel;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpOverrides;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.StaticFiles;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Diagnostics.HealthChecks;
-using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using Trail365.Configuration;
 using Trail365.Data;
-using Trail365.Seeds;
 using Trail365.Services;
 using Trail365.Tasks;
 
 namespace Trail365.Web
 {
+
     public class Startup
     {
         public Startup(IConfiguration configuration)
@@ -92,6 +80,15 @@ namespace Trail365.Web
 
             services.AddControllers();
 
+            services.AddSingleton<CoordinateClassifier>((isp) =>
+            {
+                LookupDataProvider ldp = new VectorTileLookupDataProvider(@"https://trex.blob.core.windows.net/tiles");
+                CoordinateClassifier classifier = new LookupCoordinateClassifier(ldp);
+                return classifier;
+            });
+
+
+
             services.Configure<CookiePolicyOptions>(options =>
             {
                 options.CheckConsentNeeded = context => !context.Request.Host.ToString().ToLowerInvariant().Contains("localhost");
@@ -142,28 +139,8 @@ namespace Trail365.Web
             services.AddSingleton<IBackgroundTaskQueue, BackgroundTaskQueue>();
         }
 
-        /// <summary>
-        ///
-        /// </summary>
-        /// <param name="httpContext"></param>
-        /// <param name="result"></param>
-        /// <param name="settings">in case of Environment==Development we print out some settings</param>
-        /// <returns></returns>
-        private static Task DefaultApiInfoHealthResponse(HttpContext httpContext, HealthReport result)
-        {
-            httpContext.Response.ContentType = "application/json";
-            var json = new JObject(
-                new JProperty("Status", result.Status.ToString()),
-                new JProperty("Version", Helper.GetProductVersionFromEntryAssembly()),
-                new JProperty("ProcessUpTime", Helper.GetUptime()),
-                new JProperty("ProcessStartTime", Helper.GetStartTime()),
-                new JProperty("results", new JObject(result.Entries.Select(pair =>
-                    new JProperty(pair.Key, new JObject(
-                        new JProperty("status", pair.Value.Status.ToString()),
-                        new JProperty("description", pair.Value.Description),
-                        new JProperty("data", new JObject(pair.Value.Data.Select(p => new JProperty(p.Key, p.Value))))))))));
-            return httpContext.Response.WriteAsync(json.ToString(Formatting.Indented));
-        }
+
+
 
         public static void ConfigureRobotsTxt(IWebHostEnvironment environment, bool allowRobots)
         {
@@ -270,119 +247,24 @@ namespace Trail365.Web
             {
                 console = System.Console.Out;
             }
-            //in Docker we must assume that every app start means a fresh container without data
-            //each DBFile must be restored from the persistent storage location
-            if (settings.SyncEnabled)
+
+
+            if (settings.SyncEnabled && !string.IsNullOrEmpty(settings.BackupDirectory)) //health status has warning if status is not consistent
             {
-                using (var serviceScope = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>().CreateScope())
-                {
-                    List<DbContext> list = new List<DbContext>();
-
-                    if (!settings.IdentityContextDisabled)
-                    {
-                        list.Add(serviceScope.ServiceProvider.GetService<IdentityContext>());
-                    }
-
-                    if (!settings.TaskContextDisabled)
-                    {
-                        list.Add(serviceScope.ServiceProvider.GetService<TaskContext>());
-                    }
-
-                    if (!settings.TrailContextDisabled)
-                    {
-                        list.Add(serviceScope.ServiceProvider.GetService<TrailContext>());
-                    }
-
-                    DbContextExtension.SyncSqliteFiles(list.ToArray(), settings.BackupDirectory, settings.SyncOverwriteEnabled, console);
-                }
+                //in Docker we must assume that every app start means a fresh container without data
+                //each DBFile must be restored from the persistent storage location
+                app.UseSqliteBackupSync(settings, console);
             }
 
-            if (ConnectionStrings.TryGetSqliteFileInfo(settings.ConnectionStrings.GetResolvedTrailDBConnectionString(), console, out var file1))
-            {
-                if (file1.Directory.Exists == false)
-                {
-                    file1.Directory.Create();
-                }
-            }
-
-            if (ConnectionStrings.TryGetSqliteFileInfo(settings.ConnectionStrings.GetResolvedIdentityDBConnectionString(), console, out var file2))
-            {
-                if (file2.Directory.Exists == false)
-                {
-                    file2.Directory.Create();
-                }
-            }
-
-            if (ConnectionStrings.TryGetSqliteFileInfo(settings.ConnectionStrings.GetResolvedTaskDBConnectionString(), console, out var file3))
-            {
-                if (file3.Directory.Exists == false)
-                {
-                    file3.Directory.Create();
-                }
-            }
+            app.EnsureSqliteDefaultDirectories(settings, console);
 
             if (settings.RunMigrationsAtStartup)
             {
-                //Lesson learned 12/2019: a database created via "EnsureCreated" cannot be migrated anymore - first creation must also be done by ".Migrate"!!!
-                if (!settings.TrailContextDisabled)
-                {
-                    using (var serviceScope = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>().CreateScope())
-                    {
-                        var context = serviceScope.ServiceProvider.GetService<TrailContext>();
-                        context.Database.SetCommandTimeout(TimeSpan.FromMinutes(30));
-                        var dcr = (RelationalDatabaseCreator)context.GetService<IDatabaseCreator>();
-                        bool exists = dcr.Exists();
-
-                        context.Database.Migrate();
-
-                        if ((settings.SeedOnCreation) && (!exists))
-                        {
-                            var blobService = context.GetService<BlobService>();
-                            IUrlHelper helper = UrlHelperFactory.GetStaticUrlHelper(new UriBuilder(settings.SeedingApplicationUrl).Uri);
-                            context.SeedTrails(TrailDtoProvider.CreateInstanceForPublicSeeds(), blobService, helper);
-                            context.SeedEvents(EventDtoProvider.CreateTRVEvents2020(), blobService, helper);
-                            context.SeedStories(StoryDtoProvider.RealisticStories(), blobService, helper);
-                        }
-                    }
-                }
-
-                if (!settings.IdentityContextDisabled)
-                {
-                    using (var serviceScope = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>().CreateScope())
-                    {
-                        var context = serviceScope.ServiceProvider.GetService<IdentityContext>();
-                        context.Database.SetCommandTimeout(TimeSpan.FromMinutes(30));
-                        var dcr = (RelationalDatabaseCreator)context.GetService<IDatabaseCreator>();
-                        bool exists = dcr.Exists();
-
-                        context.Database.Migrate();
-
-                        if ((settings.SeedOnCreation) && (!exists))
-                        {
-                        }
-                    }
-                }
-
-                if (!settings.TaskContextDisabled)
-                {
-                    using (var serviceScope = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>().CreateScope())
-                    {
-                        var context = serviceScope.ServiceProvider.GetService<TaskContext>();
-                        context.Database.SetCommandTimeout(TimeSpan.FromMinutes(30));
-                        var dcr = (RelationalDatabaseCreator)context.GetService<IDatabaseCreator>();
-                        bool exists = dcr.Exists();
-
-                        context.Database.Migrate();
-
-                        if ((settings.SeedOnCreation) && (!exists))
-                        {
-                        }
-                    }
-                }
+                app.UseMigrations(settings);
             }
             else
             {
-                //special case: don't migrate on start but create database if does not exists currently NOT implemented!
+                //special case: don't migrate on start but create database if it does not exists => currently NOT implemented!
             }
 
             if (settings.StaticUserSettingsEnabled)
@@ -394,7 +276,7 @@ namespace Trail365.Web
 
                 app.UseMiddleware<AuthenticatedRequestMiddleware>();
 
-                if (!settings.IdentityContextDisabled && ! settings.StaticUserSettings.ShouldNotLogin)
+                if (!settings.IdentityContextDisabled && !settings.StaticUserSettings.ShouldNotLogin)
                 {
                     using (var serviceScope = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>().CreateScope())
                     {
@@ -416,66 +298,9 @@ namespace Trail365.Web
 
             ConfigureRobotsTxt(env, settings.AllowRobots);
 
-            int maxeAgeInSecondsForStaticAssets = 1 * 60; //1min
+            app.UseWwwRootStaticFileDelivery(settings);
 
-            if (env.IsProduction())
-            {
-                maxeAgeInSecondsForStaticAssets = maxeAgeInSecondsForStaticAssets * 60 * 24;
-            }
-
-            //wwwroot static file delivery
-            FileExtensionContentTypeProvider contentType = new FileExtensionContentTypeProvider();
-            contentType.Mappings[".webmanifest"] = "application/manifest+json";
-            app.UseStaticFiles(new StaticFileOptions
-            {
-                ContentTypeProvider = contentType,
-                OnPrepareResponse = ctx =>
-                {
-                    ctx.Context.Response.Headers[Microsoft.Net.Http.Headers.HeaderNames.CacheControl] =
-                        "public,max-age=" + maxeAgeInSecondsForStaticAssets;
-                }
-            });
-
-            if (!string.IsNullOrEmpty(settings.FileSystemBlobServiceRootDirectory))
-            {
-                if (settings.CloudStorageEnabled)
-                {
-                    throw new InvalidOperationException("we shouldn't activate a static file route if cloud is used");
-                }
-                string dir = settings.GetFileSystemBlobServiceRootDirectoryResolved();
-                if (!Directory.Exists(dir))
-                {
-                    Directory.CreateDirectory(dir);
-                }
-
-                //second static file area for file based blob storage
-
-                FileExtensionContentTypeProvider blobTypes = new FileExtensionContentTypeProvider();
-                blobTypes.Mappings[".gpx"] = "application/gpx+xml";
-
-                var staticblobOptions = new StaticFileOptions()
-                {
-                    ContentTypeProvider = blobTypes,
-                    FileProvider = new PhysicalFileProvider(dir),
-                    RequestPath = new PathString(settings.FileSystemBlobServiceRequestPath),
-                    ServeUnknownFileTypes = false,
-                    OnPrepareResponse = ctx =>
-                    {
-                        ctx.Context.Response.Headers[Microsoft.Net.Http.Headers.HeaderNames.CacheControl] =
-                            "public,max-age=" + settings.CloudStorageMaxAgeSeconds;
-                    }
-                };
-
-                app.UseStaticFiles(staticblobOptions);
-                if (settings.FileSystemBlobServiceBrowserEnabled)
-                {
-                    app.UseDirectoryBrowser(new DirectoryBrowserOptions
-                    {
-                        FileProvider = new PhysicalFileProvider(dir),
-                        RequestPath = new PathString(settings.FileSystemBlobServiceRequestPath),
-                    });
-                }
-            }
+            app.UseBlobServices(settings);
 
             app.UseRouting();
 
@@ -484,7 +309,7 @@ namespace Trail365.Web
             app.UseHealthChecks("/health", new HealthCheckOptions()
             {
                 // This custom writer formats the detailed status as JSON.
-                ResponseWriter = DefaultApiInfoHealthResponse
+                ResponseWriter = HealthChecksExtension.DefaultApiInfoHealthResponse,
             });
 
             app.UseAuthorization(); //The call to app.UseAuthorization() must appear between app.UseRouting() and app.UseEndpoints(...).

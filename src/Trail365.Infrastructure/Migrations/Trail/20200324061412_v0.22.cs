@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Trail365.Migrations
 {
-    public partial class v0120 : Migration
+    public partial class v022 : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -68,6 +68,7 @@ namespace Trail365.Migrations
                     InternalDescription = table.Column<string>(nullable: true),
                     Excerpt = table.Column<string>(nullable: true),
                     GpxBlobID = table.Column<Guid>(nullable: true),
+                    AnalyzerBlobID = table.Column<Guid>(nullable: true),
                     OwnerID = table.Column<Guid>(nullable: true),
                     ExternalID = table.Column<string>(nullable: true),
                     ExternalSource = table.Column<string>(nullable: true),
@@ -98,6 +99,12 @@ namespace Trail365.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Trails", x => x.ID);
+                    table.ForeignKey(
+                        name: "FK_Trail_AnalyzerBlob",
+                        column: x => x.AnalyzerBlobID,
+                        principalTable: "Blobs",
+                        principalColumn: "ID",
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_Trail_ElevationProfileImage",
                         column: x => x.ElevationProfileImageID,
@@ -306,6 +313,11 @@ namespace Trail365.Migrations
                 name: "IX_StoryBlocks_StoryID",
                 table: "StoryBlocks",
                 column: "StoryID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Trails_AnalyzerBlobID",
+                table: "Trails",
+                column: "AnalyzerBlobID");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Trails_ElevationProfileImageID",

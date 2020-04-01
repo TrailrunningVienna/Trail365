@@ -299,18 +299,29 @@ namespace Trail365
 
         public static string GetEventUrl(this IUrlHelper url, Guid eventID, bool noConsent = false, bool scraping = false) => url.AbsoluteUrl($"Home/Event?id={eventID.ToString()}&noconsent={noConsent}&scraping={scraping}");
 
-        public static string GetTrailExplorerUrl(this IUrlHelper url, string trailExplorerBaseUrl, Uri gpxDownloadUrl, ExplorerMapStyle style, System.Drawing.Size size, bool snapshotMode, bool debug)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="url"></param>
+        /// <param name="trailExplorerBaseUrl"></param>
+        /// <param name="geoJsonDownloadUrl">TREX (Version 04/2020) expects a geoJson with attribs for classification </param>
+        /// <param name="style"></param>
+        /// <param name="size"></param>
+        /// <param name="snapshotMode"></param>
+        /// <param name="debug"></param>
+        /// <returns></returns>
+        public static string GetTrailExplorerUrl(this IUrlHelper url, string trailExplorerBaseUrl, Uri geoJsonDownloadUrl, ExplorerMapStyle style, System.Drawing.Size size, bool snapshotMode, bool debug)
         {
             if (url == null) throw new ArgumentNullException(nameof(url));
-            if (gpxDownloadUrl == null) throw new ArgumentNullException(nameof(gpxDownloadUrl));
+            if (geoJsonDownloadUrl == null) throw new ArgumentNullException(nameof(geoJsonDownloadUrl));
             string mode = "default";
             if (snapshotMode)
             {
                 mode = "snapshot";
             }
 
-            string encodedDownloadUri = System.Net.WebUtility.UrlEncode(gpxDownloadUrl.ToString());
-            string explorer = $"{GetTrailExplorerRoot(trailExplorerBaseUrl)}?mode={mode}&style={style.ToString().ToLowerInvariant()}&debug={debug}&gpxsource={encodedDownloadUri}";
+            string encodedDownloadUri = System.Net.WebUtility.UrlEncode(geoJsonDownloadUrl.ToString());
+            string explorer = $"{GetTrailExplorerRoot(trailExplorerBaseUrl)}?mode={mode}&style={style.ToString().ToLowerInvariant()}&debug={debug}&jsonsource={encodedDownloadUri}";
 
             if (!size.IsEmpty)
             {
@@ -329,18 +340,18 @@ namespace Trail365
             return builder.Uri.ToString();
         }
 
-        public static string GetTrailExplorerUrlOrDefault(this IUrlHelper url, string trailExplorerBaseUrl, string gpxDownloadUrlOrDefault)
+        public static string GetTrailExplorerUrlOrDefault(this IUrlHelper url, string trailExplorerBaseUrl, string geoJsonDownloadUrl)
         {
-            return GetTrailExplorerUrlOrDefault(url, trailExplorerBaseUrl, gpxDownloadUrlOrDefault, ExplorerMapStyle.Outdoor);
+            return GetTrailExplorerUrlOrDefault(url, trailExplorerBaseUrl, geoJsonDownloadUrl, ExplorerMapStyle.Outdoor);
         }
 
-        public static string GetTrailExplorerUrlOrDefault(this IUrlHelper url, string trailExplorerBaseUrl, string gpxDownloadUrlOrDefault, ExplorerMapStyle style)
+        public static string GetTrailExplorerUrlOrDefault(this IUrlHelper url, string trailExplorerBaseUrl, string geoJsonDownloadUrl, ExplorerMapStyle style)
         {
             
-            return GetTrailExplorerUrlOrDefault(url, trailExplorerBaseUrl, gpxDownloadUrlOrDefault, style, System.Drawing.Size.Empty, false, false);
+            return GetTrailExplorerUrlOrDefault(url, trailExplorerBaseUrl, geoJsonDownloadUrl, style, System.Drawing.Size.Empty, false, false);
         }
 
-        public static string GetTrailExplorerUrlOrDefault(this IUrlHelper url, string trailExplorerBaseUrl, string gpxDownloadUrlOrDefault, ExplorerMapStyle style, System.Drawing.Size size, bool snapshotMode, bool debug)
+        public static string GetTrailExplorerUrlOrDefault(this IUrlHelper url, string trailExplorerBaseUrl, string geoJsonDownloadUrl, ExplorerMapStyle style, System.Drawing.Size size, bool snapshotMode, bool debug)
         {
             if (url == null) throw new ArgumentNullException(nameof(url));
             string mode = "default";
@@ -348,7 +359,8 @@ namespace Trail365
             {
                 mode = "snapshot";
             }
-            if (string.IsNullOrEmpty(gpxDownloadUrlOrDefault))
+
+            if (string.IsNullOrEmpty(geoJsonDownloadUrl))
             {
                 string explorer = $"{GetTrailExplorerRoot(trailExplorerBaseUrl)}?mode={mode}&style={style.ToString().ToLowerInvariant()}&debug={debug}";
 
@@ -360,10 +372,12 @@ namespace Trail365
             }
             else
             {
-                var u = new UriBuilder(gpxDownloadUrlOrDefault).Uri;
+                var u = new UriBuilder(geoJsonDownloadUrl).Uri;
                 return GetTrailExplorerUrl(url, trailExplorerBaseUrl, u, style, size, snapshotMode, debug);
             }
         }
+
+        public static string GetStorageProxyBaseUrl(this IUrlHelper url) => url.AbsoluteUrl(RouteName.StorageProxyRoute);
 
         public static string GetApiTrailBaseUrl(this IUrlHelper url) => url.AbsoluteUrl(RouteName.TrailsApi);
 

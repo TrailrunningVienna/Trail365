@@ -11,7 +11,7 @@
     "Kestrel": {
       "commandName": "Project",
       "launchBrowser": true,
-      "launchUrl": "",
+      "launchUrl": "health",
       "environmentVariables": {
         "HOME": "c:\\work",
         "ASPNETCORE_ENVIRONMENT": "Development"

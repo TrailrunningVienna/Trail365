@@ -56,6 +56,8 @@ namespace Trail365.Data
 
         public DbSet<StoryBlock> StoryBlocks { get; set; }
 
+        public DbSet<EventInvolvement>EventInvolvements { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Blob>();
@@ -104,6 +106,12 @@ namespace Trail365.Data
                 .HasForeignKey(t => t.GpxBlobID)
                 .HasConstraintName("FK_Trail_GpxBlob");
 
+            modelBuilder.Entity<Trail>()
+                .HasOne(t => t.AnalyzerBlob)
+                .WithMany()
+                .HasForeignKey(t => t.AnalyzerBlobID)
+                .HasConstraintName("FK_Trail_AnalyzerBlob");
+
             modelBuilder.Entity<Event>()
                 .HasOne(e => e.Place)
                 .WithMany()
@@ -145,6 +153,13 @@ namespace Trail365.Data
                .WithMany(i => i.StoryCovers)
                .HasForeignKey(bl => bl.CoverImageID)
                .HasConstraintName("FK_Story_CoverImage");
+
+            modelBuilder.Entity<EventInvolvement>()
+                .HasOne(inv => inv.User)
+                .WithMany()
+                .HasForeignKey(inv => inv.UserID)
+                .HasConstraintName("FK_EventInvolvement_User");
+
         }
     }
 }

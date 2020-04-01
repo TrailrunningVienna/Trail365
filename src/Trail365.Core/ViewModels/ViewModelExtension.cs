@@ -191,12 +191,18 @@ namespace Trail365.ViewModels
                 Created = trail.CreatedUtc.ToLocalTime(),
                 Modified = trail.ModifiedUtc,
                 GpxUrl = trail.GpxBlob?.Url,
+                AnalyzerUrl = trail.AnalyzerBlob?.Url,
                 GpxDownloadAccess = trail.GpxDownloadAccess,
                 ListAccess = trail.ListAccess,
                 Excerpt = trail.Excerpt, //TODO if taril.Excerpt is empty, try to generate one from description!
                 Ascent = trail.AscentMeters,
                 Descent = trail.DescentMeters,
             };
+
+            if (trail.GpxBlob != null)
+            {
+                vm.GpxDownloadFileName = trail.GpxBlob.OriginalFileName;
+            }
 
             vm.Login = login ?? throw new ArgumentNullException(nameof(login));
 

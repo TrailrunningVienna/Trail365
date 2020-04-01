@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -44,21 +45,22 @@ namespace Trail365.Web.Api.Controllers
 
             var task = BackgroundTaskFactory.CreateTask<BackupTask>(this._serviceScopeFactory, this.Url, _logger); //we disable TaskLoggingSystem for this, so we should inject ILogger/ApplicationInsight at leat for the Infrastructure!
             task.Queue(this._queue, NoLogging); //logging to TaskLog disabled to prevent endless changes by the sync system:
-            return base.Ok(new { Status = "Ok", Comment = "Task Scheduled" });
+            return base.Ok(new { Status = "Ok", Comment = "Backu scheduled" });
         }
 
         [Route("fbsync")]
         public IActionResult StartFacebookSync()
         {
             BackgroundTaskFactory.CreateTask<FacebookSyncTask>(this._serviceScopeFactory, this.Url, this._logger).Queue(this._queue);
-            return base.Ok(new { Status = "Ok",Comment = "Task scheduled" });
+            return base.Ok(new { Status = "Ok", Comment = "Facebbook sync scheduled" });
         }
 
         [Route("seedstories")]
         public IActionResult SeedStories([FromServices] TrailContext context, [FromServices]BlobService blobService)
         {
-            context.SeedStories(StoryDtoProvider.UniqueStories(), blobService, this.Url, StoryStatus.Default);
-            return base.Ok(new { Status = "Ok", Comment ="Completed" });
+            var dtoProvider = StoryDtoProvider.UniqueStories();
+            context.SeedStories(dtoProvider, blobService, this.Url, StoryStatus.Default);
+            return base.Ok(new { Status = "Ok", Comment = $"Story seeding completed ({dtoProvider.All.Length})" });
         }
 
         [Route("seedplaces")]
@@ -66,19 +68,54 @@ namespace Trail365.Web.Api.Controllers
         {
             var dtoProvider = PlaceDtoProvider.CreateInstance();
             context.SeedPlaces(dtoProvider, this.Url);
-            return base.Ok(new { Status = "Ok", Comment = "Completed" });
+            return base.Ok(new { Status = "Ok", Comment = $"Place seeding completed ({dtoProvider.All.Length})" });
         }
+
+
+        [Route("logcleanup")]
+        public IActionResult LogCleanup()
+        {
+            BackgroundTaskFactory.CreateTask<TaskLogCleanupTask>(this._serviceScopeFactory, this.Url, this._logger).Queue(this._queue, disabledLogging: true);
+            return base.Ok(new { Status = "Ok", Comment = " LogCleanup scheduled" });
+        }
+
 
 
         [Route("seedevents")]
         public IActionResult SeedEvents([FromServices] TrailContext context, [FromServices]BlobService blobService)
         {
-            var dtoProvider = EventDtoProvider.CreateFromEventDtos(EventDtoProvider.VipavaValley(), EventDtoProvider.IATF2020());
+            var dtoProvider = EventDtoProvider.CreateDummyForPublicSeeds(250);
             context.SeedEvents(dtoProvider, blobService, this.Url);
-            return base.Ok(new { Status = "Ok", Comment = "Completed" });
+
+
+            var allTrails = context.Trails.ToArray();
+            if (allTrails.Length > 0)
+            {
+                Random r = new Random();
+                dtoProvider.All.ToList().ForEach(s =>
+                {
+                    var ev = context.Events.Single(e => e.ID == s.ID);
+                    int nextTrail = r.Next(-allTrails.Length, allTrails.Length - 1);
+
+                    if (nextTrail > -1)
+                    {
+                        ev.TrailID = allTrails[nextTrail].ID;
+                        context.Events.Update(ev);
+                    }
+                });
+            }
+            context.SaveChanges();
+            return base.Ok(new { Status = "Ok", Comment = $"Event seeding completed ({dtoProvider.All.Length})" });
         }
 
 
+        [Route("seedtrails")]
+        public IActionResult SeedTrails([FromServices] TrailContext context, [FromServices]BlobService blobService)
+        {
+            var dtoProvider = TrailDtoProvider.CreateDummyForPublicSeeds(75);
+            context.SeedTrails(dtoProvider, blobService, this.Url);
+            return base.Ok(new { Status = "Ok", Comment = $"Trail seeding completed ({dtoProvider.All.Length})" });
+        }
 
     }
 }

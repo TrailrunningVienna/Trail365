@@ -86,6 +86,7 @@ namespace Trail365.ViewModels
         public bool CanDownload()
         {
             Guard.AssertNotNull(this.Login);
+            if (string.IsNullOrEmpty(this.GpxUrl)) return false;
             return this.Login.CanDo(this.GpxDownloadAccess);
         }
 
@@ -190,7 +191,6 @@ namespace Trail365.ViewModels
 
         public string ElevationProfile_Proficiency_Url { get; set; }
 
-
         public string SmallPreviewUrl { get; set; }
 
         public string MediumPreviewUrl { get; set; }
@@ -220,9 +220,35 @@ namespace Trail365.ViewModels
         /// </summary>
         public string GpxUrl { get; set; }
 
+        /// <summary>
+        /// gpx converted into geoJson and some classifications applied!
+        /// </summary>
+        public string AnalyzerUrl { get; set; }
+
+        /// <summary>
+        /// proposed filename on the client side download (html "download" attribute)
+        /// </summary>
+        public string GpxDownloadFileName { get; set; }
+        /// <summary>
+        /// download access to the gpx file via self hosted file delivery to prevent CORS problems and to inject download filename
+        /// </summary>
+        /// <param name="helper"></param>
+        /// <param name="url"></param>
+        /// <param name="downloadAttribute"></param>
+        public void GetDownloadUrl(IUrlHelper helper,string containerName, out string url, out string downloadAttribute)
+        {
+            if (helper == null) throw new ArgumentNullException(nameof(helper));
+            if (string.IsNullOrEmpty(containerName)) throw new ArgumentNullException(nameof(containerName));
+            var refUrl = new Uri(this.GpxUrl);
+            var baseUrl = helper.GetStorageProxyBaseUrl();
+            string relativeUrl = refUrl.PathAndQuery.Substring(containerName.Length + 1);
+            url = baseUrl + relativeUrl;
+            downloadAttribute = this.GpxDownloadFileName;
+        }
+
         public string GetTrailAnalyzerUrl(string trailExplorerBaseUrl, IUrlHelper url)
         {
-            return url.GetTrailExplorerUrlOrDefault(trailExplorerBaseUrl, this.GpxUrl);
+            return url.GetTrailExplorerUrlOrDefault(trailExplorerBaseUrl, this.AnalyzerUrl);
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
@@ -27,23 +27,23 @@
   
   <ItemGroup>
     <PackageReference Include="ISO3166" Version="1.0.3" />
-    <PackageReference Include="Markdig" Version="0.18.1" />
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="3.1.1" />
-    <PackageReference Include="Microsoft.AspNetCore.TestHost" Version="3.1.1" />
-    <PackageReference Include="Microsoft.Azure.Management.Fluent" Version="1.30.0" />
+    <PackageReference Include="Markdig" Version="0.18.3" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="3.1.3" />
+    <PackageReference Include="Microsoft.AspNetCore.TestHost" Version="3.1.3" />
+    <PackageReference Include="Microsoft.Azure.Management.Fluent" Version="1.32.0" />
     <PackageReference Include="Microsoft.Azure.Management.Logic" Version="4.1.0" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="3.1.1" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.4.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="3.1.3" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.5.0" />
     <PackageReference Include="xunit" Version="2.4.1" />
-    <PackageReference Include="Microsoft.Azure.Storage.Blob" Version="11.1.2" />
-    <PackageReference Include="Microsoft.Extensions.Logging" Version="3.1.1" />
+    <PackageReference Include="Microsoft.Azure.Storage.Blob" Version="11.1.3" />
+    <PackageReference Include="Microsoft.Extensions.Logging" Version="3.1.3" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.4.1">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="NetTopologySuite.Features" Version="2.0.0" />
-    <PackageReference Include="NetTopologySuite.IO.GeoJSON" Version="2.0.1" />
-    <PackageReference Include="NetTopologySuite.IO.GPX" Version="1.0.0" />
+    <PackageReference Include="NetTopologySuite.Features" Version="2.1.0" />
+    <PackageReference Include="NetTopologySuite.IO.GeoJSON" Version="2.0.2" />
+    <PackageReference Include="NetTopologySuite.IO.GPX" Version="1.1.0" />
     <PackageReference Include="MSS.GraphQL.Facebook" Version="0.8.2" />
 
   </ItemGroup>
@@ -69,6 +69,57 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>TestResource.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Data\3koenig.gpx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Data\eagle.gpx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Data\ExtendedRult-HD.gpx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Data\keschtnweg.gpx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Data\kieneck.gpx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Data\puez.gpx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Data\Rudolf-HD.gpx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Data\sky.gpx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Data\tropp.gpx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Data\wut.gpx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="MvtTiles\outdoor-12\2231-1420.mvt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="MvtTiles\outdoor-12\2231-1421.mvt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="MvtTiles\outdoor-12\2232-1420.mvt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="MvtTiles\outdoor-12\2232-1421.mvt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="MvtTiles\outdoor-12\2233-1420.mvt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="MvtTiles\outdoor-12\2233-1421.mvt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>

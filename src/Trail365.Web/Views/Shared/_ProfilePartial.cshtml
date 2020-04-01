@@ -3,116 +3,135 @@
 @using Trail365.Configuration
 @model Trail365.ViewModels.ProfileSettingsViewModel
 
-    <div class="row">
+<div class="row">
 
-        @if ((_settings.CurrentValue.Features.UserTrailUpload && (this.Model.Login.IsLoggedIn)) || (_settings.CurrentValue.Features.AdminTrailUpload && (this.Model.Login.IsAdmin)))
+    @if ((_settings.CurrentValue.Features.UserTrailUpload && (this.Model.Login.IsLoggedIn)) || (_settings.CurrentValue.Features.AdminTrailUpload && (this.Model.Login.IsAdmin)))
         {
-            <div class="col-4 pr-0">
-                <a class="btn btn-lg btn-secondary w-100" asp-controller="Trail" asp-action="CreateTrail">
-                    <i class="fa fa-new-deal">&nbsp;</i>Trail uploaden
-                </a>
-            </div>
-        }
-
-        @if ((_settings.CurrentValue.Features.UserStories && (this.Model.Login.IsLoggedIn)) || (_settings.CurrentValue.Features.AdminStories && (this.Model.Login.IsAdmin)))
-        {
-            <div class="col-4 pr-0">
-                <a class="btn btn-lg btn-secondary w-100" asp-controller="StoryUpload" asp-action="MultiBlockUpload">
-                    <i class="fa fa-new-deal">&nbsp;</i>Story uploaden
-                </a>
-            </div>
-        }
-
-        @if (this.Model.Login.IsModeratorOrHigher)
-        {
-            <div class="col-4 pr-0">
-                <a class="btn btn-lg btn-secondary w-100" asp-area="Backend"  asp-controller="Events" asp-action="CreateEvent">
-                    <i class="fa fa-new-deal">&nbsp;</i>Event erstellen
-                </a>
-            </div>
-        }
-
-
+    <div class="col-4 pr-0">
+        <a class="btn btn-lg btn-secondary w-100" asp-controller="Trail" asp-action="CreateTrail">
+            <i class="fa fa-new-deal">&nbsp;</i>Trail uploaden
+        </a>
     </div>
+        }
+
+    @if ((_settings.CurrentValue.Features.UserStories && (this.Model.Login.IsLoggedIn)) || (_settings.CurrentValue.Features.AdminStories && (this.Model.Login.IsAdmin)))
+        {
+    <div class="col-4 pr-0">
+        <a class="btn btn-lg btn-secondary w-100" asp-controller="StoryUpload" asp-action="MultiBlockUpload">
+            <i class="fa fa-new-deal">&nbsp;</i>Story uploaden
+        </a>
+    </div>
+        }
+
+    @if (this.Model.Login.IsModeratorOrHigher)
+        {
+    <div class="col-4 pr-0">
+        <a class="btn btn-lg btn-secondary w-100" asp-area="Backend" asp-controller="Events" asp-action="CreateEvent">
+            <i class="fa fa-new-deal">&nbsp;</i>Event erstellen
+        </a>
+    </div>
+        }
+
+
+</div>
 
 @if (Model.Login.BackendAvailable)
 {
-    <div class="row">
-        <div class="col-12 mt-4">
-            <a class="btn btn-lg btn-secondary w-100" asp-area="Backend" asp-controller="Home" asp-action="Index">
-                <i class="fa fa-settings">&nbsp;</i>Zum Backend
-            </a>
-        </div>
+<div class="row">
+    <div class="col-12 mt-4">
+        <a class="btn btn-lg btn-secondary w-100" asp-area="Backend" asp-controller="Home" asp-action="Index">
+            <i class="fa fa-settings">&nbsp;</i>Zum Backend
+        </a>
     </div>
+</div>
 }
 
 
 @if (Model.Login.IsModeratorOrHigher)
 {
-    <div class="row">
-        <div class="col-6 mt-4">
-            <a class="btn btn-lg btn-secondary w-100" asp-area="Api" asp-controller="Management" asp-action="Backup" asp-route-enforceLogging="true">
-                <i class="fa fa-settings">&nbsp;</i>Backup
-            </a>
-        </div>
-        <div class="col-6 mt-4">
-            <a class="btn btn-lg btn-secondary w-100" asp-area="Api" asp-controller="Management" asp-action="StartFacebookSync">
-                <i class="fa fa-settings">&nbsp;</i>Facebook Sync
-            </a>
-        </div>
+<div class="row">
+    <div class="col-4 mt-4">
+        <a class="btn btn-lg btn-secondary w-100" asp-area="Api" asp-controller="Management" asp-action="Backup" asp-route-enforceLogging="true">
+            <i class="fa fa-settings">&nbsp;</i>Backup
+        </a>
+    </div>
+    <div class="col-4 mt-4">
+        <a class="btn btn-lg btn-secondary w-100" asp-area="Api" asp-controller="Management" asp-action="StartFacebookSync">
+            <i class="fa fa-settings">&nbsp;</i>Facebook Sync
+        </a>
+    </div>
+
+    <div class="col-4 mt-4">
+        <a class="btn btn-lg btn-secondary w-100" asp-area="Api" asp-controller="Management" asp-action="LogCleanup">
+            <i class="fa fa-settings">&nbsp;</i>Log Cleanup
+        </a>
+    </div>
+
+</div>
+
+
+<div class="row">
+
+    <div class="col-4 mt-4">
+        <a class="btn btn-lg btn-secondary w-100" asp-area="Api" asp-controller="Management" asp-action="SeedStories">
+            <i class="fa fa-settings">&nbsp;</i>Seed Stories
+        </a>
+    </div>
+
+    <div class="col-4 mt-4">
+        <a class="btn btn-lg btn-secondary w-100" asp-area="Api" asp-controller="Management" asp-action="SeedPlaces">
+            <i class="fa fa-settings">&nbsp;</i>Seed Places
+        </a>
     </div>
 
 
-    <div class="row">
-
-        <div class="col-4 mt-4">
-            <a class="btn btn-lg btn-secondary w-100" asp-area="Api" asp-controller="Management" asp-action="SeedStories">
-                <i class="fa fa-settings">&nbsp;</i>Seed Stories
-            </a>
-        </div>
-
-        <div class="col-4 mt-4">
-            <a class="btn btn-lg btn-secondary w-100" asp-area="Api" asp-controller="Management" asp-action="SeedPlaces">
-                <i class="fa fa-settings">&nbsp;</i>Seed Places
-            </a>
-        </div>
-
-
-        <div class="col-4 mt-4">
-            <a class="btn btn-lg btn-secondary w-100" asp-area="Api" asp-controller="Management" asp-action="SeedEvents">
-                <i class="fa fa-settings">&nbsp;</i>Seed Events
-            </a>
-        </div>
+    <div class="col-4 mt-4">
+        <a class="btn btn-lg btn-secondary w-100" asp-area="Api" asp-controller="Management" asp-action="SeedEvents">
+            <i class="fa fa-settings">&nbsp;</i>Seed Events
+        </a>
     </div>
+</div>
+
+<div class="row">
+
+    <div class="col-4 mt-4">
+        <a class="btn btn-lg btn-secondary w-100" asp-area="Api" asp-controller="Management" asp-action="SeedTrails">
+            <i class="fa fa-settings">&nbsp;</i>Seed Trails
+        </a>
+    </div>
+
+</div>
+
+
 }
 
 @if (Model.Login.BackendAvailable)
 {
-    <div class="row">
-        <div class="col-3 mt-4">
-            <a class="btn btn-lg btn-secondary w-100" asp-area="" asp-controller="Home" asp-action="Layout" asp-route-key="default">
-                <i class="fa fa-settings">&nbsp;</i>Default Layout
-            </a>
-        </div>
-
-        <div class="col-3 mt-4">
-            <a class="btn btn-lg btn-secondary w-100" asp-area="" asp-controller="Home" asp-action="Layout" asp-route-key="empty">
-                <i class="fa fa-settings">&nbsp;</i>Empty Layout
-            </a>
-        </div>
-
-        <div class="col-3 mt-4">
-            <a class="btn btn-lg btn-secondary w-100" asp-area="" asp-controller="Home" asp-action="Layout" asp-route-key="edit">
-                <i class="fa fa-settings">&nbsp;</i>Edit Layout
-            </a>
-        </div>
-
-        <div class="col-3 mt-4">
-            <a class="btn btn-lg btn-secondary w-100" asp-area="" asp-controller="Home" asp-action="Layout" asp-route-key="table">
-                <i class="fa fa-settings">&nbsp;</i>Table Layout
-            </a>
-        </div>
+<div class="row">
+    <div class="col-3 mt-4">
+        <a class="btn btn-lg btn-secondary w-100" asp-area="" asp-controller="Home" asp-action="Layout" asp-route-key="default">
+            <i class="fa fa-settings">&nbsp;</i>Default Layout
+        </a>
     </div>
+
+    <div class="col-3 mt-4">
+        <a class="btn btn-lg btn-secondary w-100" asp-area="" asp-controller="Home" asp-action="Layout" asp-route-key="empty">
+            <i class="fa fa-settings">&nbsp;</i>Empty Layout
+        </a>
+    </div>
+
+    <div class="col-3 mt-4">
+        <a class="btn btn-lg btn-secondary w-100" asp-area="" asp-controller="Home" asp-action="Layout" asp-route-key="edit">
+            <i class="fa fa-settings">&nbsp;</i>Edit Layout
+        </a>
+    </div>
+
+    <div class="col-3 mt-4">
+        <a class="btn btn-lg btn-secondary w-100" asp-area="" asp-controller="Home" asp-action="Layout" asp-route-key="table">
+            <i class="fa fa-settings">&nbsp;</i>Table Layout
+        </a>
+    </div>
+</div>
 }
 
 <div class="row">

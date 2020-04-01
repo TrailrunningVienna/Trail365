@@ -70,6 +70,11 @@ namespace Trail365.ViewModels
                 vm.GpxUrl = from.GpxBlob.Url;
             }
 
+            if (from.AnalyzerBlobID.HasValue)
+            {
+                vm.AnalysisUrl = from.AnalyzerBlob.Url;
+            }
+
             if (from.PreviewImageID.HasValue)
             {
                 vm.PreviewUrl = previewImages.Single(i => i.ID == from.PreviewImageID.Value).Url;
@@ -127,6 +132,12 @@ namespace Trail365.ViewModels
         [Display(Name = "Gpx Url")]
         public string GpxUrl { get; set; }
 
+
+        [Display(Name = "Analysis Url")]
+        public string AnalysisUrl { get; set; }
+
+
+        [Display(Name = "Preview Url")]
         public string PreviewUrl { get; set; }
 
         public string SmallPreviewUrl { get; set; }

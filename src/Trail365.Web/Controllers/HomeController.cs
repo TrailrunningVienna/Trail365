@@ -122,7 +122,7 @@ namespace Trail365.Web.Controllers
 
             if (_settings.Features.Trails)
             {
-                return this.RedirectToAction("Index", "Trail", requestModel);
+                return this.RedirectToAction("Index","TrailNews", requestModel);
             }
 
             if (_settings.Features.Stories)
@@ -198,14 +198,6 @@ namespace Trail365.Web.Controllers
         {
             BackgroundTaskFactory.CreateTask<LogTask>(this._serviceScopeFactory, this.Url, this._logger).Queue(this._queue);
             this.TempData["Info"] = $"Demo Backgroundtask wurde im Hintergrund gestartet! Das Ergebnis sollte in wenigen Sekunden im Log sichtbar werden.";
-            return this.RedirectToAction(nameof(Index));
-        }
-
-        [HttpGet("log-cleanup")]
-        public IActionResult LogClear()
-        {
-            BackgroundTaskFactory.CreateTask<TaskLogCleanupTask>(this._serviceScopeFactory, this.Url, this._logger).Queue(this._queue, disabledLogging: true);
-            this.TempData["Info"] = $"TaskLogCleanupTask wurde im Hintergrund gestartet!";
             return this.RedirectToAction(nameof(Index));
         }
 

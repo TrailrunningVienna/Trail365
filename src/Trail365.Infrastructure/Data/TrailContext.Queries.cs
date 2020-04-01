@@ -465,6 +465,7 @@ namespace Trail365.Data
                 if (filter.IncludeGpxBlob)
                 {
                     baseQuery = baseQuery.Include(t => t.GpxBlob);
+                    baseQuery = baseQuery.Include(t => t.AnalyzerBlob);
                 }
                 if (filter.IncludeImages)
                 {

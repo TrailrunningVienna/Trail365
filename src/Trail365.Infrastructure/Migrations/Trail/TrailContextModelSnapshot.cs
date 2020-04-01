@@ -155,6 +155,73 @@ namespace Trail365.Migrations
                     b.ToTable("Events");
                 });
 
+            modelBuilder.Entity("Trail365.Entities.EventInvolvement", b =>
+                {
+                    b.Property<Guid>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("CreatedByUser")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("CreatedUtc")
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid>("EventID")
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid?>("InvitedByUserID")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("Level")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("ModifiedByUser")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("ModifiedUtc")
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid>("UserID")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("EventID");
+
+                    b.HasIndex("UserID");
+
+                    b.ToTable("EventInvolvements");
+                });
+
+            modelBuilder.Entity("Trail365.Entities.FederatedIdentity", b =>
+                {
+                    b.Property<Guid>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("AuthenticationType")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("CreatedUtc")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Email")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Identifier")
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid>("UserID")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("UserID");
+
+                    b.ToTable("FederatedIdentity");
+                });
+
             modelBuilder.Entity("Trail365.Entities.Place", b =>
                 {
                     b.Property<Guid>("ID")
@@ -318,6 +385,9 @@ namespace Trail365.Migrations
                     b.Property<int?>("AltitudeAtStart")
                         .HasColumnType("INTEGER");
 
+                    b.Property<Guid?>("AnalyzerBlobID")
+                        .HasColumnType("TEXT");
+
                     b.Property<int?>("AscentMeters")
                         .HasColumnType("INTEGER");
 
@@ -412,6 +482,8 @@ namespace Trail365.Migrations
 
                     b.HasKey("ID");
 
+                    b.HasIndex("AnalyzerBlobID");
+
                     b.HasIndex("ElevationProfileImageID");
 
                     b.HasIndex("EndPlaceID");
@@ -427,6 +499,32 @@ namespace Trail365.Migrations
                     b.HasIndex("StartPlaceID");
 
                     b.ToTable("Trails");
+                });
+
+            modelBuilder.Entity("Trail365.Entities.User", b =>
+                {
+                    b.Property<Guid>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("AvatarUrl")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("GivenName")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Surname")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("UserRoles")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("ID");
+
+                    b.ToTable("User");
                 });
 
             modelBuilder.Entity("Trail365.Entities.Event", b =>
@@ -450,6 +548,31 @@ namespace Trail365.Migrations
                         .WithMany("Events")
                         .HasForeignKey("TrailID")
                         .HasConstraintName("FK_Event_Trail");
+                });
+
+            modelBuilder.Entity("Trail365.Entities.EventInvolvement", b =>
+                {
+                    b.HasOne("Trail365.Entities.Event", "Event")
+                        .WithMany()
+                        .HasForeignKey("EventID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Trail365.Entities.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserID")
+                        .HasConstraintName("FK_EventInvolvement_User")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Trail365.Entities.FederatedIdentity", b =>
+                {
+                    b.HasOne("Trail365.Entities.User", "User")
+                        .WithMany("Identities")
+                        .HasForeignKey("UserID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Trail365.Entities.Story", b =>
@@ -481,6 +604,11 @@ namespace Trail365.Migrations
 
             modelBuilder.Entity("Trail365.Entities.Trail", b =>
                 {
+                    b.HasOne("Trail365.Entities.Blob", "AnalyzerBlob")
+                        .WithMany()
+                        .HasForeignKey("AnalyzerBlobID")
+                        .HasConstraintName("FK_Trail_AnalyzerBlob");
+
                     b.HasOne("Trail365.Entities.Blob", "ElevationProfileImage")
                         .WithMany()
                         .HasForeignKey("ElevationProfileImageID")

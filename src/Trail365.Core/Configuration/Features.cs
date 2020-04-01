@@ -48,7 +48,7 @@ namespace Trail365.Configuration
         /// </summary>
         public bool Login { get; set; } = true;
 
-        public bool TrailAnalyzer { get; set; } = true;
+        public bool TrailAnalyzer { get; set; } = false;
 
         public bool ShareOnFacebook { get; set; } = true;
     }
