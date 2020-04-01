@@ -28,9 +28,9 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="NetTopologySuite.Features" Version="2.0.0" />
-    <PackageReference Include="NetTopologySuite.IO.GeoJSON" Version="2.0.1" />
-    <PackageReference Include="NetTopologySuite.IO.GPX" Version="1.0.0" />
+    <PackageReference Include="NetTopologySuite.Features" Version="2.1.0" />
+    <PackageReference Include="NetTopologySuite.IO.GeoJSON" Version="2.0.2" />
+    <PackageReference Include="NetTopologySuite.IO.GPX" Version="1.1.0" />
     <PackageReference Include="MSS.GraphQL.Facebook" Version="0.8.2" />
   </ItemGroup>
 

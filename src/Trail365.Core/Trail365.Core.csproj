@@ -23,10 +23,10 @@
     </PackageReference>
     <PackageReference Include="Microsoft.AspNetCore.Mvc" Version="2.2.0" />
     <PackageReference Include="protobuf-net" Version="2.4.4" />
-    <PackageReference Include="PuppeteerSharp" Version="2.0.0" />
-    <PackageReference Include="NetTopologySuite.Features" Version="2.0.0" />
-    <PackageReference Include="NetTopologySuite.IO.GeoJSON" Version="2.0.1" />
-    <PackageReference Include="NetTopologySuite.IO.GPX" Version="1.0.0" />
+    <PackageReference Include="PuppeteerSharp" Version="2.0.2" />
+    <PackageReference Include="NetTopologySuite.Features" Version="2.1.0" />
+    <PackageReference Include="NetTopologySuite.IO.GeoJSON" Version="2.0.2" />
+    <PackageReference Include="NetTopologySuite.IO.GPX" Version="1.1.0" />
   </ItemGroup>
 
   <ItemGroup>
