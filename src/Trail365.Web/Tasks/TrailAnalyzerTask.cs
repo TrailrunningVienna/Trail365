@@ -116,6 +116,15 @@ namespace Trail365.Web.Tasks
         }
 
 
+        public static LineString Simplify(LineString lineString)
+        {
+            NetTopologySuite.Simplify.DouglasPeuckerLineSimplifier simplifier = new NetTopologySuite.Simplify.DouglasPeuckerLineSimplifier(lineString.Coordinates);
+            simplifier.DistanceTolerance = 0.00001;
+            Coordinate[] smaller = simplifier.Simplify();
+            LineString ls = new LineString(smaller);
+            return ls;
+        }
+
         public Uri UpdateGeoJsonBlob(BlobService blobService, Blob blob, Stream stream, string type, string name, IUrlHelper helper)
         {
             if (blobService == null) throw new ArgumentNullException(nameof(blobService));

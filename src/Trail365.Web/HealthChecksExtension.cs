@@ -57,7 +57,7 @@ namespace Trail365.Web
                 new JProperty("ProcessStartTime", Helper.GetStartTime()),
             };
 
-            rootItems.Add(new JProperty("components", new JObject(jItems)));
+            rootItems.Add(new JProperty("Components", new JObject(jItems)));
 
             var json = new JObject(rootItems.ToArray());
 
@@ -98,9 +98,12 @@ namespace Trail365.Web
                 return r;
             });
         }
-        public static void AddBlobFeatureStatus(this IHealthChecksBuilder healthChecksBuilder)
+        public static void AddStorageFeatureStatus(this IHealthChecksBuilder healthChecksBuilder)
         {
-            healthChecksBuilder.AddCheck("Blob", () =>
+            var serviceProvider = healthChecksBuilder.Services.BuildServiceProvider();
+            AppSettings here = serviceProvider.GetRequiredService<IOptions<AppSettings>>().Value;
+
+            healthChecksBuilder.AddCheck("Storage", () =>
             {
                 var isp = healthChecksBuilder.Services.BuildServiceProvider();
                 AppSettings settings = isp.GetRequiredService<IOptions<AppSettings>>().Value;
@@ -113,23 +116,6 @@ namespace Trail365.Web
 
                 var proposedHealthStatatus = HealthStatus.Healthy;
                 string proposedDescription = null;
-
-                string accountName = "N/A";
-
-                if (settings.CloudStorageEnabled)
-                {
-                    if (CloudStorageAccount.TryParse(settings.ConnectionStrings.GetResolvedCloudStorageConnectionString(), out var account))
-                    {
-                        accountName = account.Credentials.AccountName;
-                    }
-                }
-                //TODO check consistensy for AzureBlob vs. local Blob!
-                dictionary.Add("CloudStorageRootContainerName", settings.CloudStorageRootContainerName);
-                dictionary.Add("CloudStorageMaxAgeSeconds", settings.CloudStorageMaxAgeSeconds);
-                dictionary.Add("CloudStorageAccount", accountName);
-                dictionary.Add(nameof(settings.FileSystemBlobServiceBrowserEnabled), settings.FileSystemBlobServiceBrowserEnabled);
-                dictionary.Add(nameof(settings.FileSystemBlobServiceRequestPath), settings.FileSystemBlobServiceRequestPath);
-                dictionary.Add(nameof(settings.FileSystemBlobServiceRootDirectory), settings.FileSystemBlobServiceRootDirectory);
 
                 ReadOnlyDictionary<string, object> roDict;
 
@@ -146,6 +132,87 @@ namespace Trail365.Web
                 return r;
             });
 
+            if (here.CloudStorageEnabled)
+            {
+
+                healthChecksBuilder.AddCheck("AzureBlob", () =>
+                {
+                    var isp = healthChecksBuilder.Services.BuildServiceProvider();
+                    AppSettings settings = isp.GetRequiredService<IOptions<AppSettings>>().Value;
+                    IWebHostEnvironment env = isp.GetRequiredService<IWebHostEnvironment>();
+
+                    Dictionary<string, object> dictionary = new Dictionary<string, object>
+                    {
+                    { nameof(settings.CloudStorageEnabled), settings.CloudStorageEnabled }
+                    };
+
+                    var proposedHealthStatatus = HealthStatus.Healthy;
+                    string proposedDescription = null;
+
+                    string accountName = "N/A";
+
+                    if (settings.CloudStorageEnabled)
+                    {
+                        if (CloudStorageAccount.TryParse(settings.ConnectionStrings.GetResolvedCloudStorageConnectionString(), out var account))
+                        {
+                            accountName = account.Credentials.AccountName;
+                        }
+                    }
+                    //TODO check consistensy for AzureBlob vs. local Blob!
+                    dictionary.Add(nameof(settings.CloudStorageContainerName), settings.CloudStorageContainerName);
+                    dictionary.Add(nameof(settings.CloudStorageMaxAgeSeconds), settings.CloudStorageMaxAgeSeconds);
+                    dictionary.Add("CloudStorageAccount", accountName);
+
+                    ReadOnlyDictionary<string, object> roDict;
+
+                    if (env.IsDevelopment())
+                    {
+                        roDict = new ReadOnlyDictionary<string, object>(dictionary);
+                    }
+                    else
+                    {
+                        roDict = new ReadOnlyDictionary<string, object>(new Dictionary<string, object>());
+                    }
+
+                    HealthCheckResult r = new HealthCheckResult(proposedHealthStatatus, proposedDescription, data: roDict);
+                    return r;
+                });
+            }
+            else
+            {
+                healthChecksBuilder.AddCheck("FileSystemBlobBlob", () =>
+                {
+                    var isp = healthChecksBuilder.Services.BuildServiceProvider();
+                    AppSettings settings = isp.GetRequiredService<IOptions<AppSettings>>().Value;
+                    IWebHostEnvironment env = isp.GetRequiredService<IWebHostEnvironment>();
+
+                    Dictionary<string, object> dictionary = new Dictionary<string, object>
+                    {
+
+                    };
+
+                    var proposedHealthStatatus = HealthStatus.Healthy;
+                    string proposedDescription = null;
+
+                    dictionary.Add(nameof(settings.FileSystemBlobServiceRootDirectory), settings.FileSystemBlobServiceRootDirectory);
+                    dictionary.Add(nameof(settings.FileSystemBlobServiceBrowserEnabled), settings.FileSystemBlobServiceBrowserEnabled);
+                    dictionary.Add(nameof(settings.FileSystemBlobServiceRequestPath), settings.FileSystemBlobServiceRequestPath);
+
+                    ReadOnlyDictionary<string, object> roDict;
+
+                    if (env.IsDevelopment())
+                    {
+                        roDict = new ReadOnlyDictionary<string, object>(dictionary);
+                    }
+                    else
+                    {
+                        roDict = new ReadOnlyDictionary<string, object>(new Dictionary<string, object>());
+                    }
+
+                    HealthCheckResult r = new HealthCheckResult(proposedHealthStatatus, proposedDescription, data: roDict);
+                    return r;
+                });
+            }
         }
 
         public static void AddTrailExplorerFeatureStatus(this IHealthChecksBuilder healthChecksBuilder)
@@ -204,7 +271,7 @@ namespace Trail365.Web
                     { nameof(settings.BackupDirectory), $"{settings.BackupDirectory}" },
                     { nameof(settings.SyncEnabled), $"{settings.SyncEnabled}" }
                 };
-
+                dictionary.Add(nameof(settings.SyncOverwriteEnabled), $"{settings.SyncOverwriteEnabled}");
                 var proposedHealthStatatus = HealthStatus.Healthy;
                 string proposedDescription = null;
 

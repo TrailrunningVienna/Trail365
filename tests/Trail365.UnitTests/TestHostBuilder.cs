@@ -48,6 +48,12 @@ namespace Trail365.UnitTests
             return new TestHost(GetConfigurationRoot(this.Configuration), Helper);
         }
 
+        public TestHostBuilder UseFeatures(Features features)
+        {
+            this.Configuration.ConfigureFeatures(features);
+            return this;
+        }
+
         public TestHostBuilder UseCloudStorage(string connectionString, string containerName)
         {
             this.Configuration.ConfigureAzureBlobService(connectionString, containerName);
@@ -91,13 +97,23 @@ namespace Trail365.UnitTests
             return result;
         }
 
-        public static TestHostBuilder DefaultForFrontendAsUser(ITestOutputHelper helper = null)
+        public static TestHostBuilder DefaultForFrontendAsUser(ITestOutputHelper helper)
+        {
+            return DefaultForFrontendAsUser(null, helper);
+        }
+
+        public static TestHostBuilder DefaultForFrontendAsUser(Features features = null, ITestOutputHelper helper = null)
         {
             var result = Empty().UseStaticAuthenticationAsUser().WithTrailContext().WithIdentityContext().UseFileSystemStorage();
             if (helper != null)
             {
                 result = result.UseTestOutputHelper(helper);
             }
+            if (features != null)
+            {
+                result = result.UseFeatures(features);
+            }
+
             return result;
         }
 

@@ -24,7 +24,7 @@ Date|Version|Status
 08.11.2019|v0.3.0|backend and API improvements for Tracks (track database online) 
 05.01.2020|v0.9.0|migrate to asp net core 3.1
 02.03.2020|v0.20.0|Newststream for Events and Trails simplified and shortened, layout refinements
-
+01.04.2020|v0.23|EventInvolvement draft, Trail Simplifications and Quality
 ## TODO 
 
 ## Special Routes/Urls

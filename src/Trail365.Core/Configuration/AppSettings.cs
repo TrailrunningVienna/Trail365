@@ -15,7 +15,7 @@ namespace Trail365.Configuration
             {
                 return false;
             }
-            containerName = System.Environment.ExpandEnvironmentVariables(string.Format("{0}", this.CloudStorageRootContainerName));
+            containerName = System.Environment.ExpandEnvironmentVariables(string.Format("{0}", this.CloudStorageContainerName));
             if (string.IsNullOrEmpty(containerName)) throw new InvalidOperationException("containerName for CloudStorage not defined");
             return true;
         }
@@ -77,7 +77,7 @@ namespace Trail365.Configuration
 
         public string TrailExplorerBaseUrl { get; set; }
 
-        public string CloudStorageRootContainerName { get; set; }
+        public string CloudStorageContainerName { get; set; }
 
         public string FileSystemBlobServiceRootDirectory { get; set; }
 

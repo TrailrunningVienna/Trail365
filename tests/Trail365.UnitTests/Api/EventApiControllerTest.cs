@@ -46,7 +46,7 @@ namespace Trail365.UnitTests.Api
         [Fact]
         public void ShouldCreateListAndDeleteEvents()
         {
-            var testData = EventDtoProvider.CreateDummyForPublicSeeds();
+            var testData = EventDtoProvider.CreateDummyForPublicSeeds(5);
 
             using (var host = TestHostBuilder.Empty().UseTestOutputHelper(OutputHelper).WithTrailContext().Build())
             {

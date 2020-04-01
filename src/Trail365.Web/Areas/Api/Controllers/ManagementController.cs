@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -57,8 +58,9 @@ namespace Trail365.Web.Api.Controllers
         [Route("seedstories")]
         public IActionResult SeedStories([FromServices] TrailContext context, [FromServices]BlobService blobService)
         {
-            context.SeedStories(StoryDtoProvider.UniqueStories(), blobService, this.Url, StoryStatus.Default);
-            return base.Ok(new { Status = "Ok", Comment = "Story seeding completed" });
+            var dtoProvider = StoryDtoProvider.UniqueStories();
+            context.SeedStories(dtoProvider, blobService, this.Url, StoryStatus.Default);
+            return base.Ok(new { Status = "Ok", Comment = $"Story seeding completed ({dtoProvider.All.Length})" });
         }
 
         [Route("seedplaces")]
@@ -66,7 +68,7 @@ namespace Trail365.Web.Api.Controllers
         {
             var dtoProvider = PlaceDtoProvider.CreateInstance();
             context.SeedPlaces(dtoProvider, this.Url);
-            return base.Ok(new { Status = "Ok", Comment = "Place seeding completed" });
+            return base.Ok(new { Status = "Ok", Comment = $"Place seeding completed ({dtoProvider.All.Length})" });
         }
 
 
@@ -82,9 +84,37 @@ namespace Trail365.Web.Api.Controllers
         [Route("seedevents")]
         public IActionResult SeedEvents([FromServices] TrailContext context, [FromServices]BlobService blobService)
         {
-            var dtoProvider = EventDtoProvider.CreateFromEventDtos(EventDtoProvider.VipavaValley(), EventDtoProvider.IATF2020());
+            var dtoProvider = EventDtoProvider.CreateDummyForPublicSeeds(250);
             context.SeedEvents(dtoProvider, blobService, this.Url);
-            return base.Ok(new { Status = "Ok", Comment = "Event seeding completed" });
+
+
+            var allTrails = context.Trails.ToArray();
+            if (allTrails.Length > 0)
+            {
+                Random r = new Random();
+                dtoProvider.All.ToList().ForEach(s =>
+                {
+                    var ev = context.Events.Single(e => e.ID == s.ID);
+                    int nextTrail = r.Next(-allTrails.Length, allTrails.Length - 1);
+
+                    if (nextTrail > -1)
+                    {
+                        ev.TrailID = allTrails[nextTrail].ID;
+                        context.Events.Update(ev);
+                    }
+                });
+            }
+            context.SaveChanges();
+            return base.Ok(new { Status = "Ok", Comment = $"Event seeding completed ({dtoProvider.All.Length})" });
+        }
+
+
+        [Route("seedtrails")]
+        public IActionResult SeedTrails([FromServices] TrailContext context, [FromServices]BlobService blobService)
+        {
+            var dtoProvider = TrailDtoProvider.CreateDummyForPublicSeeds(75);
+            context.SeedTrails(dtoProvider, blobService, this.Url);
+            return base.Ok(new { Status = "Ok", Comment = $"Trail seeding completed ({dtoProvider.All.Length})" });
         }
 
     }

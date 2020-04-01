@@ -94,30 +94,9 @@ namespace Trail365.Web
 
             IHealthChecksBuilder healthChecksBuilder = services.AddHealthChecks();
 
-            //healthChecksBuilder.AddCheck("AppSettings", () =>
-            //{
-            //    var isp = healthChecksBuilder.Services.BuildServiceProvider();
-            //    AppSettings settings = isp.GetRequiredService<IOptions<AppSettings>>().Value;
-            //    IWebHostEnvironment env = isp.GetRequiredService<IWebHostEnvironment>();
-
-            //    Dictionary<string, object> dictionary = new Dictionary<string, object>
-            //    {
-            //       // { nameof(settings.BackgroundServiceDisabled), settings.BackgroundServiceDisabled.ToString() }
-            //    };
-
-            //    if (env.IsDevelopment())
-            //    {
-            //    }
-
-            //    ReadOnlyDictionary<string, object> roDict = new ReadOnlyDictionary<string, object>(dictionary);
-
-            //    HealthCheckResult r = new HealthCheckResult(HealthStatus.Degraded, description: string.Format("XXXX{0}", env.EnvironmentName), data: roDict);
-            //    return r;
-            //});
-
             healthChecksBuilder.AddTrailExplorerFeatureStatus();
             healthChecksBuilder.AddBackupFeatureStatus();
-            healthChecksBuilder.AddBlobFeatureStatus();
+            healthChecksBuilder.AddStorageFeatureStatus();
             healthChecksBuilder.AddBackgroundServiceStatus();
 
             healthChecksBuilder.AddCheck("App", () =>
@@ -128,7 +107,6 @@ namespace Trail365.Web
 
                 Dictionary<string, object> dictionary = new Dictionary<string, object>
                 {
-                    { nameof(settings.BackgroundServiceDisabled), settings.BackgroundServiceDisabled.ToString() }
                 };
 
                 var proposedHealthStatatus = HealthStatus.Healthy;
@@ -138,7 +116,6 @@ namespace Trail365.Web
                     dictionary.Add(nameof(settings.HasInstrumentationKey), settings.HasInstrumentationKey());
                     dictionary.Add(nameof(settings.RunMigrationsAtStartup), settings.RunMigrationsAtStartup);
                     dictionary.Add(nameof(settings.PuppeteerEnabled), settings.PuppeteerEnabled);
-                    //dictionary.Add(nameof(settings.TrailExplorerBaseUrl), $"{settings.TrailExplorerBaseUrl}");
 
                     dictionary.Add(nameof(settings.GoogleAuthentication), settings.GoogleAuthentication);
                     dictionary.Add(nameof(settings.FacebookAuthentication), settings.FacebookAuthentication);
@@ -155,9 +132,6 @@ namespace Trail365.Web
 
                     dictionary.Add(nameof(settings.AbsoluteExpirationInSecondsRelativeToNow), settings.AbsoluteExpirationInSecondsRelativeToNow);
 
-                    dictionary.Add(nameof(settings.BackupDirectory), settings.BackupDirectory);
-                    dictionary.Add(nameof(settings.SyncEnabled), settings.SyncEnabled);
-                    dictionary.Add(nameof(settings.SyncOverwriteEnabled), settings.SyncOverwriteEnabled);
 
                     dictionary.Add(nameof(settings.EnableForwardHeaders), settings.EnableForwardHeaders);
                     dictionary.Add(nameof(settings.ApplicationInsightsStorageFolder), settings.ApplicationInsightsStorageFolder);

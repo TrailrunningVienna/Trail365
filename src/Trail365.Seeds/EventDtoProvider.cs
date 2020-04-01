@@ -160,22 +160,32 @@ namespace Trail365.Seeds
             return ev1;
         }
 
-        public static EventDtoProvider CreateDummyForPublicSeeds()
+        public static EventDtoProvider CreateDummyForPublicSeeds(int count)
         {
+            if (count < 1) throw new ArgumentNullException(nameof(count));
             List<EventDto> list = new List<EventDto>();
 
-            for (int i = 1; i < 5; i++)
+            Random r = new Random();
+            int daysToAdd = 0;
+            for (int i = 1; i < count; i++)
             {
-                var startUtc = DateTime.UtcNow.AddDays((i * 2) + 1).AddMinutes(i * 3); //SHOULD include Time-Part, MUST be in Utc
+                string sequence = DateTime.Now.Ticks.ToString().PadLeft(12, '0').Substring(4);
+                int time = r.Next(0, 48);
+                int hour = Convert.ToInt32(Math.Floor((double)time / 2));
+                int minute = 30 * (time % 2);
 
+                daysToAdd += r.Next(0, 2);
+
+                var startUtc = DateTime.UtcNow.Date.AddDays(daysToAdd).AddHours(hour).AddMinutes(minute);
+                var duration = TimeSpan.FromHours(r.Next(2, 72) / 2);
                 var ev1 = new EventDto
                 {
-                    Name = $"Demo Event ##{i}",
-                    Excerpt = $"Demo Event Excerpt ##{i}" + System.Environment.NewLine + "lorem ipsum second row on Event",
+                    Name = TextSeedingHelper.GetNameDummy(),
+                    Excerpt = TextSeedingHelper.GetExcerptDummy(),
                     ListAccess = AccessLevel.Public,
                     StartTimeUtc = startUtc,
-                    EndTimeUtc = startUtc.AddDays(i - 1).AddHours(i),
-                    ExternalID = "externID",
+                    EndTimeUtc = startUtc.Add(duration),
+                    ExternalID = $"externID{i:000000}",
                     ExternalSource = "externSource",
                 };
                 list.Add(ev1);

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Trail365.DTOs;
@@ -9,6 +10,55 @@ namespace Trail365.Seeds
 
     public class TrailDtoProvider
     {
+
+        public static TrailDtoProvider CreateDummyForPublicSeeds(int count)
+        {
+            if (count < 1) throw new ArgumentNullException(nameof(count));
+            List<TrailDto> list = new List<TrailDto>();
+
+            Random r = new Random();
+            for (int i = 1; i < count; i++)
+            {
+                byte[] gpxContent = null;
+                string gpxSourceName = null;
+                int gpxSelection = r.Next(0, 2);
+
+                if (gpxSelection == 0)
+                {
+                    gpxContent = File.ReadAllBytes(GpxTracks.HusarenTempel);
+                    gpxSourceName = "Husarentempel";
+                };
+
+                if (gpxSelection == 1)
+                {
+                    gpxContent = File.ReadAllBytes(GpxTracks.Buschberg);
+                    gpxSourceName = "Buschberg";
+                };
+
+                if (gpxSelection == 2)
+                {
+                    gpxContent = File.ReadAllBytes(GpxTracks.U4U4Toiflhuette);
+                    gpxSourceName = "U4U4Toiflhuette";
+                };
+
+                var trail = new TrailDto
+                {
+                    Name = TextSeedingHelper.GetNameDummy(),
+                    Gpx = gpxContent,
+                    GpxDownloadAccess = AccessLevel.Public,
+                    ListAccess = AccessLevel.Public,
+                    Description = $"description for unique test trail {i:000000} using {gpxSourceName}",
+                    Excerpt = TextSeedingHelper.GetExcerptDummy(),
+                };
+                list.Add(trail);
+            }
+            var p = new TrailDtoProvider
+            {
+                All = list.ToArray()
+            };
+            return p;
+        }
+
         public static TrailDtoProvider CreateProductionSeeds(string directory)
         {
             var fileInfos = GpxTracks.GetAllGpxTracksFromDirectory(directory);

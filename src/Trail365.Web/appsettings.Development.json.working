@@ -1,6 +1,6 @@
 {
   "APPINSIGHTS_INSTRUMENTATIONKEY": "bd0fa8c3-94bb-4b45-a978-e42b4ba8fdc5",
-  "CloudStorageRootContainerName": "uploads",
+  "CloudStorageContainerName": "uploads",
   "RunMigrationsAtStartup": true,
   "CloudStorageEnabled": false,
   "EnableForwardHeaders": true,

@@ -6,6 +6,19 @@ namespace Trail365.UnitTests
 {
     public static class ConfigurationExtension
     {
+        public static Dictionary<string, string> ConfigureFeatures(this Dictionary<string, string> configuration, Features features)
+        {
+            foreach (var pi in features.GetType().GetProperties())
+            {
+                if (pi.MemberType != System.Reflection.MemberTypes.Property) continue;
+                if (pi.PropertyType != typeof(bool)) continue;
+                string fullName = $"Features__" + pi.Name;
+                bool value = (bool)pi.GetValue(features);
+                configuration[fullName] = value.ToString();
+            }
+            return configuration;
+        }
+
         public static Dictionary<string, string> ConfigureDefaults(this Dictionary<string, string> configuration)
         {
             configuration.Add($"{nameof(AppSettings.PuppeteerEnabled)}", false.ToString());
@@ -23,7 +36,7 @@ namespace Trail365.UnitTests
         public static Dictionary<string, string> ConfigureAzureBlobService(this Dictionary<string, string> configuration, string connectionString, string containerName)
         {
             configuration.Add($"ConnectionStrings:{nameof(ConnectionStrings.CloudStorage)}", connectionString);
-            configuration.Add(nameof(AppSettings.CloudStorageRootContainerName), containerName);
+            configuration.Add(nameof(AppSettings.CloudStorageContainerName), containerName);
             configuration[nameof(AppSettings.CloudStorageEnabled)] = true.ToString();
             configuration.Add(nameof(AppSettings.FileSystemBlobServiceRootDirectory), string.Empty);
             return configuration;
