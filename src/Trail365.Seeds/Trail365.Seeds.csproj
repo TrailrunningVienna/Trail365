@@ -55,6 +55,9 @@
     <None Update="GpxTracks\RosengartenSchlernSkymarathon2019.gpx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="GpxTracks\shared-route.gpx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="GpxTracks\U4-U4Toiflhuette.gpx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

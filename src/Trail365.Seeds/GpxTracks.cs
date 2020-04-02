@@ -33,6 +33,12 @@ namespace Trail365.Seeds
         public static string HusarenTempel => EnsureFilePath("HusarenTempel-Schubertweg.gpx");
 
         /// <summary>
+        /// caused some exception that should be solved/regression tested
+        /// it is a route not a track!
+        /// </summary>
+        public static string SharedRoute => EnsureFilePath("shared-route.gpx"); 
+
+        /// <summary>
         /// Ignore Multifile
         /// </summary>
         public static string[] AllValidTracks => new string[] { Rosengarten, VTRClassic, VTRLight, U4U4Toiflhuette, Buschberg, HusarenTempel };

@@ -37,6 +37,30 @@ namespace Trail365.UnitTests
             Assert.True(result.MinimumAltitude == 166);
         }
 
+
+        [Fact]
+        public void ShouldReturnFeatureCollectionFromSharedTrack()
+        {
+            var result = TrailExtender.ConvertToFeatureCollection(GpxTracks.SharedRoute);
+            Assert.Equal(1385, result[0].Geometry.Coordinates.Length);
+        }
+
+        [Fact]
+        public void ShouldReturnValuesForSharedTrack()
+        {
+            string gpxTrack = File.ReadAllText(GpxTracks.SharedRoute);
+            var result = TrailExtender.ReadGpxFileInfo(gpxTrack, new Trail());
+            Assert.True(result.DistanceMeters > 37400);
+            Assert.True(result.DistanceMeters < 37500);
+            Assert.True(result.AscentMeters > 1460);
+            Assert.True(result.AscentMeters < 1470);
+            Assert.True(result.DescentMeters > 1465);
+            Assert.True(result.DescentMeters < 1470);
+            Assert.True(result.AltitudeAtStart == 439);
+            Assert.True(result.MaximumAltitude == 597);
+            Assert.True(result.MinimumAltitude == 330);
+        }
+
         [Fact]
         public void ShouldReturnValuesForBuschberg()
         {

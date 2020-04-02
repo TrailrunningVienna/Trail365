@@ -212,6 +212,14 @@ namespace Trail365
 
         public static Boundaries GetBoundaries(this FeatureCollection featureCollection)
         {
+            
+            if (featureCollection == null) throw new ArgumentNullException(nameof(featureCollection));
+
+            if (featureCollection.Count < 1)
+            {
+                throw new InvalidOperationException("Boundaries cannot be calculated from empty featurecollection");
+            }
+
             var boundaries = featureCollection.Select(feature1 =>
             {
                 //tested implementation for single geometry
