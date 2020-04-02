@@ -44,7 +44,7 @@ namespace Trail365.Web.Tasks
             var scopedTrail = await scopedDB.Trails.Include(t => t.GpxBlob).Include(t => t.AnalyzerBlob).Where(t => t.ID == this.Trail.ID).SingleOrDefaultAsync();
 
             await this.CalculateTrailAnalysis(scopedTrail, scopedDB, classifier, this.Context.Url, cancellationToken, this.Context.DefaultLogger, blobService);
-
+            scopedDB.Trails.Update(scopedTrail);
             var dbchanges = await scopedDB.SaveChangesAsync();
             //this.Context.DefaultLogger.LogTrace($"{nameof(TrailPreviewTask)}.DBContext.SaveChanges={dbchanges} ({this.Trail.Name})");
         }
@@ -83,7 +83,15 @@ namespace Trail365.Web.Tasks
             var buffer = await contentDownloader.GetFromUriAsync(new Uri(trail.GpxBlob.Url), cancellationToken);
             cancellationToken.ThrowIfCancellationRequested();
             FeatureCollection inputData = TrailExtender.ConvertToFeatureCollection(buffer); //NOT simplified, we need detailed data here
+
             FeatureCollection classifiedData = _classifier.GetClassification(inputData);
+
+            //use classified to calculate numbers
+            var classifications = classifiedData.GetClassifiedDistanceInMeters();
+            trail.UnclassifiedMeters = classifications.GetIntValueOrDefault(CoordinateClassification.Unknown);
+            trail.UnpavedTrailMeters = classifications.GetIntValueOrDefault(CoordinateClassification.Trail);
+            trail.AsphaltedRoadMeters = classifications.GetIntValueOrDefault(CoordinateClassification.AsphaltedRoad);
+            trail.PavedRoadMeters = classifications.GetIntValueOrDefault(CoordinateClassification.PavedRoad);
 
             using (var stream = new MemoryStream())
             {
@@ -109,8 +117,7 @@ namespace Trail365.Web.Tasks
                     _context.Blobs.Update(oldBlob);
                 }
             } //memory stream for analyzer geoJson
-            //logger.LogTrace($"{nameof(this.CalculateTrailAnalysis)}.Start {trail.Name}");
-            //logger.LogTrace($"{nameof(this.CalculateTrailAnalysis)}.End {trail.Name}");
+
         }
     }
 }

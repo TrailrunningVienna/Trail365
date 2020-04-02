@@ -87,7 +87,7 @@ namespace Trail365
 
             if (t == null || t.GetQuality() < 1)
             {
-                return new CoordinateClassification(input, "unknown");
+                return new CoordinateClassification(input, CoordinateClassification.Unknown);
             }
             return new CoordinateClassification(input, t.Classification);
         }

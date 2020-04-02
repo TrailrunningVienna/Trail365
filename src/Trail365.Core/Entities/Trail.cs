@@ -112,6 +112,20 @@ namespace Trail365.Entities
         public int? AltitudeAtStart { get; set; }
 
         /// <summary>
+        /// pure trail
+        /// </summary>
+        public int? UnpavedTrailMeters { get; set; }
+
+        /// <summary>
+        /// typically forestry road
+        /// </summary>
+        public int? PavedRoadMeters { get; set; }
+
+        public int? AsphaltedRoadMeters { get; set; }
+
+        public int? UnclassifiedMeters { get; set; }
+
+        /// <summary>
         /// Elevation Profile optimized for this track (no alignments), some other info integrated (TBD)
         /// </summary>
         public Guid? ElevationProfileImageID { get; set; }

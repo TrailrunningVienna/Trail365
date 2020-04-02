@@ -5,6 +5,15 @@ namespace Trail365
     public static class GeoMath
     {
         public static readonly double PIDiv180 = Math.PI / 180.0;
+        
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="longitude">X</param>
+        /// <param name="latitude">Y</param>
+        /// <param name="otherLongitude">X</param>
+        /// <param name="otherLatitude">Y</param>
+        /// <returns></returns>
         public static double GetDistanceInMeters(double longitude, double latitude, double otherLongitude, double otherLatitude)
         {
             var d1 = latitude * (PIDiv180);

@@ -7,11 +7,81 @@ using NetTopologySuite.Features;
 using NetTopologySuite.Geometries;
 using NetTopologySuite.IO;
 using Newtonsoft.Json;
+using Trail365.Internal;
 
 namespace Trail365
 {
     public static class FeatureCollectionExtensions
     {
+
+        public static int? GetIntValueOrDefault(this Dictionary<string, double> dictionary, string classification)
+        {
+            if (dictionary == null) throw new ArgumentNullException(nameof(dictionary));
+            if (string.IsNullOrEmpty(classification)) throw new ArgumentNullException(classification);
+
+            if (dictionary.TryGetValue(classification, out double result))
+            {
+                return Convert.ToInt32(result);
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        private static double GetDistanceInMeters(LineString ls)
+        {
+            double result = 0.0;
+            Coordinate last = null;
+
+            foreach (var cs in ls.Coordinates)
+            {
+                if (last == null)
+                {
+                    last = cs;
+                    continue;
+                }
+
+                double currentDist = GeoMath.GetDistanceInMeters(last.X, last.Y, cs.X, cs.Y);
+                result += currentDist;
+                last = cs;
+            }
+            return result;
+        }
+
+        public static Dictionary<string, double> GetClassifiedDistanceInMeters(this FeatureCollection input)
+        {
+            if (input == null) throw new ArgumentNullException(nameof(input));
+            var result = new Dictionary<string, double>();
+            foreach (var f in input)
+            {
+                LineString ls = f.Geometry as LineString;
+                if (ls == null)
+                {
+                    continue; //ignore points from toilets!
+                }
+
+                string currentClass = string.Empty;
+                if (f.Attributes != null && f.Attributes.Exists("outdoor_class"))
+                {
+                    currentClass = $"{f.Attributes["outdoor_class"]}";
+                }
+                Guard.Assert(currentClass == currentClass.Trim());
+                if (string.IsNullOrEmpty(currentClass)) continue;
+                double currentDist = GetDistanceInMeters(ls);
+                if (result.TryGetValue(currentClass, out var dist))
+                {
+                    result[currentClass] = currentDist + dist;
+                }
+                else
+                {
+                    result[currentClass] = currentDist;
+                }
+            } //foreach over input!
+            return result;
+        }
+
+
         /// <summary>
         /// all SingleLine features with the same class are merged into one multiline feature
         /// </summary>
@@ -60,9 +130,6 @@ namespace Trail365
             }
             return output;
         }
-
-
-
 
         /// <summary>
         /// merges multiple two-point lines into one line, if attibutes are the same
@@ -190,15 +257,13 @@ namespace Trail365
             return sb.ToString();
         }
 
-
         public static void SerializeFeatureCollectionIntoGeoJson(this FeatureCollection featureCollection, Stream targetStream)
         {
-            using (var writer = new StreamWriter(targetStream,leaveOpen:true))
+            using (var writer = new StreamWriter(targetStream, leaveOpen: true))
             {
                 SerializeFeatureCollectionIntoGeoJson(featureCollection, writer);
             }
         }
-
 
         public static void SerializeFeatureCollectionIntoGeoJson(this FeatureCollection featureCollection, TextWriter writer)
         {
@@ -212,7 +277,7 @@ namespace Trail365
 
         public static Boundaries GetBoundaries(this FeatureCollection featureCollection)
         {
-            
+
             if (featureCollection == null) throw new ArgumentNullException(nameof(featureCollection));
 
             if (featureCollection.Count < 1)
