@@ -7,9 +7,48 @@ using Trail365.Internal;
 
 namespace Trail365.ViewModels
 {
-
+    /// <summary>
+    /// this VM should only be used for unidirectional (Output only) bindings
+    /// </summary>
     public class TrailViewModel : TrailViewModelBase
     {
+        public bool HasClassifications => this.UnpavedTrailMeters.HasValue || this.UnclassifiedMeters.HasValue;
+
+        private string GetClassifiedInKm(int? meters)
+        {
+            if (meters.HasValue)
+            {
+                double km = Math.Round((double) meters.Value / 1000,1);
+                return km.ToString("#.0")+ " km";
+            }
+            else
+            {
+                return "N/A";
+            }
+        }
+
+        public string UnpavedTrail => GetClassifiedInKm(this.UnpavedTrailMeters);
+
+        public string PavedRoad => GetClassifiedInKm(this.PavedRoadMeters);
+
+        public string AsphaltedRoad => GetClassifiedInKm(this.AsphaltedRoadMeters);
+
+        public string Unclassified => GetClassifiedInKm(this.UnclassifiedMeters);
+
+        /// <summary>
+        /// pure trail
+        /// </summary>
+        public int? UnpavedTrailMeters { get; set; }
+
+        /// <summary>
+        /// typically forestry road
+        /// </summary>
+        public int? PavedRoadMeters { get; set; }
+
+        public int? AsphaltedRoadMeters { get; set; }
+
+        public int? UnclassifiedMeters { get; set; }
+
         public string PreviewUrl { get; set; }
 
         public Dictionary<string, string> CreateOpenGraphTags(IUrlHelper helper, Size imageSize, string appID)

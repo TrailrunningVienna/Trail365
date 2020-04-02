@@ -73,6 +73,31 @@
     </div>
 </div>
 
+@if (this.Model.HasClassifications)
+{
+
+    <div class="@row">
+        <div class="@col_left">Trailanteil:</div>
+        <div class="@col_right">@Model.UnpavedTrail</div>
+    </div>
+
+    <div class="@row">
+        <div class="@col_left">Forststrassenanteil:</div>
+        <div class="@col_right">@Model.PavedRoad</div>
+    </div>
+
+    <div class="@row">
+        <div class="@col_left">Asphalanteil:</div>
+        <div class="@col_right">@Model.AsphaltedRoad</div>
+    </div>
+
+    <div class="@row">
+        <div class="@col_left">Unbekannt:</div>
+        <div class="@col_right">@Model.Unclassified</div>
+    </div>
+
+}
+
 @if (this.Model.ShowChallenge)
 {
     <div class="@row">
