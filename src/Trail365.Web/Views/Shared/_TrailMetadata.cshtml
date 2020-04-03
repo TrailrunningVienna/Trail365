@@ -1,99 +1,96 @@
 @using Trail365
 @model Trail365.ViewModels.TrailViewModel
 @{
-    string col_left = "col-3";
-    string col_right = "col-6";
-    string col_right1 = "col-3";
-    if (!this.Model.ShowEditLink)
-    {
-        col_right = "col-9";
-    }
-
+    string col_left = "col-2";
+    string col_right = "col-2 text-right";
+    string col_right1 = "col pl-2";
     string row = "row no-gutters";
-    bool? bagValue = this.ViewBag.HideIdentifierRow as bool?;
-    bool hideIdentifierRow = false;
-    if (bagValue.HasValue)
-    {
-        hideIdentifierRow = bagValue.Value;
-    }
 }
 
-@if (!hideIdentifierRow)
-{
     <div class="@row">
-        <div class="@col_left">Strecke:</div>
 
-        <div class="@col_right">
-            <a class="fg-link" asp-area="" asp-controller="TrailDetails" asp-action="Trail" asp-route-Id="@this.Model.ID">@Model.Name</a>
-        </div>
-
-        @if ((this.Model.Login.IsModeratorOrHigher) && (this.Model.ShowEditLink))
-        {
-            <div class="@col_right1">
-                <a class="fg-link" asp-area="Backend" asp-controller="Trails" asp-action="Edit" asp-route-Id="@this.Model.ID">[Edit]</a>
-            </div>
-        }
-    </div>
-}
-<div class="@row">
-
-    <div class="@col_left">
-        <span>&nbsp;</span>
-    </div>
-
-    <div class="@col_right">
+        <div class="@col_left">Distanz:</div>
         @if (Model.DistanceKm.HasValue)
         {
-            <div class="">
-                <i class="fas fa-arrows-alt-h"></i>&nbsp;@Model.DistanceKm.Value.ToKmFormat()<span class="">&nbsp;km</span>
+            <div class="@col_right">
+                @Model.DistanceKm.Value.ToKmFormat()
             </div>
+            <div class="@col_right1"><span>km&nbsp;</span><i class="fas fa-arrows-alt-h"></i></div>
+        }
+        else
+        {
+            <div class="@col_right">N/A</div>
+            <div class="@col_right1"><span>&nbsp;</span></div>
         }
     </div>
-</div>
 
-<div class="@row">
 
-    <div class="@col_left">
-        <span>&nbsp;</span>
-    </div>
-
-    <div class="@col_right">
+    <div class="@row">
+        <div class="@col_left">Anstieg:</div>
         @if (Model.Ascent.HasValue)
         {
-            <div class="">
-                <i class="fas fa-arrow-up"></i>&nbsp;@Model.Ascent.ToIntFormat()<span class="">&nbsp;m</span>
+            <div class="@col_right">
+                @Model.Ascent.ToIntFormat()
             </div>
+            <div class="@col_right1"><span>&nbsp;m&nbsp;</span><i class="fas fa-arrow-up"></i></div>
         }
-        @if (Model.Descent.HasValue)
+        else
         {
-            <div class="">
-                <i class="fas fa-arrow-down"></i>&nbsp;@Model.Descent.ToIntFormat()<span class="">&nbsp;m</span>
-            </div>
+            <div class="@col_right">N/A</div>
+            <div class="@col_right1"><span>&nbsp;</span></div>
         }
     </div>
-</div>
+
+    <div class="@row">
+        <div class="@col_left">Abstieg:</div>
+        @if (Model.Descent.HasValue)
+        {
+            <div class="@col_right">@Model.Descent.ToIntFormat()</div>
+            <div class="@col_right1"><span>&nbsp;m&nbsp;</span><i class="fas fa-arrow-down"></i></div>
+        }
+        else
+        {
+            <div class="@col_right">N/A</div>
+            <div class="@col_right1"><span>&nbsp;</span></div>
+        }
+    </div>
+
 
 @if (this.Model.HasClassifications)
 {
 
     <div class="@row">
-        <div class="@col_left">Trailanteil:</div>
+        <div class="@col_left"><span>&nbsp;</span></div>
+        <div class="@col_right"><span>&nbsp;</span></div>
+    </div>
+
+    <div class="@row">
+        <div class="@col_left">Bewertung</div>
+        <div class="@col_right"><span>&nbsp;</span></div>
+    </div>
+
+    <div class="@row">
+        <div class="@col_left">Trail:</div>
         <div class="@col_right">@Model.UnpavedTrail</div>
+        <div class="@col_right1">km</div>
     </div>
 
     <div class="@row">
-        <div class="@col_left">Forststrassenanteil:</div>
+        <div class="@col_left">Forststrasse:</div>
         <div class="@col_right">@Model.PavedRoad</div>
+        <div class="@col_right1">km</div>
     </div>
 
     <div class="@row">
-        <div class="@col_left">Asphalanteil:</div>
+        <div class="@col_left">Asphalt:</div>
         <div class="@col_right">@Model.AsphaltedRoad</div>
+        <div class="@col_right1">km</div>
     </div>
 
     <div class="@row">
         <div class="@col_left">Unbekannt:</div>
         <div class="@col_right">@Model.Unclassified</div>
+        <div class="@col_right1">km</div>
     </div>
 
 }

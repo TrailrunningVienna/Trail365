@@ -19,7 +19,7 @@ namespace Trail365.ViewModels
             if (meters.HasValue)
             {
                 double km = Math.Round((double) meters.Value / 1000,1);
-                return km.ToString("#.0")+ " km";
+                return km.ToString("#0.0");
             }
             else
             {
@@ -95,7 +95,7 @@ namespace Trail365.ViewModels
             return string.Empty;
         }
 
-        public bool ShowEditLink { get; set; }
+        public bool ShowEditLink { get; set; } 
 
         public bool ShowDownloadLink { get; set; }
 
