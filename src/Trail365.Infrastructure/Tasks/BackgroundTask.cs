@@ -49,7 +49,7 @@ namespace Trail365.Tasks
                 {
                     context.ServiceProvider = scope.ServiceProvider;
 
-                    string currentTaskName = this.GetType().Name;
+                    string loggerCategoryName = this.GetType().Name.Replace("Task",string.Empty).Trim();
 
                     using (var loggerFactory = new LoggerFactory())
                     {
@@ -58,7 +58,7 @@ namespace Trail365.Tasks
                         using (BackgroundTaskLoggingProvider loggerProvider = new BackgroundTaskLoggingProvider(dbContext, logDisabled))
                         {
                             loggerFactory.AddProvider(loggerProvider);
-                            var engineLogger = loggerFactory.CreateLogger(currentTaskName); //WM 03/2020 logging with the final category => user context!
+                            var engineLogger = loggerFactory.CreateLogger(loggerCategoryName); //WM 03/2020 logging with the final category => user context!
                             try
                             {
                                 this.OnBeforeExecute();

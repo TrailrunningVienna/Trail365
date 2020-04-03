@@ -101,6 +101,8 @@ namespace Trail365.Web
             healthChecksBuilder.AddBackgroundServiceStatus();
             healthChecksBuilder.AddScrapingServiceStatus();
 
+            healthChecksBuilder.AddChatFeatureStatus();
+
             healthChecksBuilder.AddCheck("App", () =>
             {
                 var isp = healthChecksBuilder.Services.BuildServiceProvider();
@@ -285,7 +287,9 @@ namespace Trail365.Web
                         { $"{nameof(settings.Features.Login)}", settings.Features.Login },
                         { $"{nameof(settings.Features.TrailAnalyzer)}", settings.Features.TrailAnalyzer },
                         { $"{nameof(settings.Features.ShareOnFacebook)}", settings.Features.ShareOnFacebook },
-                        { $"{nameof(settings.Features.Trails)}", settings.Features.Trails }
+                        { $"{nameof(settings.Features.Trails)}", settings.Features.Trails },
+                        { $"{nameof(settings.Features.Chat)}", settings.Features.Chat }
+
                 };
 
                 ReadOnlyDictionary<string, object> roDict = new ReadOnlyDictionary<string, object>(dictionary);

@@ -65,6 +65,40 @@ namespace Trail365.Web
         }
 
 
+        public static void AddChatFeatureStatus(this IHealthChecksBuilder healthChecksBuilder)
+        {
+            healthChecksBuilder.AddCheck("Chat", () =>
+            {
+                var isp = healthChecksBuilder.Services.BuildServiceProvider();
+                AppSettings settings = isp.GetRequiredService<IOptions<AppSettings>>().Value;
+                IWebHostEnvironment env = isp.GetRequiredService<IWebHostEnvironment>();
+
+                Dictionary<string, object> dictionary = new Dictionary<string, object>
+                {
+                     { nameof(settings.Features.Chat), settings.Features.Chat.ToString() }
+                     //{ nameof(settings.TrailExplorerBaseUrl), $"{settings.TrailExplorerBaseUrl}"}
+                };
+
+                var proposedHealthStatatus = HealthStatus.Healthy;
+                string proposedDescription = null;
+
+                ReadOnlyDictionary<string, object> roDict;
+
+                if (env.IsDevelopment())
+                {
+                    roDict = new ReadOnlyDictionary<string, object>(dictionary);
+                }
+                else
+                {
+                    roDict = new ReadOnlyDictionary<string, object>(new Dictionary<string, object>());
+                }
+
+                HealthCheckResult r = new HealthCheckResult(proposedHealthStatatus, proposedDescription, data: roDict);
+                return r;
+            });
+        }
+
+
         public static void AddScrapingServiceStatus(this IHealthChecksBuilder healthChecksBuilder)
         {
             healthChecksBuilder.AddCheck("ScrapingService", () =>
@@ -78,8 +112,6 @@ namespace Trail365.Web
                      { nameof(settings.PuppeteerEnabled), settings.PuppeteerEnabled.ToString() },
                      { nameof(settings.TrailExplorerBaseUrl), $"{settings.TrailExplorerBaseUrl}"}
                 };
-
-                //TODO ensure that connectionstring for TaskSystem is valid!
 
                 var proposedHealthStatatus = HealthStatus.Healthy;
                 string proposedDescription = null;

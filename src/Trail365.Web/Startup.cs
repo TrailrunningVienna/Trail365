@@ -22,7 +22,6 @@ using Trail365.Tasks;
 
 namespace Trail365.Web
 {
-
     public class Startup
     {
         public Startup(IConfiguration configuration)
@@ -75,6 +74,11 @@ namespace Trail365.Web
             }
 
             services.AddMvc();
+
+            if (settings.Features.Chat)
+            {
+                services.AddSignalR();
+            }
 
             services.AddAuthorization();
 
@@ -248,7 +252,6 @@ namespace Trail365.Web
                 console = System.Console.Out;
             }
 
-
             if (settings.SyncEnabled && !string.IsNullOrEmpty(settings.BackupDirectory)) //health status has warning if status is not consistent
             {
                 //in Docker we must assume that every app start means a fresh container without data
@@ -338,6 +341,11 @@ namespace Trail365.Web
                     name: "default",
                     pattern: "{controller}/{action}/{id?}",
                     defaults: new { controller = "Home", action = "Index" });
+
+                if (settings.Features.Chat)
+                {
+                    endpoints.MapHub<Chat>("/chat");
+                }
             });
         }
     }
