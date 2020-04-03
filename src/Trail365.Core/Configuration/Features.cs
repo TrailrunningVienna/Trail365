@@ -51,5 +51,7 @@ namespace Trail365.Configuration
         public bool TrailAnalyzer { get; set; } = false;
 
         public bool ShareOnFacebook { get; set; } = true;
+
+        public bool Chat { get; set; } = false;
     }
 }
