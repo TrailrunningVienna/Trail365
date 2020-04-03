@@ -97,7 +97,9 @@ namespace Trail365.Web
             healthChecksBuilder.AddTrailExplorerFeatureStatus();
             healthChecksBuilder.AddBackupFeatureStatus();
             healthChecksBuilder.AddStorageFeatureStatus();
+
             healthChecksBuilder.AddBackgroundServiceStatus();
+            healthChecksBuilder.AddScrapingServiceStatus();
 
             healthChecksBuilder.AddCheck("App", () =>
             {
@@ -115,7 +117,6 @@ namespace Trail365.Web
                 {
                     dictionary.Add(nameof(settings.HasInstrumentationKey), settings.HasInstrumentationKey());
                     dictionary.Add(nameof(settings.RunMigrationsAtStartup), settings.RunMigrationsAtStartup);
-                    dictionary.Add(nameof(settings.PuppeteerEnabled), settings.PuppeteerEnabled);
 
                     dictionary.Add(nameof(settings.GoogleAuthentication), settings.GoogleAuthentication);
                     dictionary.Add(nameof(settings.FacebookAuthentication), settings.FacebookAuthentication);
