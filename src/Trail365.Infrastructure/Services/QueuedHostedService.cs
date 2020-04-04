@@ -7,7 +7,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Trail365.Services
 {
-    public class QueuedHostedService : BackgroundService
+    public sealed class QueuedHostedService : BackgroundService
     {
         private readonly ILogger _logger;
 

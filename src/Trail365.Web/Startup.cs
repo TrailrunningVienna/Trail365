@@ -133,6 +133,7 @@ namespace Trail365.Web
             if (!settings.BackgroundServiceDisabled)
             {
                 services.AddHostedService<QueuedHostedService>();
+                services.AddHostedService<QueuedWorkerService>();
             }
 
             services.AddSingleton<IBackgroundTaskQueue, BackgroundTaskQueue>();

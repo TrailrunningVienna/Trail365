@@ -2,8 +2,8 @@
   <PropertyGroup>
     <MajorVersion>0</MajorVersion>
     <MinorVersion>23</MinorVersion>
-    <PatchVersion>902</PatchVersion>
-    <PreReleaseLabel>2</PreReleaseLabel>
+    <PatchVersion>905</PatchVersion>
+    <PreReleaseLabel>queue-1</PreReleaseLabel>
     <VersionPrefix>$(MajorVersion).$(MinorVersion).$(PatchVersion)</VersionPrefix>
     <VersionSuffix Condition="'$(PreReleaseLabel)' == ''"></VersionSuffix>
     <VersionSuffix Condition="'$(PreReleaseLabel)' != ''">-$(PreReleaseLabel)</VersionSuffix>
