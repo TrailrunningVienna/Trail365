@@ -254,46 +254,6 @@
 
     @if (_settings.CurrentValue.Features.Chat)
     {
-        <script src="~/lib/signalr/signalr.js"></script>
-        <div id="chat">
-            <form id="frm-send-message" action="#">
-                <label for="message">Message:</label>
-                <input type="text" id="message" />
-                <input type="submit" id="send" value="Send" />
-            </form>
-            <div class="clear">
-            </div>
-            <ul id="messages"></ul>
-        </div>
-
-        <script>
-
-            const connection = new signalR.HubConnectionBuilder()
-                .withUrl("/chat")
-                .build();
-
-            connection.start().catch(err => console.error(err.toString()));
-
-            connection.on('Send', (message) => {
-                appendLine(message);
-            });
-
-            document.getElementById('frm-send-message').addEventListener('submit', event => {
-                let message = document.getElementById('message').value;
-                document.getElementById('message').value = '';
-
-                connection.invoke('Send', message);
-                event.preventDefault();
-            });
-
-            function appendLine(line, color) {
-                let li = document.createElement('li');
-                li.innerText = line;
-                document.getElementById('messages').appendChild(li);
-            };
-
-        </script>
-
 
     }
 }

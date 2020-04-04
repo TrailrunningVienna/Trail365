@@ -75,11 +75,6 @@ namespace Trail365.Web
 
             services.AddMvc();
 
-            if (settings.Features.Chat)
-            {
-                services.AddSignalR();
-            }
-
             services.AddAuthorization();
 
             services.AddControllers();
@@ -323,15 +318,6 @@ namespace Trail365.Web
                 //https://github.com/aspnet/AspNetCore/blob/master/src/MusicStore/samples/MusicStore/Startup.cs
                 //https://aregcode.com/blog/2019/dotnetcore-understanding-aspnet-endpoint-routing/
 
-                //endpoints.MapControllerRoute(
-                //    name: "Default",
-                //    pattern: "{controller=Home}/{action=Index}/{id?}");
-
-                //endpoints.MapAreaControllerRoute(
-                //    name: "Backend",
-                //    areaName: "Backend",
-                //    pattern: "{area}/{controller=Home}/{action=Index}/{id?}");
-
                 endpoints.MapControllerRoute(
                   name: "areaRoute",
                   pattern: "{area:exists}/{controller}/{action}/{id?}",
@@ -341,11 +327,6 @@ namespace Trail365.Web
                     name: "default",
                     pattern: "{controller}/{action}/{id?}",
                     defaults: new { controller = "Home", action = "Index" });
-
-                if (settings.Features.Chat)
-                {
-                    endpoints.MapHub<Chat>("/chat");
-                }
             });
         }
     }
