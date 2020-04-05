@@ -254,6 +254,7 @@
 
     @if (_settings.CurrentValue.Features.Chat)
     {
-
+        <input type="hidden" id="hidUserID" value="@ViewBag.UserID" />
+        <partial name="_chatbox" model="@Model" />
     }
 }

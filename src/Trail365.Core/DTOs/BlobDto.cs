@@ -3,6 +3,17 @@ using Trail365.Entities;
 
 namespace Trail365.DTOs
 {
+
+    public class UserMessage
+    {
+        public int MessageID { get; set; }
+        public int SYSUserID { get; set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+        public string MessageText { get; set; }
+        public DateTime? LogDate { get; set; }
+    }
+
     public class BlobDto
     {
         public static BlobDto FromBlob(Blob blob)

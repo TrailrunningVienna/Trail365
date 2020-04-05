@@ -1,0 +1,113 @@
+@using Microsoft.AspNetCore.Http.Extensions
+@using Trail365
+@using Trail365.Configuration
+@using Trail365.ViewModels
+@using Trail365.Web
+@inject Microsoft.Extensions.Options.IOptionsMonitor<AppSettings> _settings
+
+@{
+}
+
+<style type="text/css">
+    #divShoutBox {
+        position: relative;
+        width: 400px;
+        height: 300px;
+        overflow: auto;
+    }
+
+    #txtMessageText {
+        width: 400px;
+        height: 100px;
+    }
+</style>
+
+<div id="divShoutBox">
+    <div id="divUserMessage"></div>
+</div>
+
+<input type="button" class="btn-primary w-100" id="btnPost" value="Post" />
+
+<br />
+<textarea id="txtMessageText"></textarea>
+<br />
+
+<script>
+
+    var _isScrolling = false;
+    var _lastScrollPos = 0;
+    var _counter = 0;
+
+    $(function () {
+
+        GetMessages();
+        setInterval(Fetch, 5000);
+
+        $("#divShoutBox").on("scroll", function () {
+            _isScrolling = true;
+            _lastScrollPos = this.scrollHeight;
+        });
+
+        $("#btnPost").on("click", function () {
+            var msg = $("#txtMessageText");
+            var user = $("#hidUserID");
+
+            if (msg.val().length > 0) {
+                $.ajax({
+                    type: "POST",
+                    url: '@(Url.Action("SendMessage","Home"))',
+                    data: { userID: user.val(), message: msg.val() },
+                    success: function (d) { msg.val(""); GetMessages(); },
+                    error: function (err) { }
+                });
+            }
+        });
+
+    });
+
+
+    function Fetch() {
+        if (!_isScrolling) {
+            GetMessages();
+            $("#divShoutBox").scrollTop(_lastScrollPos);
+        };
+        _isScrolling = false;
+    }
+
+    function GetMessages() {
+        $.ajax({
+            type: "POST",
+            url: '@(Url.Action("GetMessages","Home"))',
+               data: {},
+               success: function (d) {
+                   $("#divUserMessage").empty();
+                   $.each(d, function (index, i) {
+                       GenerateHTML(i.firstName, i.lastName, i.messageText, FormatDateString(i.logDate));
+                   });
+               },
+               error: function (err) { }
+        });
+    }
+
+    function GenerateHTML(fName, lName, msgText, logDate) {
+        var divMsg = $("#divUserMessage");
+        divMsg.append("Posted by: " + fName + " " + lName + "<br/>");
+        divMsg.append("Posted on: " + logDate + "<br/>");
+        divMsg.append(msgText);
+        divMsg.append("<hr/>");
+    }
+
+    function FormatDateString(logDate) {
+        return "mydate";
+        var d = new Date(parseInt(logDate.substr(6)));
+        var year = d.getFullYear();
+        var month = d.getMonth() + 1;
+        var day = d.getDate();
+        var hour = d.getHours();
+        var minutes = d.getMinutes();
+        var sec = d.getSeconds();
+
+        return month + "/" + day + "/" + year + " " + hour + ":" + minutes + ":" + sec;
+    }
+
+</script>

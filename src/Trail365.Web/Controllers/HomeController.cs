@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -8,6 +9,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Trail365.Configuration;
 using Trail365.Data;
+using Trail365.DTOs;
 using Trail365.Entities;
 using Trail365.Tasks;
 using Trail365.Tasks.Internal;
@@ -210,5 +212,35 @@ namespace Trail365.Web.Controllers
         {
             return this.View();
         }
+
+        //    [Authorize]
+        public ActionResult SendMessage(int userID, string message)
+        {
+           // UserManager UM = new UserManager();
+           // UM.AddMessage(userID, message);
+            return Json(new { success = true });
+        }
+
+    //    [Authorize]
+        public ActionResult GetMessages()
+        {
+            List<UserMessage> l = new List<UserMessage>();
+            l.Add(new UserMessage()
+            {
+               FirstName = "frist name 1",
+               LastName = "last name 1",
+               MessageID = 99,
+               MessageText ="Hello world",
+               LogDate = DateTime.Now,
+               SYSUserID = 77,
+            });
+            //UserManager UM = new UserManager();
+            //return Json(UM.GetAllMessages(), JsonRequestBehavior.AllowGet);
+            return Json(l,null);
+
+        }
+
+
+
     }
 }
