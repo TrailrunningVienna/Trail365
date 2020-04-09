@@ -295,6 +295,97 @@ namespace Trail365.Web
         }
 
 
+
+        public static void AddAuthenticationStatus(this IHealthChecksBuilder healthChecksBuilder)
+        {
+            healthChecksBuilder.AddCheck("Authentication", () =>
+            {
+                var isp = healthChecksBuilder.Services.BuildServiceProvider();
+                AppSettings settings = isp.GetRequiredService<IOptions<AppSettings>>().Value;
+                IWebHostEnvironment env = isp.GetRequiredService<IWebHostEnvironment>();
+
+                Dictionary<string, object> dictionary = new Dictionary<string, object>
+                {
+                    { nameof(settings.FacebookAuthentication), $"{settings.FacebookAuthentication}" },
+                    { nameof(settings.GitHubAuthentication), $"{settings.GitHubAuthentication}" },
+                    { nameof(settings.GoogleAuthentication), $"{settings.GoogleAuthentication}" },
+                    { nameof(settings.StaticUserSettingsEnabled), $"{settings.StaticUserSettingsEnabled}" },
+                    { nameof(settings.EnableForwardHeaders), $"{settings.EnableForwardHeaders}" },
+
+                };
+                var proposedHealthStatatus = HealthStatus.Healthy;
+                string proposedDescription = null;
+
+                if (!settings.EnableForwardHeaders)
+                {
+                    if (settings.FacebookAuthentication || settings.GoogleAuthentication || settings.GitHubAuthentication)
+                    {
+                        proposedHealthStatatus = HealthStatus.Degraded;
+                        proposedDescription = "ForwardHeaders mus be enabled for external Authentication (without FH the redirect to https is not working)";
+                    }
+                }
+
+                ReadOnlyDictionary<string, object> roDict;
+
+                if (env.IsDevelopment())
+                {
+                    roDict = new ReadOnlyDictionary<string, object>(dictionary);
+                }
+                else
+                {
+                    roDict = new ReadOnlyDictionary<string, object>(new Dictionary<string, object>());
+                }
+
+                HealthCheckResult r = new HealthCheckResult(proposedHealthStatatus, proposedDescription, data: roDict);
+                return r;
+            });
+
+        }
+
+        public static void AddDatabaseStatus(this IHealthChecksBuilder healthChecksBuilder)
+        {
+            healthChecksBuilder.AddCheck("Database", () =>
+            {
+                var isp = healthChecksBuilder.Services.BuildServiceProvider();
+                AppSettings settings = isp.GetRequiredService<IOptions<AppSettings>>().Value;
+                IWebHostEnvironment env = isp.GetRequiredService<IWebHostEnvironment>();
+
+                Dictionary<string, object> dictionary = new Dictionary<string, object>
+                {
+                    { nameof(settings.TrailContextDisabled), $"{settings.TrailContextDisabled}" },
+                    { nameof(settings.IdentityContextDisabled), $"{settings.IdentityContextDisabled}" },
+                    { nameof(settings.TaskContextDisabled), $"{settings.TaskContextDisabled}" }
+                };
+
+                if (env.IsDevelopment())
+                {
+                    dictionary.Add(nameof(settings.ConnectionStrings.TaskDB), $"{settings.ConnectionStrings.GetResolvedTaskDBConnectionString()}");
+                    dictionary.Add(nameof(settings.ConnectionStrings.TrailDB), $"{settings.ConnectionStrings.GetResolvedTrailDBConnectionString()}");
+                    dictionary.Add(nameof(settings.ConnectionStrings.IdentityDB), $"{settings.ConnectionStrings.GetResolvedIdentityDBConnectionString()}");
+                    dictionary.Add("WEBSITES_ENABLE_APP_SERVICE_STORAGE", $"{Environment.GetEnvironmentVariable("WEBSITES_ENABLE_APP_SERVICE_STORAGE")}");
+                }
+
+                var proposedHealthStatatus = HealthStatus.Healthy;
+                string proposedDescription = null;
+
+                ReadOnlyDictionary<string, object> roDict;
+
+                if (env.IsDevelopment())
+                {
+                    roDict = new ReadOnlyDictionary<string, object>(dictionary);
+                }
+                else
+                {
+                    roDict = new ReadOnlyDictionary<string, object>(new Dictionary<string, object>());
+                }
+
+                HealthCheckResult r = new HealthCheckResult(proposedHealthStatatus, proposedDescription, data: roDict);
+                return r;
+            });
+
+        }
+
+
         public static void AddBackupFeatureStatus(this IHealthChecksBuilder healthChecksBuilder)
         {
             healthChecksBuilder.AddCheck("Backup", () =>
@@ -305,10 +396,17 @@ namespace Trail365.Web
 
                 Dictionary<string, object> dictionary = new Dictionary<string, object>
                 {
-                    { nameof(settings.BackupDirectory), $"{settings.BackupDirectory}" },
                     { nameof(settings.SyncEnabled), $"{settings.SyncEnabled}" }
                 };
+
                 dictionary.Add(nameof(settings.SyncOverwriteEnabled), $"{settings.SyncOverwriteEnabled}");
+
+                if (env.IsDevelopment())
+                {
+                    dictionary.Add(nameof(settings.BackupDirectory), $"{settings.BackupDirectory}");
+                    dictionary.Add("WEBSITES_ENABLE_APP_SERVICE_STORAGE", $"{Environment.GetEnvironmentVariable("WEBSITES_ENABLE_APP_SERVICE_STORAGE")}");
+                }
+
                 var proposedHealthStatatus = HealthStatus.Healthy;
                 string proposedDescription = null;
 
@@ -337,5 +435,6 @@ namespace Trail365.Web
             });
 
         }
+
     }
 }
