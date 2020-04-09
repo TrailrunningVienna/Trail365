@@ -241,13 +241,14 @@ namespace Trail365.Web
                 //app.UseHsts();// The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
             }
 
-            var console = System.IO.TextWriter.Null;// System.Console.Out;
+            var console = System.IO.TextWriter.Null;
 
             if (env.IsDevelopment())
             {
                 console = System.Console.Out;
             }
 
+            console.WriteLine($"WEBSITES_ENABLE_APP_SERVICE_STORAGE={Environment.GetEnvironmentVariable("WEBSITES_ENABLE_APP_SERVICE_STORAGE")}");
 
             if (settings.SyncEnabled && !string.IsNullOrEmpty(settings.BackupDirectory)) //health status has warning if status is not consistent
             {
