@@ -32,12 +32,31 @@ namespace Trail365.Services
         public static PuppeteerScraper Create()
         {
             var config = new TelemetryConfiguration();
-            return new PuppeteerScraper(NullLoggerFactory.Instance.CreateLogger<PuppeteerScraper>(), new TelemetryClient(config));
+            return new PuppeteerScraper(NullLoggerFactory.Instance.CreateLogger<PuppeteerScraper>());
         }
 
-        public PuppeteerScraper(ILogger<PuppeteerScraper> logger, TelemetryClient telemetryClient) : base(logger)
+        private PuppeteerScraper(ILogger<PuppeteerScraper> logger) : base(logger)
         {
-            this._telemetryClient = telemetryClient ?? throw new ArgumentNullException(nameof(telemetryClient));
+            var config = new TelemetryConfiguration();
+            _telemetryClient = new TelemetryClient(config);
+        }
+
+        public PuppeteerScraper(ILogger<PuppeteerScraper> logger, IServiceProvider serviceProvider) : base(logger)
+        {
+
+            try
+            {
+                _telemetryClient = serviceProvider.GetService(typeof(TelemetryClient)) as TelemetryClient;
+            }
+            catch (InvalidOperationException)
+            {
+                _telemetryClient = null;
+            }
+            if (_telemetryClient == null)
+            {
+                var config = new TelemetryConfiguration();
+                _telemetryClient = new TelemetryClient(config);
+            }
         }
 
         public static async Task<byte[]> CreateScreenshotFromPage(Browser browser, ViewPortOptions vpo, ScreenshotOptions sco, Uri requestUri, ILogger logger)

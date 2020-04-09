@@ -105,7 +105,7 @@ namespace Trail365
                 {
                     distance = 0d;
                 }
-                distance += TrailExtender.GetDistanceInMeters(last.Longitude.Value, last.Latitude.Value, current.Longitude.Value, current.Latitude.Value);
+                distance += GeoMath.GetDistanceInMeters(last.Longitude.Value, last.Latitude.Value, current.Longitude.Value, current.Latitude.Value);
                 if (current.ElevationInMeters.HasValue)
                 {
                     PointF p = new PointF(Convert.ToSingle(distance.Value), Convert.ToSingle(current.ElevationInMeters.Value));

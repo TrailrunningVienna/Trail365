@@ -197,6 +197,10 @@ namespace Trail365.ViewModels
                 Excerpt = trail.Excerpt, //TODO if taril.Excerpt is empty, try to generate one from description!
                 Ascent = trail.AscentMeters,
                 Descent = trail.DescentMeters,
+                UnclassifiedMeters = trail.UnclassifiedMeters,
+                UnpavedTrailMeters = trail.UnpavedTrailMeters,
+                PavedRoadMeters = trail.PavedRoadMeters,
+                AsphaltedRoadMeters = trail.AsphaltedRoadMeters
             };
 
             if (trail.GpxBlob != null)

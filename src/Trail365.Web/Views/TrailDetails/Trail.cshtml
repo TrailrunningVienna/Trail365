@@ -18,7 +18,6 @@
     {
         allPictures = new string[] { this.Url.GetDefaultEmptyImageUrl() };
     }
-    this.ViewBag.HideIdentifierRow = true; //_TrailMetadata behavior
     string downloadUrl=null;
     string downloadAttrib=null;
     if (this.Model.CanDownload())
@@ -44,26 +43,22 @@
 @HtmlHelperExtension.EmptyRow(this.Html)
 
 <div class="row">
-    @*full row that should be layouted in two columns*@
-    <div class="col-6">
-        @*one column: contains map preview picture*@
+    <div class="col-sm-6 border">
         <div class="trail-preview-wrapper">
-            <img src="@(allPictures[0])" class="img-fluid" style="width:50%" />
+            <img src="@(allPictures[0])" class="img-fluid" style="width:90%" />
         </div>
     </div>
-    <div class="col-6">
-        @*another column: layouted in multiple rows (and colums) with detail content - not sure if it may better span columns over more rows instead of cascading grids*@
-
+    <div class="col-sm-6 border">
         <div class="row">
             <div class="col-12">
                 <div class="trail-preview-wrapper">
-                    <img src="@(Model.GetChallengeElevationProfileUrlOrDefault(Model.Challenge))" class="img-fluid" />
+                    <img src="@(Model.GetChallengeElevationProfileUrlOrDefault(Model.Challenge))" class="img-fluid" style="width:90%"/>
                 </div>
             </div>
         </div>
-        @*<partial name="_TrailMeasures" model="@(Model)" />*@
     </div>
 </div>
+
 
 <partial name="_TrailMetadata" model="@(Model)" />
 

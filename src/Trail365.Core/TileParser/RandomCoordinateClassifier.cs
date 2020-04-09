@@ -14,7 +14,7 @@ namespace Trail365
             sequenceLength = random.Next(3, 5) * random.Next(2, 4);
         }
         private readonly Random random = new Random();
-        private static readonly string[] classes = new string[] { "trail", "road", "motorway", "unknown" };
+        private static readonly string[] classes = new string[] { CoordinateClassification.Trail, CoordinateClassification.PavedRoad, CoordinateClassification.AsphaltedRoad, CoordinateClassification.Unknown };
         private int sequenceLength;
         private string sequenceClass;
 

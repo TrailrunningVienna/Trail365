@@ -12,7 +12,7 @@ namespace Trail365.UnitTests
         {
             //Arrange
             byte[] gpxFileContent = System.IO.File.ReadAllBytes(Helper.GetExtendedRultGpxPath());
-            var gpxFileFeatureCollection = TrailAnalyzerTask.ConvertToFeatureCollection(gpxFileContent);
+            var gpxFileFeatureCollection = TrailExtender.ConvertToFeatureCollection(gpxFileContent);
             var gpxFileBoundaries = gpxFileFeatureCollection.GetBoundaries();
             var mvtLocationUri = MvtTiles.GetDirectoryUri();
             string url = mvtLocationUri.ToString(); //@"https://trex.blob.core.windows.net/tiles";

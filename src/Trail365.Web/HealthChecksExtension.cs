@@ -64,6 +64,43 @@ namespace Trail365.Web
             return httpContext.Response.WriteAsync(json.ToString(Formatting.Indented));
         }
 
+
+        public static void AddScrapingServiceStatus(this IHealthChecksBuilder healthChecksBuilder)
+        {
+            healthChecksBuilder.AddCheck("ScrapingService", () =>
+            {
+                var isp = healthChecksBuilder.Services.BuildServiceProvider();
+                AppSettings settings = isp.GetRequiredService<IOptions<AppSettings>>().Value;
+                IWebHostEnvironment env = isp.GetRequiredService<IWebHostEnvironment>();
+
+                Dictionary<string, object> dictionary = new Dictionary<string, object>
+                {
+                     { nameof(settings.PuppeteerEnabled), settings.PuppeteerEnabled.ToString() },
+                     { nameof(settings.TrailExplorerBaseUrl), $"{settings.TrailExplorerBaseUrl}"}
+                };
+
+                //TODO ensure that connectionstring for TaskSystem is valid!
+
+                var proposedHealthStatatus = HealthStatus.Healthy;
+                string proposedDescription = null;
+
+                ReadOnlyDictionary<string, object> roDict;
+
+                if (env.IsDevelopment())
+                {
+                    roDict = new ReadOnlyDictionary<string, object>(dictionary);
+                }
+                else
+                {
+                    roDict = new ReadOnlyDictionary<string, object>(new Dictionary<string, object>());
+                }
+
+                HealthCheckResult r = new HealthCheckResult(proposedHealthStatatus, proposedDescription, data: roDict);
+                return r;
+            });
+        }
+
+
         public static void AddBackgroundServiceStatus(this IHealthChecksBuilder healthChecksBuilder)
         {
             healthChecksBuilder.AddCheck("BackgroundWorker", () =>
