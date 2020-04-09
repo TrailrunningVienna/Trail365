@@ -23,6 +23,7 @@ namespace Trail365
         public static readonly string Application = "application";
 
         public static readonly string Gpx = "application/gpx+xml";
+        public static readonly string Geojson = "application/json";
 
         public static bool IsTypeWithImageSize(string mimeType)
         {
@@ -53,7 +54,7 @@ namespace Trail365
 
             if (ext == "geojson")
             {
-                contentType = "application/json"; 
+                contentType = SupportedMimeType.Geojson; 
             }
 
             if (ext == "jpg")

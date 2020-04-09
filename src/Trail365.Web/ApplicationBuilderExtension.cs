@@ -157,7 +157,7 @@ namespace Trail365.Web
 
         /// <summary>
         /// we cannot deliver gpx (download) via azure blob anymore => CORS is blocking href/download htlm5 features
-        /// we implement a static file delivery ba the app that acts like a proxy
+        /// we implement a static file delivery by the app that acts like a proxy
         /// </summary>
         /// <param name="app"></param>
         /// <param name="settings"></param>
@@ -207,8 +207,8 @@ namespace Trail365.Web
                 //second static file area for file based blob storage
 
                 FileExtensionContentTypeProvider blobTypes = new FileExtensionContentTypeProvider();
-                blobTypes.Mappings[".gpx"] = "application/gpx+xml";
-
+                blobTypes.Mappings[".gpx"] = SupportedMimeType.Gpx;
+                blobTypes.Mappings[".geojson"] = SupportedMimeType.Geojson;
                 var staticblobOptions = new StaticFileOptions()
                 {
                     ContentTypeProvider = blobTypes,
