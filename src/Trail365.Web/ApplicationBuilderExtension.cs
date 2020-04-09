@@ -238,29 +238,8 @@ namespace Trail365.Web
                     {
                         ctx.Context.Response.Headers[Microsoft.Net.Http.Headers.HeaderNames.CacheControl] =
                             "public,max-age=" + settings.CloudStorageMaxAgeSeconds;
-
                         ctx.Context.Response.Headers["Access-Control-Allow-Origin"] = "*";
 
-                        //var policy = app.ApplicationServices.GetRequiredService<CorsPolicy>();
-                        //if (ctx.File.Name.ToLowerInvariant().EndsWith(".geojson"))
-                        //{
-                        //    var origin = ctx.Context.Request.Headers[CorsConstants.Origin];
-                        //    var requestHeaders = ctx.Context.Request.Headers;
-
-                        //    var isOptionsRequest = string.Equals(ctx.Context.Request.Method, CorsConstants.PreflightHttpMethod, StringComparison.OrdinalIgnoreCase);
-                        //    var isPreflightRequest = isOptionsRequest && requestHeaders.ContainsKey(CorsConstants.AccessControlRequestMethod);
-
-                        //    var corsResult = new CorsResult
-                        //    {
-                        //        IsPreflightRequest = isPreflightRequest,
-                        //        IsOriginAllowed = IsOriginAllowed(policy, origin),
-                        //    };
-
-                        //    if (!corsResult.IsOriginAllowed)
-                        //    {
-                        //        ctx.Context.Response.StatusCode = 204;
-                        //    }
-                        //}
                     }
                 };
 
