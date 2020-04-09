@@ -94,6 +94,8 @@ namespace Trail365.Web
 
             IHealthChecksBuilder healthChecksBuilder = services.AddHealthChecks();
 
+            healthChecksBuilder.AddAuthenticationStatus();
+            healthChecksBuilder.AddDatabaseStatus();
             healthChecksBuilder.AddTrailExplorerFeatureStatus();
             healthChecksBuilder.AddBackupFeatureStatus();
             healthChecksBuilder.AddStorageFeatureStatus();

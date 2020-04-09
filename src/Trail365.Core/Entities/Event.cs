@@ -7,24 +7,9 @@ using System.Diagnostics;
 namespace Trail365.Entities
 {
     /// <summary>
-    /// derived from EventCrawler.RawEvent
     /// </summary>
     public class Event
     {
-        //Modelling ideas/requirements:
-        // Master-Details relation Event/Run
-        //Event has Name and Date (Range) without any Time information (we don't need UTC here)
-        //Run has StartTime and EndTime (optional) and more Details.
-        //Event can have NO Runs (or Default Run?)
-        //Events from Crawler can be imported without runs
-        //we can provide Scraping pics for Events without Runs
-        //our own runs are Events with Runs
-        //we can decide to put multiple runs for multiple groups
-        // => to complex for our own FB-based events
-        // startdate renamed into starttime... single run later we can create matser-events...
-        //a event has a place
-        //a run can start and end on the same place like the event, or on 2 different places
-        //run: name it activity
 
         [Key]
         public Guid ID { get; set; } = Guid.NewGuid();
