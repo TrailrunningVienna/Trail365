@@ -5,6 +5,7 @@ namespace Trail365.Configuration
 {
     public class AppSettings
     {
+        public string ClassifierTilesUrl { get; set; }
 
         public bool TryGetActiveCloudStorageContainerName(out string containerName)
         {
@@ -33,6 +34,15 @@ namespace Trail365.Configuration
             string expandedConnectionString = this.ConnectionStrings.GetResolvedCloudStorageConnectionString();
             if (string.IsNullOrEmpty(expandedConnectionString)) throw new InvalidOperationException("connectionString for CloudStorage not defined");
             return true;
+        }
+
+        public string GetResolvedBackupDirectoryOrDefault()
+        {
+            if (TryGetResolvedBackupDirectory(out var dir))
+            {
+                return dir.FullName;
+            }
+            return null;
         }
 
         public bool TryGetResolvedBackupDirectory(out DirectoryInfo directory)

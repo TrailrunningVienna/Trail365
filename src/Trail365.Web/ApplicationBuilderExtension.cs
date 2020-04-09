@@ -152,7 +152,7 @@ namespace Trail365.Web
                 {
                     list.Add(serviceScope.ServiceProvider.GetService<TrailContext>());
                 }
-                DbContextExtension.SyncSqliteFiles(list.ToArray(), settings.BackupDirectory, settings.SyncOverwriteEnabled, console);
+                DbContextExtension.SyncSqliteFiles(list.ToArray(), settings.GetResolvedBackupDirectoryOrDefault(), settings.SyncOverwriteEnabled, console);
             }
             return app;
         }

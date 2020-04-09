@@ -82,7 +82,7 @@ namespace Trail365.Web
 
             services.AddSingleton<CoordinateClassifier>((isp) =>
             {
-                LookupDataProvider ldp = new VectorTileLookupDataProvider(@"https://trex.blob.core.windows.net/tiles");
+                LookupDataProvider ldp = new VectorTileLookupDataProvider(settings.ClassifierTilesUrl); 
                 CoordinateClassifier classifier = new LookupCoordinateClassifier(ldp);
                 return classifier;
             });

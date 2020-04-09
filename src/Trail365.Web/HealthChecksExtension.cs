@@ -404,6 +404,7 @@ namespace Trail365.Web
                 if (env.IsDevelopment())
                 {
                     dictionary.Add(nameof(settings.BackupDirectory), $"{settings.BackupDirectory}");
+                    dictionary.Add(nameof(settings.GetResolvedBackupDirectoryOrDefault), $"{settings.GetResolvedBackupDirectoryOrDefault()}");
                     dictionary.Add("WEBSITES_ENABLE_APP_SERVICE_STORAGE", $"{Environment.GetEnvironmentVariable("WEBSITES_ENABLE_APP_SERVICE_STORAGE")}");
                 }
 
