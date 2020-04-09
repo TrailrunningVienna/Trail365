@@ -139,17 +139,17 @@ namespace Trail365.Web
 
             services.AddSingleton<IBackgroundTaskQueue, BackgroundTaskQueue>();
 
-            var policy = new CorsPolicyBuilder().WithOrigins("https://trails.trailrunningvienna.at")
-                    .AllowAnyMethod()
-                    .AllowAnyHeader()
-                    .AllowCredentials().Build();
+            //var policy = new CorsPolicyBuilder().WithOrigins("https://trails.trailrunningvienna.at")
+            //        .AllowAnyMethod()
+            //        .AllowAnyHeader()
+            //        .AllowCredentials().Build();
 
-            services.AddSingleton<CorsPolicy>(policy);
+            //services.AddSingleton<CorsPolicy>(policy);
 
-            services.AddCors(options =>
-            {
-                options.AddPolicy("CorsPolicy", policy);
-            });
+            //services.AddCors(options =>
+            //{
+            //    options.AddPolicy("CorsPolicy", policy);
+            //});
 
         }
 
