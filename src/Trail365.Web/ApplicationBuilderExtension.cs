@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Cors.Infrastructure;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.StaticFiles;
@@ -10,6 +11,7 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
+using Microsoft.Extensions.Primitives;
 using Trail365.Configuration;
 using Trail365.Data;
 using Trail365.FileProvider;
@@ -189,6 +191,23 @@ namespace Trail365.Web
 
             return app;
         }
+        private static bool IsOriginAllowed(CorsPolicy policy, StringValues origin)
+        {
+            if (StringValues.IsNullOrEmpty(origin))
+            {
+
+                return false;
+            }
+
+
+            if (policy.AllowAnyOrigin || policy.IsOriginAllowed(origin))
+            {
+
+                return true;
+            }
+
+            return false;
+        }
 
         public static IApplicationBuilder UseBlobServices(this IApplicationBuilder app, AppSettings settings)
         {
@@ -219,6 +238,27 @@ namespace Trail365.Web
                     {
                         ctx.Context.Response.Headers[Microsoft.Net.Http.Headers.HeaderNames.CacheControl] =
                             "public,max-age=" + settings.CloudStorageMaxAgeSeconds;
+
+                        var policy = app.ApplicationServices.GetRequiredService<CorsPolicy>();
+                        if (ctx.File.Name.ToLowerInvariant().EndsWith(".geojson"))
+                        {
+                            var origin = ctx.Context.Request.Headers[CorsConstants.Origin];
+                            var requestHeaders = ctx.Context.Request.Headers;
+
+                            var isOptionsRequest = string.Equals(ctx.Context.Request.Method, CorsConstants.PreflightHttpMethod, StringComparison.OrdinalIgnoreCase);
+                            var isPreflightRequest = isOptionsRequest && requestHeaders.ContainsKey(CorsConstants.AccessControlRequestMethod);
+
+                            var corsResult = new CorsResult
+                            {
+                                IsPreflightRequest = isPreflightRequest,
+                                IsOriginAllowed = IsOriginAllowed(policy, origin),
+                            };
+
+                            if (!corsResult.IsOriginAllowed)
+                            {
+                                ctx.Context.Response.StatusCode = 204;
+                            }
+                        }
                     }
                 };
 

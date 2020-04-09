@@ -6,6 +6,7 @@ using Microsoft.ApplicationInsights;
 using Microsoft.ApplicationInsights.Channel;
 using Microsoft.ApplicationInsights.WindowsServer.TelemetryChannel;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Cors.Infrastructure;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpOverrides;
@@ -137,6 +138,19 @@ namespace Trail365.Web
             }
 
             services.AddSingleton<IBackgroundTaskQueue, BackgroundTaskQueue>();
+
+            var policy = new CorsPolicyBuilder().WithOrigins("https://trails.trailrunningvienna.at")
+                    .AllowAnyMethod()
+                    .AllowAnyHeader()
+                    .AllowCredentials().Build();
+
+            services.AddSingleton<CorsPolicy>(policy);
+
+            services.AddCors(options =>
+            {
+                options.AddPolicy("CorsPolicy", policy);
+            });
+
         }
 
 
