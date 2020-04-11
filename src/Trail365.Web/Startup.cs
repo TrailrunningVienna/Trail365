@@ -80,13 +80,15 @@ namespace Trail365.Web
 
             services.AddControllers();
 
-            services.AddSingleton<CoordinateClassifier>((isp) =>
+            if (settings.Features.TrailAnalyzer)
             {
-                LookupDataProvider ldp = new VectorTileLookupDataProvider(settings.ClassifierTilesUrl); 
-                CoordinateClassifier classifier = new LookupCoordinateClassifier(ldp);
-                return classifier;
-            });
-
+                services.AddSingleton<CoordinateClassifier>((isp) =>
+                {
+                    LookupDataProvider ldp = new VectorTileLookupDataProvider(settings.ClassifierTilesUrl);
+                    CoordinateClassifier classifier = new LookupCoordinateClassifier(ldp);
+                    return classifier;
+                });
+            }
 
 
             services.Configure<CookiePolicyOptions>(options =>
