@@ -80,13 +80,15 @@ namespace Trail365.Web
 
             services.AddControllers();
 
-            services.AddSingleton<CoordinateClassifier>((isp) =>
+            if (settings.Features.TrailAnalyzer)
             {
-                LookupDataProvider ldp = new VectorTileLookupDataProvider(@"https://trex.blob.core.windows.net/tiles");
-                CoordinateClassifier classifier = new LookupCoordinateClassifier(ldp);
-                return classifier;
-            });
-
+                services.AddSingleton<CoordinateClassifier>((isp) =>
+                {
+                    LookupDataProvider ldp = new VectorTileLookupDataProvider(settings.ClassifierTilesUrl);
+                    CoordinateClassifier classifier = new LookupCoordinateClassifier(ldp);
+                    return classifier;
+                });
+            }
 
 
             services.Configure<CookiePolicyOptions>(options =>
@@ -137,21 +139,18 @@ namespace Trail365.Web
             }
 
             services.AddSingleton<IBackgroundTaskQueue, BackgroundTaskQueue>();
+
         }
-
-
 
 
         public static void ConfigureRobotsTxt(IWebHostEnvironment environment, bool allowRobots)
         {
-            //robots.txt wird als statisches file im wwwroot bereitgestellt.
-            //hier können wir den passenden Inhalt generieren (speziell für Einschränkungen) oder das File auch löschen => keine EInschränkungen!
+
             if (string.IsNullOrEmpty(environment.WebRootPath))
             {
-                //WM 08.07.2019 tritt in xUnit auf. kann dort ignoriert werden!
+                //WM 08.07.2019 occurs in xUnit => can be ignored.
                 return;
             }
-            //Azure Apps for Container uses a special txt as health check.
 
             //robots933456.txt
             string azureFilePath = System.IO.Path.Combine(environment.WebRootPath, "robots933456.txt");
@@ -168,7 +167,7 @@ namespace Trail365.Web
             {
                 if (System.IO.File.Exists(filePath))
                 {
-                    System.IO.File.Delete(filePath); //meine: keine Restriktionen für Suchmaschinen!
+                    System.IO.File.Delete(filePath); 
                 }
             }
             else
@@ -237,7 +236,7 @@ namespace Trail365.Web
             }
             else
             {
-                app.UseExceptionHandler("/home");
+                app.UseExceptionHandler("/");
                 //app.UseHsts();// The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
             }
 
@@ -320,15 +319,6 @@ namespace Trail365.Web
                 //https://stackoverflow.com/questions/58352836/how-to-define-an-endpoint-route-to-multiple-areas
                 //https://github.com/aspnet/AspNetCore/blob/master/src/MusicStore/samples/MusicStore/Startup.cs
                 //https://aregcode.com/blog/2019/dotnetcore-understanding-aspnet-endpoint-routing/
-
-                //endpoints.MapControllerRoute(
-                //    name: "Default",
-                //    pattern: "{controller=Home}/{action=Index}/{id?}");
-
-                //endpoints.MapAreaControllerRoute(
-                //    name: "Backend",
-                //    areaName: "Backend",
-                //    pattern: "{area}/{controller=Home}/{action=Index}/{id?}");
 
                 endpoints.MapControllerRoute(
                   name: "areaRoute",

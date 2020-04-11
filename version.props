@@ -3,7 +3,7 @@
     <MajorVersion>0</MajorVersion>
     <MinorVersion>23</MinorVersion>
     <PatchVersion>999</PatchVersion>
-    <PreReleaseLabel>prev3</PreReleaseLabel>
+    <PreReleaseLabel>prev8</PreReleaseLabel>
     <VersionPrefix>$(MajorVersion).$(MinorVersion).$(PatchVersion)</VersionPrefix>
     <VersionSuffix Condition="'$(PreReleaseLabel)' == ''"></VersionSuffix>
     <VersionSuffix Condition="'$(PreReleaseLabel)' != ''">-$(PreReleaseLabel)</VersionSuffix>

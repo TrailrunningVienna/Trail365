@@ -263,19 +263,27 @@ namespace Trail365.Web
                 Dictionary<string, object> dictionary = new Dictionary<string, object>
                 {
                     { nameof(settings.TrailExplorerBaseUrl), $"{settings.TrailExplorerBaseUrl}" },
+                    { nameof(settings.ClassifierTilesUrl), $"{settings.ClassifierTilesUrl}" },
                     { $"Features.{nameof(settings.Features.TrailAnalyzer)}", $"{settings.Features.TrailAnalyzer}" }
                 };
 
                 var proposedHealthStatatus = HealthStatus.Healthy;
-                string proposedDescription = null;
+                List<string> proposedDescriptions = new List<string>();
 
                 if (settings.Features.TrailAnalyzer)
                 {
                     if (string.IsNullOrEmpty(settings.TrailExplorerBaseUrl))
                     {
                         proposedHealthStatatus = HealthStatus.Degraded;
-                        proposedDescription = $"Feature '{nameof(settings.Features.TrailAnalyzer)}' is enabled but setting '{nameof(settings.TrailExplorerBaseUrl)}' is empty";
+                        proposedDescriptions.Add($"Feature '{nameof(settings.Features.TrailAnalyzer)}' is enabled but setting '{nameof(settings.TrailExplorerBaseUrl)}' is empty");
                     }
+
+                    if (string.IsNullOrEmpty(settings.ClassifierTilesUrl))
+                    {
+                        proposedHealthStatatus = HealthStatus.Degraded;
+                        proposedDescriptions.Add($"Feature '{nameof(settings.Features.TrailAnalyzer)}' is enabled but setting '{nameof(settings.ClassifierTilesUrl)}' is empty");
+                    }
+
                 }
 
                 ReadOnlyDictionary<string, object> roDict;
@@ -289,7 +297,7 @@ namespace Trail365.Web
                     roDict = new ReadOnlyDictionary<string, object>(new Dictionary<string, object>());
                 }
 
-                HealthCheckResult r = new HealthCheckResult(proposedHealthStatatus, proposedDescription, data: roDict);
+                HealthCheckResult r = new HealthCheckResult(proposedHealthStatatus, string.Join(", ",proposedDescriptions), data: roDict);
                 return r;
             });
         }
@@ -404,6 +412,7 @@ namespace Trail365.Web
                 if (env.IsDevelopment())
                 {
                     dictionary.Add(nameof(settings.BackupDirectory), $"{settings.BackupDirectory}");
+                    dictionary.Add(nameof(settings.GetResolvedBackupDirectoryOrDefault), $"{settings.GetResolvedBackupDirectoryOrDefault()}");
                     dictionary.Add("WEBSITES_ENABLE_APP_SERVICE_STORAGE", $"{Environment.GetEnvironmentVariable("WEBSITES_ENABLE_APP_SERVICE_STORAGE")}");
                 }
 
