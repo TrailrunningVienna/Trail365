@@ -43,8 +43,6 @@ namespace Trail365.Web
             {
                 factory.AddConsole();
                 factory.SetMinimumLevel(LogLevel.Trace);
-                // Turn off Info logging for EF commands
-                //factory.AddFilter("Microsoft.EntityFrameworkCore.Database.Command", LogLevel.Warning);
             });
 
             var webHost = builder.Build();

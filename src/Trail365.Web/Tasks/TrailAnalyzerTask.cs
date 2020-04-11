@@ -3,14 +3,12 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Xml;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using NetTopologySuite.Features;
 using NetTopologySuite.Geometries;
-using NetTopologySuite.IO;
 using Trail365.Data;
 using Trail365.Entities;
 using Trail365.Internal;
@@ -22,70 +20,6 @@ namespace Trail365.Web.Tasks
     public class TrailAnalyzerTask : BackgroundTask
     {
         //Logging Strategy: don't use logging here => Framework logging should ensure the minimum!
-
-        public static FeatureCollection ConvertToFeatureCollection(byte[] buffer, Func<LineString, LineString> simplifierOrDefault = null)
-        {
-            using (var stream = new MemoryStream(buffer))
-            {
-                using (var reader = new StreamReader(stream, System.Text.Encoding.UTF8))
-                {
-                    return ConvertToFeatureCollection(reader, simplifierOrDefault);
-                }
-            }
-        }
-
-        public static FeatureCollection ConvertToFeatureCollection(string filePath, Func<LineString, LineString> simplifierOrDefault = null)
-        {
-            if (string.IsNullOrEmpty(filePath)) throw new ArgumentNullException(nameof(filePath));
-            using (TextReader reader = File.OpenText(filePath))
-            {
-                return ConvertToFeatureCollection(reader, simplifierOrDefault);
-            }
-        }
-
-        public static FeatureCollection ConvertToFeatureCollection(TextReader gpxTextReader, Func<LineString, LineString> simplifierOrDefault)
-        {
-            Guard.ArgumentNotNull(gpxTextReader, nameof(gpxTextReader));
-
-            using (var reader = XmlReader.Create(gpxTextReader))
-            {
-                var (metadata, features, extensions) = GpxReader.ReadFeatures(reader, null, GeometryFactory.Default);
-
-                FeatureCollection featureCollection = new FeatureCollection();
-
-                bool multiLineFound = false;
-                bool singleLineFound = false;
-
-                foreach (var f in features)
-                {
-                    MultiLineString ms = f.Geometry as MultiLineString;
-                    if (ms != null)
-                    {
-                        Guard.Assert(multiLineFound == false); //only one feature expected until now!
-                        multiLineFound = true;
-                        LineString ls = ms.Geometries[0] as LineString;
-                        if (ls != null)
-                        {
-                            Guard.Assert(singleLineFound == false);
-                            singleLineFound = true;
-                            Feature feature = new Feature();
-                            if (simplifierOrDefault != null)
-                            {
-                                feature.Geometry = simplifierOrDefault(ls);
-                            }
-                            else
-                            {
-                                feature.Geometry = ls;
-                            }
-                            featureCollection.Add(feature);
-                        }
-                    }
-                }
-                return featureCollection;
-            }
-        }
-
-
         public Trail Trail { get; set; }
 
         protected override void OnBeforeExecute()
@@ -110,7 +44,7 @@ namespace Trail365.Web.Tasks
             var scopedTrail = await scopedDB.Trails.Include(t => t.GpxBlob).Include(t => t.AnalyzerBlob).Where(t => t.ID == this.Trail.ID).SingleOrDefaultAsync();
 
             await this.CalculateTrailAnalysis(scopedTrail, scopedDB, classifier, this.Context.Url, cancellationToken, this.Context.DefaultLogger, blobService);
-
+            scopedDB.Trails.Update(scopedTrail);
             var dbchanges = await scopedDB.SaveChangesAsync();
             //this.Context.DefaultLogger.LogTrace($"{nameof(TrailPreviewTask)}.DBContext.SaveChanges={dbchanges} ({this.Trail.Name})");
         }
@@ -148,8 +82,16 @@ namespace Trail365.Web.Tasks
 
             var buffer = await contentDownloader.GetFromUriAsync(new Uri(trail.GpxBlob.Url), cancellationToken);
             cancellationToken.ThrowIfCancellationRequested();
-            FeatureCollection inputData = ConvertToFeatureCollection(buffer); //NOT simplified, we need detailed data here
+            FeatureCollection inputData = TrailExtender.ConvertToFeatureCollection(buffer); //NOT simplified, we need detailed data here
+
             FeatureCollection classifiedData = _classifier.GetClassification(inputData);
+
+            //use classified to calculate numbers
+            var classifications = classifiedData.GetClassifiedDistanceInMeters();
+            trail.UnclassifiedMeters = classifications.GetIntValueOrDefault(CoordinateClassification.Unknown);
+            trail.UnpavedTrailMeters = classifications.GetIntValueOrDefault(CoordinateClassification.Trail);
+            trail.AsphaltedRoadMeters = classifications.GetIntValueOrDefault(CoordinateClassification.AsphaltedRoad);
+            trail.PavedRoadMeters = classifications.GetIntValueOrDefault(CoordinateClassification.PavedRoad);
 
             using (var stream = new MemoryStream())
             {
@@ -175,8 +117,7 @@ namespace Trail365.Web.Tasks
                     _context.Blobs.Update(oldBlob);
                 }
             } //memory stream for analyzer geoJson
-            //logger.LogTrace($"{nameof(this.CalculateTrailAnalysis)}.Start {trail.Name}");
-            //logger.LogTrace($"{nameof(this.CalculateTrailAnalysis)}.End {trail.Name}");
+
         }
     }
 }

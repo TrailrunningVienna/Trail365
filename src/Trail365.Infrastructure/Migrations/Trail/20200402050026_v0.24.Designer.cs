@@ -2,15 +2,17 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Trail365.Data;
 
 namespace Trail365.Migrations
 {
     [DbContext(typeof(TrailContext))]
-    partial class TrailContextModelSnapshot : ModelSnapshot
+    [Migration("20200402050026_v0.24")]
+    partial class v024
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

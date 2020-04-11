@@ -18,14 +18,14 @@ jobs:
       with:
         dotnet-version: 3.1.201
 
-    - name: Get Version Suffix (master)
-      if: startsWith(github.ref, 'refs/heads/master')
+    - name: Get Version Suffix (master/release)
+      if: (startsWith(github.ref, 'refs/heads/master') || startsWith(github.ref, 'refs/heads/release/') )
       run: |
          echo "::set-env name=VERSION_SUFFIX::"
          echo "::set-env name=DOCKER_REPOSITORY::app"
 
-    - name: Get Version Suffix (not-master)
-      if: (!startsWith(github.ref, 'refs/heads/master'))
+    - name: Get Version Suffix (develop/feature)
+      if: ( !startsWith(github.ref, 'refs/heads/master') && !startsWith(github.ref, 'refs/heads/release/') )
       run: |
          VERSION_SUFFIX=$(git rev-list --all --count)
          echo "::set-env name=VERSION_SUFFIX::-preview${VERSION_SUFFIX}"

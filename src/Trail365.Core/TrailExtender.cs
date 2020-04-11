@@ -1,14 +1,109 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
+using System.Xml;
+using NetTopologySuite.Features;
+using NetTopologySuite.Geometries;
 using NetTopologySuite.IO;
 using Trail365.Entities;
+using Trail365.Internal;
 
 namespace Trail365
 {
     public static class TrailExtender
     {
+
+        public static FeatureCollection ConvertToFeatureCollection(byte[] buffer, Func<LineString, LineString> simplifierOrDefault = null)
+        {
+            using (var stream = new MemoryStream(buffer))
+            {
+                using (var reader = new StreamReader(stream, System.Text.Encoding.UTF8))
+                {
+                    return ConvertToFeatureCollection(reader, simplifierOrDefault);
+                }
+            }
+        }
+
+        public static FeatureCollection ConvertToFeatureCollection(string filePath, Func<LineString, LineString> simplifierOrDefault = null)
+        {
+            if (string.IsNullOrEmpty(filePath)) throw new ArgumentNullException(nameof(filePath));
+            using (TextReader reader = File.OpenText(filePath))
+            {
+                return ConvertToFeatureCollection(reader, simplifierOrDefault);
+            }
+        }
+
+        public static FeatureCollection ConvertToFeatureCollection(TextReader gpxTextReader, Func<LineString, LineString> simplifierOrDefault)
+        {
+            Guard.ArgumentNotNull(gpxTextReader, nameof(gpxTextReader));
+
+            using (var reader = XmlReader.Create(gpxTextReader))
+            {
+                var (metadata, features, extensions) = GpxReader.ReadFeatures(reader, null, GeometryFactory.Default);
+
+                FeatureCollection featureCollection = new FeatureCollection();
+
+                bool multiLineFound = false;
+                bool singleLineFound = false;
+
+                foreach (var f in features)
+                {
+                    MultiLineString ms = f.Geometry as MultiLineString;
+                    if (ms != null)
+                    {
+                        Guard.Assert(multiLineFound == false); //only one feature expected until now!
+                        multiLineFound = true;
+                        LineString ls = ms.Geometries[0] as LineString;
+                        if (ls != null)
+                        {
+                            Guard.Assert(singleLineFound == false);
+                            singleLineFound = true;
+                            Feature feature = new Feature();
+                            if (simplifierOrDefault != null)
+                            {
+                                feature.Geometry = simplifierOrDefault(ls);
+                            }
+                            else
+                            {
+                                feature.Geometry = ls;
+                            }
+                            featureCollection.Add(feature);
+                        }
+                    }
+                    // route has linestring
+
+                    LineString ls1 = f.Geometry as LineString;
+                    if (ls1 != null)
+                    {
+                        Guard.Assert(multiLineFound == false); //only one feature expected until now!
+                        //multiLineFound = true;
+                        //LineString ls = ms.Geometries[0] as LineString;
+                        if (ls1 != null)
+                        {
+                            Guard.Assert(singleLineFound == false);
+                            singleLineFound = true;
+                            Feature feature = new Feature();
+                            if (simplifierOrDefault != null)
+                            {
+                                feature.Geometry = simplifierOrDefault(ls1);
+                            }
+                            else
+                            {
+                                feature.Geometry = ls1;
+                            }
+                            featureCollection.Add(feature);
+                        }
+                    }
+
+
+                }
+                return featureCollection;
+            }
+        }
+
+
         public static Trail ReadGpxFileInfo(byte[] gpxContent, Trail target)
         {
             string xml = System.Text.Encoding.UTF8.GetString(gpxContent);
@@ -135,15 +230,6 @@ namespace Trail365
             return target;
         }
 
-        public static double GetDistanceInMeters(double longitude, double latitude, double otherLongitude, double otherLatitude)
-        {
-            var d1 = latitude * (Math.PI / 180.0);
-            var num1 = longitude * (Math.PI / 180.0);
-            var d2 = otherLatitude * (Math.PI / 180.0);
-            var num2 = otherLongitude * (Math.PI / 180.0) - num1;
-            var d3 = Math.Pow(Math.Sin((d2 - d1) / 2.0), 2.0) + Math.Cos(d1) * Math.Cos(d2) * Math.Pow(Math.Sin(num2 / 2.0), 2.0);
-            return 6376500.0 * (2.0 * Math.Atan2(Math.Sqrt(d3), Math.Sqrt(1.0 - d3)));
-        }
 
         public static TrailDescription GetDescription(IEnumerable<GpxWaypoint> sequence)
         {
@@ -212,7 +298,7 @@ namespace Trail365
                 {
                     distance = 0d;
                 }
-                distance += GetDistanceInMeters(last.Longitude.Value, last.Latitude.Value, current.Longitude.Value, current.Latitude.Value);
+                distance += GeoMath.GetDistanceInMeters(last.Longitude.Value, last.Latitude.Value, current.Longitude.Value, current.Latitude.Value);
                 last = current;
             }
 
