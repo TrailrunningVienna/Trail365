@@ -1,4 +1,5 @@
 using System.Linq;
+using Microsoft.EntityFrameworkCore;
 using Trail365.Seeds;
 using Trail365.UnitTests.TestContext;
 using Xunit;
@@ -27,7 +28,15 @@ namespace Trail365.UnitTests
 
                 host.InitWithViewModel(testTrails.All);
                 Assert.Equal(testTrails.All.Length, host.TrailContext.Trails.ToList().Count);
-                var trailToTest = host.TrailContext.Trails.First();
+                var trailToTest = host.TrailContext.Trails.Include(t=>t.AnalyzerBlob).First();
+
+                trailToTest.AnalyzerBlob = new Entities.Blob()
+                {
+                    Url = @"https://www.google.com"
+                };
+
+                host.TrailContext.Add(trailToTest.AnalyzerBlob);
+
                 Assert.False(trailToTest.ScrapedUtc.HasValue);
                 Assert.False(trailToTest.PreviewImageID.HasValue);
                 Assert.False(trailToTest.SmallPreviewImageID.HasValue);
@@ -36,7 +45,7 @@ namespace Trail365.UnitTests
                 host.ScrapingService.ScrapeTrail(host.TrailContext, trailToTest, host.RootUrl);
                 host.TrailContext.SaveChanges();
 
-                Assert.Equal(3 + 4, host.TrailContext.Blobs.ToList().Count);
+                Assert.Equal(3 + 4+1, host.TrailContext.Blobs.ToList().Count);
                 Assert.True(trailToTest.ScrapedUtc.HasValue);
                 Assert.True(trailToTest.PreviewImageID.HasValue);
                 Assert.True(trailToTest.SmallPreviewImageID.HasValue);
