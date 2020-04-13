@@ -46,7 +46,6 @@ namespace Trail365.Web.Tasks
             await this.CalculateTrailAnalysis(scopedTrail, scopedDB, classifier, this.Context.Url, cancellationToken, this.Context.DefaultLogger, blobService);
             scopedDB.Trails.Update(scopedTrail);
             var dbchanges = await scopedDB.SaveChangesAsync();
-            //this.Context.DefaultLogger.LogTrace($"{nameof(TrailPreviewTask)}.DBContext.SaveChanges={dbchanges} ({this.Trail.Name})");
         }
 
 
