@@ -311,7 +311,7 @@ namespace Trail365
         /// <param name="snapshotMode"></param>
         /// <param name="debug"></param>
         /// <returns></returns>
-        public static string GetTrailExplorerUrl(this IUrlHelper url, string trailExplorerBaseUrl, Uri geoJsonDownloadUrl, ExplorerMapStyle style, System.Drawing.Size size, bool snapshotMode, string bbox)
+        public static string GetTrailExplorerUrl(this IUrlHelper url, string trailExplorerBaseUrl, Uri geoJsonDownloadUrl, ExplorerMapStyle style, bool snapshotMode, string bbox)
         {
             if (url == null) throw new ArgumentNullException(nameof(url));
             if (geoJsonDownloadUrl == null) throw new ArgumentNullException(nameof(geoJsonDownloadUrl));
@@ -325,11 +325,6 @@ namespace Trail365
             string encodedDownloadUri = System.Net.WebUtility.UrlEncode(geoJsonDownloadUrl.ToString());
 
             string explorer = $"{GetTrailExplorerRoot(trailExplorerBaseUrl)}?mode={mode}&style={style.ToString().ToLowerInvariant()}&jsonsource={encodedDownloadUri}";
-
-            if (!size.IsEmpty)
-            {
-                explorer += $"&width={size.Width}&height={size.Height}";
-            }
 
             if (!string.IsNullOrEmpty(bbox))
             {
@@ -356,10 +351,10 @@ namespace Trail365
 
         public static string GetTrailExplorerUrlOrDefault(this IUrlHelper url, string trailExplorerBaseUrl, string geoJsonDownloadUrl, ExplorerMapStyle style)
         {
-            return GetTrailExplorerUrlOrDefault(url, trailExplorerBaseUrl, geoJsonDownloadUrl, style, System.Drawing.Size.Empty, false, null);
+            return GetTrailExplorerUrlOrDefault(url, trailExplorerBaseUrl, geoJsonDownloadUrl, style, false, string.Empty);
         }
 
-        public static string GetTrailExplorerUrlOrDefault(this IUrlHelper url, string trailExplorerBaseUrl, string geoJsonDownloadUrl, ExplorerMapStyle style, System.Drawing.Size size, bool snapshotMode, string bbox)
+        public static string GetTrailExplorerUrlOrDefault(this IUrlHelper url, string trailExplorerBaseUrl, string geoJsonDownloadUrl, ExplorerMapStyle style, bool snapshotMode, string bbox)
         {
             if (url == null) throw new ArgumentNullException(nameof(url));
             string mode = "default";
@@ -372,24 +367,18 @@ namespace Trail365
             {
                 string explorer = $"{GetTrailExplorerRoot(trailExplorerBaseUrl)}?mode={mode}&style={style.ToString().ToLowerInvariant()}";
 
-                if (!size.IsEmpty)
-                {
-                    explorer += $"&width={size.Width}&height={size.Height}";
-                }
-
                 if (!string.IsNullOrEmpty(bbox))
                 {
                     string encodedbbox = System.Net.WebUtility.UrlEncode(bbox);
                     explorer += $"&bbox={encodedbbox}";
                 }
 
-
                 return explorer;
             }
             else
             {
                 var u = new UriBuilder(geoJsonDownloadUrl).Uri;
-                return GetTrailExplorerUrl(url, trailExplorerBaseUrl, u, style, size, snapshotMode, bbox);
+                return GetTrailExplorerUrl(url, trailExplorerBaseUrl, u, style, snapshotMode, bbox);
             }
         }
 

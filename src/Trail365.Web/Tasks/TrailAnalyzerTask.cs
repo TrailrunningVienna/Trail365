@@ -89,7 +89,9 @@ namespace Trail365.Web.Tasks
 
             var bounds = inputData.GetBoundaries().Envelope;
 
-            Coordinate[] boundingCoordinates = new Coordinate[] { bounds.Coordinates[0].Copy(), bounds.Coordinates[2].Copy() };
+            Coordinate topLeft = bounds.Coordinates[0];
+            Coordinate opposite = bounds.Coordinates[2];
+            double[] boundingCoordinates = new double[] { topLeft.X, topLeft.Y, opposite.X, opposite.Y };
             string boundsJson = JsonConvert.SerializeObject(boundingCoordinates, new JsonSerializerSettings()
             {
                 ReferenceLoopHandling = ReferenceLoopHandling.Ignore
