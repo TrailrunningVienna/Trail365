@@ -12,6 +12,27 @@ namespace Trail365.Tasks
 {
     public abstract class BackgroundTask
     {
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="initialize"></param>
+        /// <returns>a not queued Background Task</returns>
+        public BackgroundTask ContinueWith<T>(Action<T> initialize) where T : BackgroundTask, new()
+        {
+            var task = BackgroundTaskFactory.CreateTask<T>(this.Context.ServiceScopeFactory, this.Context.Url, this.QueueLogger);
+            if (initialize != null)
+            {
+                initialize(task);
+            }
+            this.Continuation = () =>
+            {
+                IBackgroundTaskQueue _queue = this.Context.ServiceProvider.GetRequiredService<IBackgroundTaskQueue>();
+                task.Queue(_queue);
+            };
+            return task;
+        }
+
         public string Caption { get; set; }
 
         internal ILogger QueueLogger = NullLogger.Instance;
@@ -20,6 +41,16 @@ namespace Trail365.Tasks
 
         protected virtual void OnBeforeExecute()
         { }
+
+        private Action Continuation;
+
+        protected void HandleContinuations()
+        {
+            if (this.Continuation != null)
+            {
+                this.Continuation();
+            }
+        }
 
         protected abstract Task Execute(CancellationToken cancellationToken);
 
@@ -92,7 +123,18 @@ namespace Trail365.Tasks
                             {
                                 engineLogger.LogError(TaskError, ex, nameof(this.Execute));
                                 logger.LogError(TaskError, ex, nameof(this.Execute));
+                                return; //ignore continuation
                             }
+                            try
+                            {
+                                HandleContinuations();
+                            }
+                            catch (Exception ex)
+                            {
+                                engineLogger.LogError(TaskError, ex, nameof(this.HandleContinuations));
+                                logger.LogError(TaskError, ex, nameof(this.HandleContinuations));
+                            }
+
                         } //using LoggingProvider
                     } //using loggerfactory
                 }; //using Scope
