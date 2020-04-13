@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -9,6 +10,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using NetTopologySuite.Features;
 using NetTopologySuite.Geometries;
+using NetTopologySuite.IO.Converters;
+using Newtonsoft.Json;
 using Trail365.Data;
 using Trail365.Entities;
 using Trail365.Internal;
@@ -81,7 +84,18 @@ namespace Trail365.Web.Tasks
 
             var buffer = await contentDownloader.GetFromUriAsync(new Uri(trail.GpxBlob.Url), cancellationToken);
             cancellationToken.ThrowIfCancellationRequested();
+
             FeatureCollection inputData = TrailExtender.ConvertToFeatureCollection(buffer); //NOT simplified, we need detailed data here
+
+            var bounds = inputData.GetBoundaries().Envelope;
+
+            Coordinate[] boundingCoordinates = new Coordinate[] { bounds.Coordinates[0].Copy(), bounds.Coordinates[2].Copy() };
+            string boundsJson = JsonConvert.SerializeObject(boundingCoordinates, new JsonSerializerSettings()
+            {
+                ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+            });
+
+            trail.BoundingBox = boundsJson;
 
             FeatureCollection classifiedData = _classifier.GetClassification(inputData);
 
@@ -91,7 +105,7 @@ namespace Trail365.Web.Tasks
             trail.UnpavedTrailMeters = classifications.GetIntValueOrDefault(CoordinateClassification.Trail);
             trail.AsphaltedRoadMeters = classifications.GetIntValueOrDefault(CoordinateClassification.AsphaltedRoad);
             trail.PavedRoadMeters = classifications.GetIntValueOrDefault(CoordinateClassification.PavedRoad);
-
+            
             using (var stream = new MemoryStream())
             {
                 classifiedData.SerializeFeatureCollectionIntoGeoJson(stream);
