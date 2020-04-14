@@ -34,7 +34,7 @@ namespace Trail365.IntegrationTests
         [Fact]
         public void Should_Seed_Data()
         {
-            using (var host = TestHostBuilder.Empty().UseTestOutputHelper(this.OutputHelper).Build())
+            using (var host = TestHostBuilder.Empty().WithTrailContext().UseTestOutputHelper(this.OutputHelper).Build())
             {
                 var testTrails = TrailViewModelProvider.CreateInstance();
                 host.InitWithViewModel(testTrails.All);

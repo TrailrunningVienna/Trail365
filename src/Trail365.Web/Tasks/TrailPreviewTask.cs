@@ -15,8 +15,6 @@ using Trail365.Tasks;
 namespace Trail365.Web.Tasks
 {
 
-
-
     /// <summary>
     /// Background Task for Scraping AND Elevationprofile calculation
     /// </summary>
@@ -34,33 +32,16 @@ namespace Trail365.Web.Tasks
             {
                 this.Caption = "<Unknown Trail";
             }
-            var scopedScrapingService = this.Context.ServiceProvider.GetRequiredService<ScrapingService>();
-            this.Caption += $" ({scopedScrapingService.Scraper.GetType().Name})";
         }
 
-        protected override async Task Execute(CancellationToken cancellationToken)
+        protected override Task Execute(CancellationToken cancellationToken)
         {
-            var scopedDB = this.Context.ServiceProvider.GetRequiredService<TrailContext>();
-            var scopedScrapingService = this.Context.ServiceProvider.GetRequiredService<ScrapingService>();
-            var scopedTrail = await scopedDB.Trails.Include(t => t.GpxBlob).Where(t => t.ID == this.Trail.ID).SingleOrDefaultAsync();
-            await this.CalculateTrailPreview(scopedTrail, scopedDB, scopedScrapingService, this.Context.Url, this.Context.DefaultLogger);
-            var dbchanges = await scopedDB.SaveChangesAsync();
-            this.Context.DefaultLogger.LogTrace($"DBContext.SaveChanges={dbchanges} ({this.Trail.Name})");
+            this
+                .ContinueWith<TrailAnalyzerTask>(ta => ta.Trail = this.Trail)
+                .ContinueWith<TrailElevationProfilerTask>(ta => ta.Trail = this.Trail)
+                .ContinueWith<TrailScraperTask>(ta => ta.Trail = this.Trail);
+            return Task.CompletedTask;
         }
 
-        private async Task CalculateTrailPreview(Trail trail, TrailContext _context, ScrapingService _scrapingService, IUrlHelper url, ILogger logger)
-        {
-            if (url == null) throw new ArgumentNullException(nameof(url));
-            if (trail == null) throw new ArgumentNullException(nameof(trail));
-
-            Guard.AssertNotNull(trail.GpxBlob);
-            Guard.AssertNotNull(logger, nameof(logger));
-            logger.LogTrace($"{nameof(this.CalculateTrailPreview)}.Start {trail.Name}");
-            var getGpxXmlTask = ServiceHelper.GetGpxXml(trail.GpxBlob.Url, logger); //start async download before Scraping is started!
-            _scrapingService.ScrapeTrail(_context, trail, url);
-            string gpxXml = await getGpxXmlTask;
-            _scrapingService.BuildElevationProfile(_context, trail, gpxXml, url);
-            logger.LogTrace($"{nameof(this.CalculateTrailPreview)}.End {trail.Name}");
-        }
     }
 }

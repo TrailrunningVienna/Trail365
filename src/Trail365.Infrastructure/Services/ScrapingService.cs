@@ -203,7 +203,7 @@ namespace Trail365.Services
         public bool ScrapeTrail(TrailContext context, Trail trail, bool debug, IUrlHelper helper, CancellationToken token = default)
         {
             if (trail == null) throw new ArgumentNullException(nameof(trail));
-            if (trail.GpxBlob == null) throw new InvalidOperationException($"Trail.GpxBlob must be assigned - please verify EF-Includes");
+            if (trail.AnalyzerBlob == null) throw new InvalidOperationException($"Trail.GpxBlob must be assigned - please verify EF-Includes");
             this.Logger.LogTrace($"ScrapeTrail: ID={trail.ID.ToString()}, debug={debug.ToString()}");
             Stopwatch sw = Stopwatch.StartNew();
             var createdImages = new List<Blob>();
@@ -212,7 +212,11 @@ namespace Trail365.Services
             {
                 var workItem = trail;
                 token.ThrowIfCancellationRequested();
-                var pngData = this.Scraper.ScreenshotAsync(this.CreatePreviewImageSnapshotUrl(workItem.GpxBlob.Url, DefaultScrapingSize, debug), DefaultScrapingSize).GetAwaiter().GetResult();
+
+                var scraperUrl = new Uri( helper.GetTrailExplorerUrlOrDefault(Settings.TrailExplorerBaseUrl,workItem.AnalyzerBlob.Url ,ExplorerMapStyle.Outdoor, true, trail.BoundingBox));
+
+                var pngData = this.Scraper.ScreenshotAsync(scraperUrl, DefaultScrapingSize).GetAwaiter().GetResult();
+
                 if (!this.Scraper.IsNull)
                 {
                     if (pngData.Length < 1024 * 10)

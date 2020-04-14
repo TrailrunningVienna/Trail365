@@ -45,7 +45,7 @@ namespace Trail365.Web.Api.Controllers
 
             var task = BackgroundTaskFactory.CreateTask<BackupTask>(this._serviceScopeFactory, this.Url, _logger); //we disable TaskLoggingSystem for this, so we should inject ILogger/ApplicationInsight at leat for the Infrastructure!
             task.Queue(this._queue, NoLogging); //logging to TaskLog disabled to prevent endless changes by the sync system:
-            return base.Ok(new { Status = "Ok", Comment = "Backu scheduled" });
+            return base.Ok(new { Status = "Ok", Comment = "Backup scheduled" });
         }
 
         [Route("fbsync")]

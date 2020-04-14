@@ -21,7 +21,7 @@ namespace Trail365.UnitTests.ViewModel
         [Fact]
         public void ShouldReturnTrailExplorerUrl()
         {
-            var url = this.Url.GetTrailExplorerUrlOrDefault("https://www.google.com/index",this.EmptyViewModel.AnalyzerUrl, ExplorerMapStyle.Outdoor, System.Drawing.Size.Empty, true, true);
+            var url = this.Url.GetTrailExplorerUrlOrDefault("https://www.google.com/index",this.EmptyViewModel.AnalyzerUrl, ExplorerMapStyle.Outdoor,  true,null);
             Debug.WriteLine(url);
         }
     }
