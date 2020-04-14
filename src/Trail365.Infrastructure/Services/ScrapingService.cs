@@ -213,9 +213,7 @@ namespace Trail365.Services
                 var workItem = trail;
                 token.ThrowIfCancellationRequested();
 
-                var scraperUrl = new Uri( helper.GetTrailExplorerUrlOrDefault(Settings.TrailExplorerBaseUrl,workItem.AnalyzerBlob.Url ,ExplorerMapStyle.Outdoor, DefaultScrapingSize,true,false));
-
-                //var scraperUrlOld = this.CreatePreviewImageSnapshotUrl(workItem.GpxBlob.Url, DefaultScrapingSize, debug);
+                var scraperUrl = new Uri( helper.GetTrailExplorerUrlOrDefault(Settings.TrailExplorerBaseUrl,workItem.AnalyzerBlob.Url ,ExplorerMapStyle.Outdoor, true, trail.BoundingBox));
 
                 var pngData = this.Scraper.ScreenshotAsync(scraperUrl, DefaultScrapingSize).GetAwaiter().GetResult();
 

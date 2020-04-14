@@ -186,5 +186,10 @@ namespace Trail365.Entities
         public Guid? StartPlaceID { get; set; }
 
         public Guid? EndPlaceID { get; set; }
+
+        /// <summary>
+        /// serialized array/list of coordinates
+        /// </summary>
+        public string BoundingBox { get; set; }
     }
 }

@@ -9,6 +9,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using NetTopologySuite.Features;
 using NetTopologySuite.Geometries;
+using Newtonsoft.Json;
 using Trail365.Data;
 using Trail365.Entities;
 using Trail365.Internal;
@@ -81,7 +82,20 @@ namespace Trail365.Web.Tasks
 
             var buffer = await contentDownloader.GetFromUriAsync(new Uri(trail.GpxBlob.Url), cancellationToken);
             cancellationToken.ThrowIfCancellationRequested();
+
             FeatureCollection inputData = TrailExtender.ConvertToFeatureCollection(buffer); //NOT simplified, we need detailed data here
+            var boundsGeometry = inputData.GetBoundaries().Envelope;
+
+            Coordinate topLeft = boundsGeometry.Coordinates[0];
+            Coordinate opposite = boundsGeometry.Coordinates[2];
+
+            double[] boundingCoordinates = new double[] { topLeft.X, topLeft.Y, opposite.X, opposite.Y };
+            string boundsJson = JsonConvert.SerializeObject(boundingCoordinates, new JsonSerializerSettings()
+            {
+                ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+            });
+
+            trail.BoundingBox = boundsJson;
 
             FeatureCollection classifiedData = _classifier.GetClassification(inputData);
 

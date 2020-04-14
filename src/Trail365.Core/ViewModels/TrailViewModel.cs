@@ -35,6 +35,8 @@ namespace Trail365.ViewModels
 
         public string Unclassified => GetClassifiedInKm(this.UnclassifiedMeters);
 
+        public string BBox { get; set; }
+
         /// <summary>
         /// pure trail
         /// </summary>
@@ -287,7 +289,7 @@ namespace Trail365.ViewModels
 
         public string GetTrailAnalyzerUrl(string trailExplorerBaseUrl, IUrlHelper url)
         {
-            return url.GetTrailExplorerUrlOrDefault(trailExplorerBaseUrl, this.AnalyzerUrl);
+            return url.GetTrailExplorerUrlOrDefault(trailExplorerBaseUrl, this.AnalyzerUrl, ExplorerMapStyle.Outdoor, false,this.BBox);
         }
     }
 }
