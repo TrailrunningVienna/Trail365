@@ -5,7 +5,6 @@ using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.AspNetCore.Routing;
-using NetTopologySuite.Geometries;
 using Trail365.Entities;
 using Trail365.Internal;
 using Trail365.ViewModels;
@@ -342,16 +341,6 @@ namespace Trail365
             Uri api = new Uri(baseUri, "/Index");
             UriBuilder builder = new UriBuilder(api.ToString());
             return builder.Uri.ToString();
-        }
-
-        public static string GetTrailExplorerUrlOrDefault(this IUrlHelper url, string trailExplorerBaseUrl, string geoJsonDownloadUrl)
-        {
-            return GetTrailExplorerUrlOrDefault(url, trailExplorerBaseUrl, geoJsonDownloadUrl, ExplorerMapStyle.Outdoor);
-        }
-
-        public static string GetTrailExplorerUrlOrDefault(this IUrlHelper url, string trailExplorerBaseUrl, string geoJsonDownloadUrl, ExplorerMapStyle style)
-        {
-            return GetTrailExplorerUrlOrDefault(url, trailExplorerBaseUrl, geoJsonDownloadUrl, style, false, string.Empty);
         }
 
         public static string GetTrailExplorerUrlOrDefault(this IUrlHelper url, string trailExplorerBaseUrl, string geoJsonDownloadUrl, ExplorerMapStyle style, bool snapshotMode, string bbox)

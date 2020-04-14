@@ -200,7 +200,8 @@ namespace Trail365.ViewModels
                 UnclassifiedMeters = trail.UnclassifiedMeters,
                 UnpavedTrailMeters = trail.UnpavedTrailMeters,
                 PavedRoadMeters = trail.PavedRoadMeters,
-                AsphaltedRoadMeters = trail.AsphaltedRoadMeters
+                AsphaltedRoadMeters = trail.AsphaltedRoadMeters,
+                BBox = trail.BoundingBox
             };
 
             if (trail.GpxBlob != null)
