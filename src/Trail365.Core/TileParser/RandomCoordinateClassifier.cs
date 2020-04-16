@@ -77,7 +77,7 @@ namespace Trail365
                         {
                             //use the same value like current and beforelast without recalculating!
                             var f1 = splitted[i - 1];
-                            lastSegmentClass = new CoordinateClassification(f1.Geometry, currentClass.Classification,"inherited");
+                            lastSegmentClass = new CoordinateClassification(f1.Geometry, currentClass.Classification,currentClass.Quality);
                             ApplyAttribute(f1, lastSegmentClass);
                         }
                         else
@@ -99,7 +99,7 @@ namespace Trail365
                 ApplyAttribute(splitted[splitted.Count - 1], reClass);
             }
 
-            return splitted.Merge();
+            return splitted.Merge(includeQuality:true);
         }
 
 

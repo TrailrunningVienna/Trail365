@@ -44,7 +44,7 @@ namespace Trail365
 
                 if (this.Previous.ResultClassification.Classification == this.Next.ResultClassification.Classification)
                 {
-                    this.ResultClassification = new CoordinateClassification(prepare.Geometry, this.Previous.ResultClassification.Classification, "inherited");
+                    this.ResultClassification = new CoordinateClassification(prepare.Geometry, this.Previous.ResultClassification.Classification, this.Previous.ResultClassification.Quality);
                     CoordinateClassifier.ApplyAttribute(prepare, this.ResultClassification);
 
                 }

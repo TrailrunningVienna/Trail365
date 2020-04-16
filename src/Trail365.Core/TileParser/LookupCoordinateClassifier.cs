@@ -75,7 +75,7 @@ namespace Trail365
 
             }
             Task.WaitAll(tasks.ToArray());
-            return splitted.Merge();
+            return splitted.Merge(includeQuality:true);
         }
 
         public override CoordinateClassification CreateClassification(FeatureCollection facts, Geometry input)
