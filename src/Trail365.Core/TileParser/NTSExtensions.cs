@@ -28,15 +28,16 @@ namespace Trail365
             var resultFeature = feature;
             if (distance == Zero)
             {
-                //perfect match or NO-Finding ? NTS contains '0.0' as some default!
-                var locations = distOp.NearestLocations();
-                if (locations.Length > 1)
-                {
-                    if ((locations[0] == null) && (locations[1] == null))
-                    {
-                        resultFeature = null;
-                    }
-                }
+                resultFeature = null;
+                ////perfect match or NO-Finding ? NTS contains '0.0' as some default!
+                //var locations = distOp.NearestLocations();
+                //if (locations.Length > 1)
+                //{
+                //    if ((locations[0] == null) && (locations[1] == null))
+                //    {
+                //        resultFeature = null;
+                //    }
+                //}
             }
             return new Tuple<IFeature, double>(resultFeature, distance);
         }
