@@ -75,7 +75,7 @@ namespace Trail365
 
             }
             Task.WaitAll(tasks.ToArray());
-            return splitted.Merge();
+            return splitted.Merge(includeQuality:true);
         }
 
         public override CoordinateClassification CreateClassification(FeatureCollection facts, Geometry input)
@@ -85,11 +85,17 @@ namespace Trail365
 
             var t = this.GetProposal(facts, input);
 
-            if (t == null || t.GetQuality() < 1)
+            if (t == null)
             {
-                return new CoordinateClassification(input, CoordinateClassification.Unknown);
+                return new CoordinateClassification(input, CoordinateClassification.Unknown,"N/A");
             }
-            return new CoordinateClassification(input, t.Classification);
+            int q = t.GetQuality();
+
+            if (q < 1)
+            {
+                return new CoordinateClassification(input, CoordinateClassification.Unknown,q.ToString());
+            }
+            return new CoordinateClassification(input, t.Classification,q.ToString());
         }
 
         /// <summary>

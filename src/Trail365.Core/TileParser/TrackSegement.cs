@@ -19,6 +19,7 @@ namespace Trail365
         public TrackSegement Next { get; set; }
 
         public LineString Line { get; set; }
+
         public CoordinateClassification ResultClassification { get; set; }
 
         private IFeature prepare = null;
@@ -43,7 +44,7 @@ namespace Trail365
 
                 if (this.Previous.ResultClassification.Classification == this.Next.ResultClassification.Classification)
                 {
-                    this.ResultClassification = new CoordinateClassification(prepare.Geometry, this.Previous.ResultClassification.Classification);
+                    this.ResultClassification = new CoordinateClassification(prepare.Geometry, this.Previous.ResultClassification.Classification, this.Previous.ResultClassification.Quality);
                     CoordinateClassifier.ApplyAttribute(prepare, this.ResultClassification);
 
                 }

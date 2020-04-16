@@ -17,8 +17,8 @@ namespace Trail365
                 {
                     feature.Attributes = new AttributesTable();
                 }
-
                 feature.Attributes.Add("outdoor_class", classification.Classification);
+                feature.Attributes.Add("outdoor_class_quality", classification.Quality);
             }
         }
 

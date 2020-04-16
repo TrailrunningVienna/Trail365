@@ -137,13 +137,16 @@ namespace Trail365
         /// <param name="input"></param>
         /// <param name="callback"></param>
         /// <returns></returns>
-        public static FeatureCollection Merge(this FeatureCollection input)
+        public static FeatureCollection Merge(this FeatureCollection input, bool includeQuality)
         {
             if (input == null) throw new ArgumentNullException(nameof(input));
 
             var output = new FeatureCollection();
             string lastClass = null;
+            string lastQuality = null;
+
             List<LineString> group = new List<LineString>();
+
             foreach (var f in input)
             {
                 LineString ls = f.Geometry as LineString;
@@ -153,19 +156,28 @@ namespace Trail365
                 }
 
                 string currentClass = string.Empty;
+                string currentQuality = string.Empty;
+
                 if (f.Attributes != null && f.Attributes.Exists("outdoor_class"))
                 {
                     currentClass = $"{f.Attributes["outdoor_class"]}";
                 }
 
-                if (lastClass == null)
+                if  (includeQuality && (f.Attributes != null) && f.Attributes.Exists("outdoor_class_quality"))
+                {
+                    currentQuality = $"{f.Attributes["outdoor_class_quality"]}";
+                }
+
+
+                if (lastClass == null & lastQuality==null)
                 {
                     group.Add(ls);
                     lastClass = currentClass;
+                    lastQuality = currentQuality;
                     continue;
                 }
 
-                if (lastClass == currentClass)
+                if ( (lastClass == currentClass) && (lastQuality == currentQuality))
                 {
                     group.Add(ls);
                 }
@@ -178,14 +190,22 @@ namespace Trail365
                     LineString line = new LineString(allPoints);
 
                     var attributes = new AttributesTable();
+
                     if (!string.IsNullOrEmpty(lastClass))
                     {
                         attributes.Add("outdoor_class", lastClass);
                     }
+
+                    if (!string.IsNullOrEmpty(lastQuality))
+                    {
+                        attributes.Add("outdoor_class_quality", lastQuality);
+                    }
+
                     output.Add(new Feature(line, attributes));
                     group.Clear();
                     group.Add(ls);
                     lastClass = currentClass;
+                    lastQuality = currentQuality;
                 }
             }
 
@@ -196,10 +216,18 @@ namespace Trail365
                 LineString line = new LineString(allPoints);
 
                 var attributes = new AttributesTable();
+
                 if (!string.IsNullOrEmpty(lastClass))
                 {
                     attributes.Add("outdoor_class", lastClass);
                 }
+
+                if (!string.IsNullOrEmpty(lastQuality))
+                {
+                    attributes.Add("outdoor_class_quality", lastQuality);
+                }
+
+
                 output.Add(new Feature(line, attributes));
             }
 

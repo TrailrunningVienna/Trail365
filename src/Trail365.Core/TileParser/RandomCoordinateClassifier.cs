@@ -26,7 +26,7 @@ namespace Trail365
                 sequenceLength = random.Next(3, 7) * random.Next(3, 7);
                 sequenceClass = classes[random.Next(0, classes.Length)];
             }
-            return new CoordinateClassification(input, sequenceClass);
+            return new CoordinateClassification(input, sequenceClass,"random");
         }
 
 
@@ -77,7 +77,7 @@ namespace Trail365
                         {
                             //use the same value like current and beforelast without recalculating!
                             var f1 = splitted[i - 1];
-                            lastSegmentClass = new CoordinateClassification(f1.Geometry, currentClass.Classification);
+                            lastSegmentClass = new CoordinateClassification(f1.Geometry, currentClass.Classification,currentClass.Quality);
                             ApplyAttribute(f1, lastSegmentClass);
                         }
                         else
@@ -99,7 +99,7 @@ namespace Trail365
                 ApplyAttribute(splitted[splitted.Count - 1], reClass);
             }
 
-            return splitted.Merge();
+            return splitted.Merge(includeQuality:true);
         }
 
 
