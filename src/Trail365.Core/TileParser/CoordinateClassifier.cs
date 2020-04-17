@@ -6,6 +6,9 @@ namespace Trail365
 {
     public abstract class CoordinateClassifier
     {
+        public static readonly string DeviationAttributeName = "outdoor_class_deviation";
+        public static readonly string OutdoorClassAttributeName = "outdoor_class";
+
         internal static void ApplyAttribute(IFeature feature, CoordinateClassification classification)
         {
             Guard.AssertNotNull(feature);
@@ -17,8 +20,8 @@ namespace Trail365
                 {
                     feature.Attributes = new AttributesTable();
                 }
-                feature.Attributes.Add("outdoor_class", classification.Classification);
-                feature.Attributes.Add("outdoor_class_quality", classification.Quality);
+                feature.Attributes.Add(OutdoorClassAttributeName, classification.Classification);
+                feature.Attributes.Add(DeviationAttributeName, classification.Deviation);
             }
         }
 

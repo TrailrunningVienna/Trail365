@@ -62,9 +62,9 @@ namespace Trail365
                 }
 
                 string currentClass = string.Empty;
-                if (f.Attributes != null && f.Attributes.Exists("outdoor_class"))
+                if (f.Attributes != null && f.Attributes.Exists(CoordinateClassifier.OutdoorClassAttributeName))
                 {
-                    currentClass = $"{f.Attributes["outdoor_class"]}";
+                    currentClass = $"{f.Attributes[CoordinateClassifier.OutdoorClassAttributeName]}";
                 }
                 Guard.Assert(currentClass == currentClass.Trim());
                 if (string.IsNullOrEmpty(currentClass)) continue;
@@ -102,9 +102,9 @@ namespace Trail365
                 }
 
                 string currentClass = string.Empty;
-                if (f.Attributes != null && f.Attributes.Exists("outdoor_class"))
+                if (f.Attributes != null && f.Attributes.Exists(CoordinateClassifier.OutdoorClassAttributeName))
                 {
-                    currentClass = $"{f.Attributes["outdoor_class"]}";
+                    currentClass = $"{f.Attributes[CoordinateClassifier.OutdoorClassAttributeName]}";
                 }
 
                 List<LineString> group;//= new List<LineString>();
@@ -125,7 +125,7 @@ namespace Trail365
                 MultiLineString ms = new MultiLineString(lol.ToArray());
                 AttributesTable attribs = new AttributesTable();
                 if (!string.IsNullOrEmpty(c))
-                    attribs.Add("outdoor_class", c);
+                    attribs.Add(CoordinateClassifier.OutdoorClassAttributeName, c);
                 output.Add(new Feature(ms, attribs));
             }
             return output;
@@ -158,14 +158,14 @@ namespace Trail365
                 string currentClass = string.Empty;
                 string currentQuality = string.Empty;
 
-                if (f.Attributes != null && f.Attributes.Exists("outdoor_class"))
+                if (f.Attributes != null && f.Attributes.Exists(CoordinateClassifier.OutdoorClassAttributeName))
                 {
-                    currentClass = $"{f.Attributes["outdoor_class"]}";
+                    currentClass = $"{f.Attributes[CoordinateClassifier.OutdoorClassAttributeName]}";
                 }
 
-                if  (includeQuality && (f.Attributes != null) && f.Attributes.Exists("outdoor_class_quality"))
+                if  (includeQuality && (f.Attributes != null) && f.Attributes.Exists(CoordinateClassifier.DeviationAttributeName))
                 {
-                    currentQuality = $"{f.Attributes["outdoor_class_quality"]}";
+                    currentQuality = $"{f.Attributes[CoordinateClassifier.DeviationAttributeName]}";
                 }
 
 
@@ -193,12 +193,12 @@ namespace Trail365
 
                     if (!string.IsNullOrEmpty(lastClass))
                     {
-                        attributes.Add("outdoor_class", lastClass);
+                        attributes.Add(CoordinateClassifier.OutdoorClassAttributeName, lastClass);
                     }
 
                     if (!string.IsNullOrEmpty(lastQuality))
                     {
-                        attributes.Add("outdoor_class_quality", lastQuality);
+                        attributes.Add(CoordinateClassifier.DeviationAttributeName, lastQuality);
                     }
 
                     output.Add(new Feature(line, attributes));
@@ -219,12 +219,12 @@ namespace Trail365
 
                 if (!string.IsNullOrEmpty(lastClass))
                 {
-                    attributes.Add("outdoor_class", lastClass);
+                    attributes.Add(CoordinateClassifier.OutdoorClassAttributeName, lastClass);
                 }
 
                 if (!string.IsNullOrEmpty(lastQuality))
                 {
-                    attributes.Add("outdoor_class_quality", lastQuality);
+                    attributes.Add(CoordinateClassifier.DeviationAttributeName, lastQuality);
                 }
 
 

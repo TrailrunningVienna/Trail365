@@ -14,6 +14,8 @@ namespace Trail365
 {
     public class VectorTileLookupDataProvider : LookupDataProvider
     {
+        public static readonly int DefaultZoomLevel = 13; //test uses 12 to reduce the number of files to provide, 13 may be a good compromiss for smaller items/less loading overhead
+
         private readonly string TileUri;
 
         private readonly string BaseName;
@@ -46,7 +48,6 @@ namespace Trail365
             return result;
         }
 
-        public static readonly int DefaultZoomLevel = 13; //test uses 12 to reduce the number of files to provide, 13 may be a good compromiss for smaller items/less loading overhead
 
         public static TileInfo[] ConvertoToTileInfos(Geometry envelope, int zoomLevel)
         {
