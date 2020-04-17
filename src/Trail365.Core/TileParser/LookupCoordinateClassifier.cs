@@ -75,7 +75,7 @@ namespace Trail365
 
             }
             Task.WaitAll(tasks.ToArray());
-            return splitted.Merge(includeQuality:true);
+            return splitted.Merge(includeQuality: true);
         }
 
         public override CoordinateClassification CreateClassification(FeatureCollection facts, Geometry input)
@@ -87,15 +87,12 @@ namespace Trail365
 
             if (t == null)
             {
-                return new CoordinateClassification(input, CoordinateClassification.Unknown,"N/A");
+                return new CoordinateClassification(input, CoordinateClassification.Unknown, "N/A");
             }
-            int q = t.GetQuality();
 
-            if (q < 1)
-            {
-                return new CoordinateClassification(input, CoordinateClassification.Unknown,q.ToString());
-            }
-            return new CoordinateClassification(input, t.Classification,q.ToString());
+            int deviation = t.GetDeviation();
+
+            return new CoordinateClassification(input, t.Classification, deviation.ToString());
         }
 
         /// <summary>
@@ -141,7 +138,7 @@ namespace Trail365
 
             var nearest = results.Where(r => r.Item2 == minValue).First();
 
-            string cls = nearest.Item1.Attributes["outdoor_class"].ToString();
+            string cls = nearest.Item1.Attributes[CoordinateClassifier.OutdoorClassAttributeName].ToString();
 
             return new ClassificationProposal()
             {
