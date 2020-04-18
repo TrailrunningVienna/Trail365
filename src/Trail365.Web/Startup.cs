@@ -84,8 +84,13 @@ namespace Trail365.Web
             {
                 services.AddSingleton<CoordinateClassifier>((isp) =>
                 {
-                    LookupDataProvider ldp = new VectorTileLookupDataProvider(settings.ClassifierTilesUrl);
-                    CoordinateClassifier classifier = new LookupCoordinateClassifier(ldp);
+                    LookupDataProvider ldp = new VectorTileLookupDataProvider(settings.ClassifierTilesUrl, settings.ClassifierLookupZoomLevel);
+
+                    CoordinateClassifier classifier = new LookupCoordinateClassifier(ldp)
+                    {
+                        UseInterpolation = settings.UseClassifierInterpolation
+                    };
+
                     return classifier;
                 });
             }

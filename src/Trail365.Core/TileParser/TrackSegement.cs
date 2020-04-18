@@ -12,6 +12,7 @@ namespace Trail365
             this.Classifier = classifier;
         }
         public bool HasCalculatedValue { get; private set; }
+
         private readonly CoordinateClassifier Classifier;
 
         public Task<TrackSegement> Worker { get; set; }
@@ -28,7 +29,7 @@ namespace Trail365
             this.HasCalculatedValue = false;
             prepare = f;
         }
-        public void StartInterpolation(FeatureCollection facts)
+        internal void StartInterpolation(FeatureCollection facts)
         {
             Guard.AssertNotNull(prepare);
             Guard.AssertNotNull(this.Previous);

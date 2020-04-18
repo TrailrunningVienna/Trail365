@@ -14,7 +14,12 @@ namespace Trail365
 {
     public class VectorTileLookupDataProvider : LookupDataProvider
     {
-        public static readonly int DefaultZoomLevel = 13; //test uses 12 to reduce the number of files to provide, 13 may be a good compromiss for smaller items/less loading overhead
+        /// <summary>
+        /// 13
+        /// </summary>
+        public static readonly int DefaultZoomLevel = 13;
+
+        internal static readonly string DefaultBaseName = "outdoor";
 
         private readonly string TileUri;
 
@@ -24,7 +29,12 @@ namespace Trail365
 
         private readonly HttpClient Client;
 
-        public VectorTileLookupDataProvider(string baseUrl) : this(baseUrl, "outdoor", DefaultZoomLevel)
+        public VectorTileLookupDataProvider(string baseUrl, int zoomLevel) : this(baseUrl, DefaultBaseName, zoomLevel)
+        {
+
+        }
+
+        public VectorTileLookupDataProvider(string baseUrl) : this(baseUrl, DefaultBaseName, DefaultZoomLevel)
         {
 
         }
