@@ -262,9 +262,11 @@ namespace Trail365.Web
 
                 Dictionary<string, object> dictionary = new Dictionary<string, object>
                 {
+                    { $"Features.{nameof(settings.Features.TrailAnalyzer)}", $"{settings.Features.TrailAnalyzer}" },
                     { nameof(settings.TrailExplorerBaseUrl), $"{settings.TrailExplorerBaseUrl}" },
                     { nameof(settings.ClassifierTilesUrl), $"{settings.ClassifierTilesUrl}" },
-                    { $"Features.{nameof(settings.Features.TrailAnalyzer)}", $"{settings.Features.TrailAnalyzer}" }
+                    { nameof(settings.UseClassifierInterpolation), $"{settings.UseClassifierInterpolation}" },
+                    { nameof(settings.ClassifierLookupZoomLevel), $"{settings.ClassifierLookupZoomLevel}" },
                 };
 
                 var proposedHealthStatatus = HealthStatus.Healthy;
@@ -297,7 +299,7 @@ namespace Trail365.Web
                     roDict = new ReadOnlyDictionary<string, object>(new Dictionary<string, object>());
                 }
 
-                HealthCheckResult r = new HealthCheckResult(proposedHealthStatatus, string.Join(", ",proposedDescriptions), data: roDict);
+                HealthCheckResult r = new HealthCheckResult(proposedHealthStatatus, string.Join(", ", proposedDescriptions), data: roDict);
                 return r;
             });
         }

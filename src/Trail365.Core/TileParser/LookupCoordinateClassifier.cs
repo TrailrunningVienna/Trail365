@@ -11,14 +11,17 @@ namespace Trail365
 
     public class LookupCoordinateClassifier : CoordinateClassifier
     {
+        public bool UseInterpolation { get; set; } = false;
+
         private readonly LookupDataProvider LookupDataProvider;
 
         public override FeatureCollection GetClassification(FeatureCollection input)
         {
-            //use LookupDataProvider to get all fact features for envelope
+
             var facts = this.LookupDataProvider.GetClassifiedMapFeatures(input.GetBoundaries().Envelope);
 
             //Input MUST be one line (2 points) per Features
+
             var splitted = input.SplitIntoFeaturePerLineSegment();
 
             TrackSegement lastSegement = null;
@@ -29,6 +32,7 @@ namespace Trail365
             {
 
                 var f = splitted[i];
+
                 LineString currentSegment = (LineString)f.Geometry;
 
                 TrackSegement currentTS = new TrackSegement(this)
@@ -52,7 +56,7 @@ namespace Trail365
                 {
                     lastSegement.Next = currentTS;
 
-                    if (lastSegement.HasCalculatedValue)
+                    if (this.UseInterpolation && lastSegement.HasCalculatedValue)
                     {
                         Guard.Assert(lastSegement.Worker != null);
                         Guard.Assert(currentTS.HasCalculatedValue == false);
@@ -70,11 +74,14 @@ namespace Trail365
                             tasks.Add(lastSegement.Worker);
                         }
                     }
+
                     lastSegement = currentTS;
                 }
 
             }
+
             Task.WaitAll(tasks.ToArray());
+
             return splitted.Merge(includeQuality: true);
         }
 
@@ -105,7 +112,6 @@ namespace Trail365
         }
 
         private readonly Dictionary<Tuple<int, int>, FeatureCollection> cache = new Dictionary<Tuple<int, int>, FeatureCollection>();
-
 
         public ClassificationProposal GetProposal(FeatureCollection facts, Geometry input)
         {
