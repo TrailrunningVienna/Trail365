@@ -263,11 +263,15 @@ namespace Trail365.Web
                 Dictionary<string, object> dictionary = new Dictionary<string, object>
                 {
                     { $"Features.{nameof(settings.Features.TrailAnalyzer)}", $"{settings.Features.TrailAnalyzer}" },
-                    { nameof(settings.TrailExplorerBaseUrl), $"{settings.TrailExplorerBaseUrl}" },
-                    { nameof(settings.ClassifierTilesUrl), $"{settings.ClassifierTilesUrl}" },
                     { nameof(settings.UseClassifierInterpolation), $"{settings.UseClassifierInterpolation}" },
                     { nameof(settings.ClassifierLookupZoomLevel), $"{settings.ClassifierLookupZoomLevel}" },
                 };
+
+                if (env.IsDevelopment())
+                {
+                    dictionary.Add(nameof(settings.TrailExplorerBaseUrl), $"{settings.TrailExplorerBaseUrl}");
+                    dictionary.Add(nameof(settings.ClassifierTilesUrl), $"{settings.ClassifierTilesUrl}");
+                }
 
                 var proposedHealthStatatus = HealthStatus.Healthy;
                 List<string> proposedDescriptions = new List<string>();
@@ -288,16 +292,7 @@ namespace Trail365.Web
 
                 }
 
-                ReadOnlyDictionary<string, object> roDict;
-
-                if (env.IsDevelopment())
-                {
-                    roDict = new ReadOnlyDictionary<string, object>(dictionary);
-                }
-                else
-                {
-                    roDict = new ReadOnlyDictionary<string, object>(new Dictionary<string, object>());
-                }
+                ReadOnlyDictionary<string, object> roDict = new ReadOnlyDictionary<string, object>(dictionary);
 
                 HealthCheckResult r = new HealthCheckResult(proposedHealthStatatus, string.Join(", ", proposedDescriptions), data: roDict);
                 return r;
