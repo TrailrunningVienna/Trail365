@@ -168,7 +168,6 @@ namespace Trail365
                     currentQuality = $"{f.Attributes[CoordinateClassifier.DeviationAttributeName]}";
                 }
 
-
                 if (lastClass == null & lastQuality==null)
                 {
                     group.Add(ls);

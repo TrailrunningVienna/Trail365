@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using NetTopologySuite.Features;
 using NetTopologySuite.Geometries;
 using Trail365.TileParser;
+using Trail365.TileParser.Contract;
 
 namespace Trail365
 {

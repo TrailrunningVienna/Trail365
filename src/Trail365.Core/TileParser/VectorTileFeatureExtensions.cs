@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using NetTopologySuite.Features;
 using NetTopologySuite.Geometries;
+using Trail365.TileParser.Contract;
 
 namespace Trail365.TileParser
 {
@@ -16,7 +17,7 @@ namespace Trail365.TileParser
 
         private static List<Coordinate> Project(List<VectorTileCoordinate> coords, TileInfo map, uint extent)
         {
-            return coords.Select(coord => coord.ToCoordinate(map,extent)).ToList();
+            return coords.Select(coord => coord.ToCoordinate(map, extent)).ToList();
         }
 
         private static LineString CreateLineString(GeometryFactory factory, List<Coordinate> pos)
@@ -186,15 +187,15 @@ namespace Trail365.TileParser
             Geometry geom = null;
             switch (vectortileFeature.GeometryType)
             {
-                case Tile.GeomType.Point:
+                case TileGeometryType.Point:
                     var projectedPoints = ProjectPoints(vectortileFeature.Geometry, map, vectortileFeature.Extent);
                     geom = GetPointGeometry(f, projectedPoints);
                     break;
-                case Tile.GeomType.LineString:
+                case TileGeometryType.LineString:
                     var projectedLines = ProjectLines(vectortileFeature.Geometry, map, vectortileFeature.Extent);
                     geom = GetLineGeometry(f, projectedLines);
                     break;
-                case Tile.GeomType.Polygon:
+                case TileGeometryType.Polygon:
                     var rings = ClassifyRings.Classify(vectortileFeature.Geometry);
                     var projectedPolygons = ProjectPolygons(rings, map, vectortileFeature.Extent);
                     geom = GetPolygonGeometry(f, projectedPolygons);

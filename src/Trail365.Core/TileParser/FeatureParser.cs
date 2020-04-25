@@ -1,17 +1,18 @@
 using System.Collections.Generic;
 using System.Globalization;
+using Trail365.TileParser.Contract;
 
 namespace Trail365.TileParser
 {
     public static class FeatureParser
     {
 
-        public static VectorTileFeature Parse(Tile.Feature feature, List<string> keys, List<Tile.Value> values,uint extent)
+        public static VectorTileFeature Parse(TileFeature feature, List<string> keys, List<TileValue> values, uint extent)
         {
             var result = new VectorTileFeature();
             var id = feature.Id;
 
-            var geom =  GeometryParser.ParseGeometry(feature.Geometry, feature.Type);
+            var geom = GeometryParser.ParseGeometry(feature.Geometry, feature.Type);
             result.GeometryType = feature.Type;
 
             // add the geometry

@@ -1,11 +1,11 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Trail365.TileParser
+namespace Trail365.TileParser.Contract
 {
     public static class AttributesParser
     {
-        public static List<KeyValuePair<string, object>> Parse(List<string> keys, List<Tile.Value> values, List<uint> tags)
+        public static List<KeyValuePair<string, object>> Parse(List<string> keys, List<TileValue> values, List<uint> tags)
         {
             var result = new List<KeyValuePair<string, object>>();
             var odds = tags.GetOdds().ToList();
@@ -15,13 +15,13 @@ namespace Trail365.TileParser
             {
                 var key = keys[(int)evens[i]];
                 var val = values[(int)odds[i]];
-                var valObject = GetAttr(val);
+                var valObject = GetAttribute(val);
                 result.Add(new KeyValuePair<string, object>(key, valObject));
             }
             return result;
         }
 
-        private static object GetAttr(Tile.Value value)
+        private static object GetAttribute(TileValue value)
         {
             object res = null;
 

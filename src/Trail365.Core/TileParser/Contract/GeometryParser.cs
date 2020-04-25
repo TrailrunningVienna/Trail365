@@ -1,10 +1,10 @@
 using System.Collections.Generic;
 
-namespace Trail365.TileParser
+namespace Trail365.TileParser.Contract
 {
     public static class GeometryParser
     {
-        public static List<List<VectorTileCoordinate>> ParseGeometry(List<uint> geom, Tile.GeomType geomType)
+        public static List<List<VectorTileCoordinate>> ParseGeometry(List<uint> geom, TileGeometryType geomType)
         {
             const uint cmdMoveTo = 1;
             //const uint cmdLineTo = 2;
@@ -39,7 +39,7 @@ namespace Trail365.TileParser
 
                 if (command == cmdSegEnd)
                 {
-                    if (geomType != Tile.GeomType.Point && !(coords.Count == 0))
+                    if (geomType != TileGeometryType.Point && !(coords.Count == 0))
                     {
                         coords.Add(coords[0]);
                     }
@@ -59,7 +59,7 @@ namespace Trail365.TileParser
                 y = y + ldy;
 
                 // use scale? var  coord = new Coordinate(x / scale, y / scale);
-                var  coord = new VectorTileCoordinate() { X = x, Y = y };
+                var coord = new VectorTileCoordinate() { X = x, Y = y };
                 coords.Add(coord);
             }
             return coordsList;

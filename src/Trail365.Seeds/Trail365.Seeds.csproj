@@ -25,6 +25,9 @@
     <None Update="FBEvents\FBFurth.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="GpxTracks\41er.1.1.0.gpx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="GpxTracks\Buschberg.gpx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

@@ -45,6 +45,7 @@ namespace Trail365.Web.Tasks
             var scopedTrail = await scopedDB.Trails.Include(t => t.GpxBlob).Include(t => t.AnalyzerBlob).Where(t => t.ID == this.Trail.ID).SingleOrDefaultAsync();
 
             await this.CalculateTrailAnalysis(scopedTrail, scopedDB, classifier, this.Context.Url, cancellationToken, this.Context.DefaultLogger, blobService);
+
             scopedDB.Trails.Update(scopedTrail);
             var dbchanges = await scopedDB.SaveChangesAsync();
         }

@@ -32,6 +32,8 @@ namespace Trail365.Seeds
         public static string Buschberg => EnsureFilePath("Buschberg.gpx");
         public static string HusarenTempel => EnsureFilePath("HusarenTempel-Schubertweg.gpx");
 
+        public static string Wanderweg41 => EnsureFilePath("41er.1.1.0.gpx");
+
         /// <summary>
         /// caused some exception that should be solved/regression tested
         /// it is a route not a track!

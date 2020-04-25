@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.IO;
 using ProtoBuf;
 
-namespace Trail365.TileParser
+namespace Trail365.TileParser.Contract
 {
     public static class VectorTileParser
     {

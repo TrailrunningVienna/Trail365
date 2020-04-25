@@ -55,6 +55,10 @@ namespace Trail365.Web
                 new JProperty("Version", Helper.GetProductVersionFromEntryAssembly()),
                 new JProperty("ProcessUpTime", Helper.GetUptime()),
                 new JProperty("ProcessStartTime", Helper.GetStartTime()),
+                new JProperty("Framework",System.Runtime.InteropServices.RuntimeInformation.FrameworkDescription),
+                new JProperty("OSDescription",System.Runtime.InteropServices.RuntimeInformation.OSDescription),
+                new JProperty("OSArchitecture",System.Runtime.InteropServices.RuntimeInformation.OSArchitecture.ToString()),
+                new JProperty("ProcessArchitecture",System.Runtime.InteropServices.RuntimeInformation.ProcessArchitecture.ToString()),
             };
 
             rootItems.Add(new JProperty("Components", new JObject(jItems)));

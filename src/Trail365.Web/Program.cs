@@ -55,11 +55,11 @@ namespace Trail365.Web
              {
                  builder.AddApplicationInsights();
              })
-             .UseKestrel(serverOptions =>
-                {
-                    // Set properties and call methods on options
-                })
-            .UseIISIntegration()
+             //.UseKestrel(serverOptions =>
+             //   {
+             //       // Set properties and call methods on options
+             //   })
+            //.UseIISIntegration()
             .UseStartup<Startup>();
     }
 }

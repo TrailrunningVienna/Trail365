@@ -94,6 +94,15 @@ namespace Trail365.Web
                     return classifier;
                 });
             }
+            else
+            {
+                //if background-Tasks are created then we need a "dummy" classifier to prevent exceptions
+                services.AddSingleton<CoordinateClassifier>((isp) =>
+                {
+                    CoordinateClassifier classifier = new NullCoordinateClassifier();
+                    return classifier;
+                });
+            }
 
 
             services.Configure<CookiePolicyOptions>(options =>
@@ -199,7 +208,7 @@ namespace Trail365.Web
             {
                 app.UseForwardedHeaders();
             }
-
+            
             app.UseResponseCompression();
 
             //may be a bug in aspnetcore: rlo MUST be available via GetService => working sample here: https://github.com/aspnet/Entropy/blob/master/samples/Localization.StarterWeb/Startup.cs

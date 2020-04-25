@@ -1,26 +1,32 @@
 using NetTopologySuite.Geometries;
 using System;
-
+using System.Collections;
+using System.Collections.Generic;
 namespace Trail365
 {
     public class ClassificationProposal
     {
         public Geometry LookupKey { get; set; }
 
-        public double DistanceToNearest { get; set; }
-        public string Classification { get; set; }
-
         /// <summary>
         /// integer about deviation - NO UNIT!
         /// 
         /// </summary>
         /// <returns></returns>
-        public int GetDeviation()
+        public int GetDeviation(string classification)
         {
-            double derived = this.DistanceToNearest * 10000000;
-            int quality = Convert.ToInt32(Math.Round(derived));
-            System.Diagnostics.Debug.WriteLine($"Dist={this.DistanceToNearest.ToString("0.0000000000")}, Quality={quality}");
+            double distance = this.Classifications[classification];
+            int quality = NTSExtensions.GetDeviation(distance);
+            System.Diagnostics.Debug.WriteLine($"Classification={classification}, Dist={distance.ToString("0.0000000000")}, Quality={quality}");
             return quality;
         }
+
+        public int? GetDeviationOrDefault(string classification)
+        {
+            if (this.Classifications.ContainsKey(classification) == false) return null;
+            return GetDeviation(classification);
+        }
+
+        public Dictionary<string,double> Classifications { get; internal set; }
     }
 }
