@@ -163,12 +163,12 @@ namespace Trail365
                     currentClass = $"{f.Attributes[CoordinateClassifier.OutdoorClassAttributeName]}";
                 }
 
-                if  (includeQuality && (f.Attributes != null) && f.Attributes.Exists(CoordinateClassifier.DeviationAttributeName))
+                if (includeQuality && (f.Attributes != null) && f.Attributes.Exists(CoordinateClassifier.DeviationAttributeName))
                 {
                     currentQuality = $"{f.Attributes[CoordinateClassifier.DeviationAttributeName]}";
                 }
 
-                if (lastClass == null & lastQuality==null)
+                if (lastClass == null & lastQuality == null)
                 {
                     group.Add(ls);
                     lastClass = currentClass;
@@ -176,7 +176,7 @@ namespace Trail365
                     continue;
                 }
 
-                if ( (lastClass == currentClass) && (lastQuality == currentQuality))
+                if ((lastClass == currentClass) && (lastQuality == currentQuality))
                 {
                     group.Add(ls);
                 }
@@ -233,6 +233,36 @@ namespace Trail365
             return output;
         }
 
+
+        public static IEnumerable<LineString> GetLineStrings(this FeatureCollection input)
+        {
+            if (input == null) throw new ArgumentNullException(nameof(input));
+            return input.Select(feature =>
+            {
+                LineString ls = feature.Geometry as LineString;
+                if (ls == null) throw new InvalidOperationException("oops");
+                return ls;
+            });
+        }
+
+        public static List<LineString> CreateShortLineString(LineString ls)
+        {
+            var output = new List<LineString>();
+            Coordinate lastPoint = null;
+            foreach (var linePoint in ls.Coordinates)
+            {
+                if (lastPoint == null)
+                {
+                    lastPoint = linePoint;
+                    continue;
+                }
+                LineString next = new LineString(new Coordinate[] { lastPoint, linePoint });
+                output.Add(next);
+                lastPoint = linePoint;
+            }
+            return output;
+        }
+
         /// <summary>
         /// returns a high number of Linestrings, each one only with two points (the shortest possible segment lengt) so they can be classified one by one
         /// </summary>
@@ -241,26 +271,13 @@ namespace Trail365
         public static FeatureCollection SplitIntoFeaturePerLineSegment(this FeatureCollection input)
         {
             if (input == null) throw new ArgumentNullException(nameof(input));
-
             var output = new FeatureCollection();
 
-            foreach (var f in input)
+            foreach (var ls in GetLineStrings(input))
             {
-                LineString ls = f.Geometry as LineString;
-                if (ls != null)
+                foreach (var shortLs in CreateShortLineString(ls))
                 {
-                    Coordinate lastPoint = null;
-                    foreach (var linePoint in ls.Coordinates)
-                    {
-                        if (lastPoint == null)
-                        {
-                            lastPoint = linePoint;
-                            continue;
-                        }
-                        LineString next = new LineString(new Coordinate[] { lastPoint, linePoint });
-                        output.Add(new Feature(next, null));
-                        lastPoint = linePoint;
-                    }
+                    output.Add(new Feature(shortLs, attributes: null));
                 }
             }
             return output;

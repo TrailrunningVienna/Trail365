@@ -17,6 +17,7 @@ namespace Trail365
 
         public Task<TrackSegement> Worker { get; set; }
         public TrackSegement Previous { get; set; }
+
         public TrackSegement Next { get; set; }
 
         public LineString Line { get; set; }
@@ -24,11 +25,13 @@ namespace Trail365
         public CoordinateClassification ResultClassification { get; set; }
 
         private IFeature prepare = null;
+
         public void PrepareInterpolation(IFeature f)
         {
             this.HasCalculatedValue = false;
             prepare = f;
         }
+
         internal void StartInterpolation(FeatureCollection facts)
         {
             Guard.AssertNotNull(prepare);
