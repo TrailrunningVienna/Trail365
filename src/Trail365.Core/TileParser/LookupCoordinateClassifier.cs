@@ -9,19 +9,6 @@ using Trail365.Internal;
 
 namespace Trail365
 {
-
-    public class NullCoordinateClassifier : CoordinateClassifier
-    {
-        public override CoordinateClassification CreateClassification(FeatureCollection facts, Geometry input)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override FeatureCollection GetClassification(FeatureCollection input)
-        {
-            throw new NotImplementedException();
-        }
-    }
     public class LookupCoordinateClassifier : CoordinateClassifier
     {
         public bool UseInterpolation { get; set; } = false;
@@ -44,22 +31,22 @@ namespace Trail365
             for (int i = 0; i < splitted.Count; i++)
             {
 
-                var f = splitted[i];
+                var splittedFeature = splitted[i];
 
-                LineString currentSegment = (LineString)f.Geometry;
+                LineString currentLineString = (LineString)splittedFeature.Geometry;
 
                 TrackSegement currentTS = new TrackSegement(this)
                 {
-                    Line = currentSegment,
+                    Line = currentLineString,
                     Previous = lastSegement
                 };
 
-                Guard.AssertNotNull(currentSegment);
-                Guard.Assert(currentSegment.Count == 2);
+                Guard.AssertNotNull(currentLineString);
+                Guard.Assert(currentLineString.Count == 2);
 
                 if (lastSegement == null)
                 {
-                    currentTS.StartCalculation(f, facts);
+                    currentTS.StartCalculation(splittedFeature, facts);
                     tasks.Add(currentTS.Worker);
                     Guard.Assert(currentTS.Previous == null);
                     lastSegement = currentTS;
@@ -74,11 +61,11 @@ namespace Trail365
                         Guard.Assert(lastSegement.Worker != null);
                         Guard.Assert(currentTS.HasCalculatedValue == false);
                         Guard.Assert(currentTS.Worker == null); //later!
-                        currentTS.PrepareInterpolation(f);
+                        currentTS.PrepareInterpolation(splittedFeature);
                     }
                     else
                     {
-                        currentTS.StartCalculation(f, facts);
+                        currentTS.StartCalculation(splittedFeature, facts);
                         tasks.Add(currentTS.Worker);
                         if (lastSegement.HasCalculatedValue == false && lastSegement.Worker == null)
                         {
@@ -92,12 +79,11 @@ namespace Trail365
                 }
 
             }
-
             Task.WaitAll(tasks.ToArray());
-
             //return splitted.Merge(includeQuality: true);
             return splitted; //merge useless we have details!
         }
+
         private static readonly int SoloLimit = 50;
         public override CoordinateClassification CreateClassification(FeatureCollection facts, Geometry input)
         {
