@@ -1,32 +1,41 @@
+using NetTopologySuite.Algorithm;
 using NetTopologySuite.Geometries;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+
 namespace Trail365
 {
+
     public class ClassificationProposal
     {
-        public Geometry LookupKey { get; set; }
 
         /// <summary>
-        /// integer about deviation - NO UNIT!
-        /// 
+        /// Map geometry/feature where we are looking for!
         /// </summary>
-        /// <returns></returns>
-        public int GetDeviation(string classification)
+        public readonly Geometry LookupKey;
+
+        /// <summary>
+        /// best LineSegment on LookupKey for the current search!
+        /// </summary>
+        
+        public List<LineSegmentProposal> LinkedLineSegments { get; set; }
+
+        public ClassificationProposal(Geometry geometry)
         {
-            double distance = this.Classifications[classification];
-            int quality = NTSExtensions.GetDeviation(distance);
-            System.Diagnostics.Debug.WriteLine($"Classification={classification}, Dist={distance.ToString("0.0000000000")}, Quality={quality}");
-            return quality;
+            this.LookupKey = geometry ?? throw new ArgumentNullException(nameof(geometry));
         }
 
-        public int? GetDeviationOrDefault(string classification)
+        public double? GetDeviationOrDefault(string classification)
         {
-            if (this.Classifications.ContainsKey(classification) == false) return null;
-            return GetDeviation(classification);
+            var res = this.LinkedLineSegments.Where(ll => ll.Classification == classification).OrderBy(ll => ll.ReferenceDistance).FirstOrDefault();
+            if (res != null)
+            {
+                return res.ReferenceDistance;
+            }
+            return null;
         }
 
-        public Dictionary<string,double> Classifications { get; internal set; }
     }
 }

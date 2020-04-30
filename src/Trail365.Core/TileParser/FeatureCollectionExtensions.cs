@@ -245,42 +245,56 @@ namespace Trail365
             });
         }
 
-        public static List<LineString> CreateShortLineString(LineString ls)
+
+        public static List<LineString> CreateShortLineStrings(this IEnumerable<LineString> lineStrings)
         {
+            if (lineStrings == null) throw new ArgumentNullException(nameof(lineStrings));
+            var result = lineStrings.Select(ls => ls.CreateShortLineStrings()).SelectMany(l => l).ToList();
+            return result;
+        }
+        public static List<LineString> CreateShortLineStrings(this LineString lineString)
+        {
+            if (lineString == null) throw new ArgumentNullException(nameof(lineString));
             var output = new List<LineString>();
             Coordinate lastPoint = null;
-            foreach (var linePoint in ls.Coordinates)
+            foreach (var linePoint in lineString.Coordinates)
             {
                 if (lastPoint == null)
                 {
                     lastPoint = linePoint;
                     continue;
                 }
-                LineString next = new LineString(new Coordinate[] { lastPoint, linePoint });
+                LineString next = new LineString(new Coordinate[] {  new Coordinate(lastPoint.X,lastPoint.Y), new Coordinate(linePoint.X, linePoint.Y)}); //remove Z Part"
                 output.Add(next);
                 lastPoint = linePoint;
             }
             return output;
         }
 
+        //public static FeatureCollection SplitIntoFeaturePerLineSegment(this FeatureCollection input)
+        //{
+        //    return null;
+        //}
+
+
+        //public static 
+
         /// <summary>
         /// returns a high number of Linestrings, each one only with two points (the shortest possible segment lengt) so they can be classified one by one
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
-        public static FeatureCollection SplitIntoFeaturePerLineSegment(this FeatureCollection input)
+        public static IEnumerable<(LineString InputLineString, LineString ShortLineString)> SplitIntoShortLinesStrings(this FeatureCollection input)
         {
             if (input == null) throw new ArgumentNullException(nameof(input));
-            var output = new FeatureCollection();
-
             foreach (var ls in GetLineStrings(input))
             {
-                foreach (var shortLs in CreateShortLineString(ls))
+                foreach (var shortLs in CreateShortLineStrings(ls))
                 {
-                    output.Add(new Feature(shortLs, attributes: null));
+                    var t = (InputLineString: ls, ShortLineString: shortLs);
+                    yield return t;
                 }
             }
-            return output;
         }
 
         public static void SerializeFeatureCollectionIntoGeoJson(this FeatureCollection featureCollection, string fileName)

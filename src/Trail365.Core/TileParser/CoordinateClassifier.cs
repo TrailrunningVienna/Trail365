@@ -7,6 +7,7 @@ using Trail365.Internal;
 
 namespace Trail365
 {
+
     public abstract class CoordinateClassifier
     {
         public static readonly string DeviationAttributeName = "outdoor_class_deviation";
@@ -48,7 +49,7 @@ namespace Trail365
 
         public abstract FeatureCollection GetClassification(FeatureCollection input);
 
-        public abstract CoordinateClassification CreateClassification(FeatureCollection facts, Geometry input);
+        //public abstract CoordinateClassification CreateClassification(FeatureCollection facts, Geometry input);
 
     }
 }

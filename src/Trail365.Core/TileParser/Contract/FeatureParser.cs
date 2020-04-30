@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using Trail365.TileParser.Contract;
 
-namespace Trail365.TileParser
+namespace Trail365.TileParser.Contract
 {
     public static class FeatureParser
     {
