@@ -6,7 +6,6 @@ namespace Trail365.Configuration
     public class AppSettings
     {
         public string ClassifierTilesUrl { get; set; }
-        public bool UseClassifierInterpolation { get; set; }
 
         /// <summary>
         /// Default = 13

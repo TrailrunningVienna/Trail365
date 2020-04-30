@@ -267,7 +267,6 @@ namespace Trail365.Web
                 Dictionary<string, object> dictionary = new Dictionary<string, object>
                 {
                     { $"Features.{nameof(settings.Features.TrailAnalyzer)}", $"{settings.Features.TrailAnalyzer}" },
-                    { nameof(settings.UseClassifierInterpolation), $"{settings.UseClassifierInterpolation}" },
                     { nameof(settings.ClassifierLookupZoomLevel), $"{settings.ClassifierLookupZoomLevel}" },
                 };
 

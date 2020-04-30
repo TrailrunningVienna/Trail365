@@ -88,7 +88,6 @@ namespace Trail365.Web
 
                     CoordinateClassifier classifier = new LookupCoordinateClassifier(ldp)
                     {
-                        UseInterpolation = settings.UseClassifierInterpolation
                     };
 
                     return classifier;
