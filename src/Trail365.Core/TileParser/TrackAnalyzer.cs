@@ -11,12 +11,19 @@ using Trail365.Internal;
 
 namespace Trail365
 {
-    public class TrackAnalyzer
+    public sealed class TrackAnalyzer
     {
         private readonly FeatureCollection MapFacts;
         public double TerminateDistance { get; private set; }
 
-        protected ILogger Logger { get; private set; } = NullLogger.Instance;
+        protected internal ILogger Logger { get; private set; } = NullLogger.Instance;
+
+        public TrackAnalyzer AssignLogger(ILogger logger)
+        {
+            if (logger == null) throw new ArgumentNullException(nameof(logger));
+            this.Logger = logger;
+            return this;
+        }
 
         public TrackAnalyzer(FeatureCollection mapFacts) : this(mapFacts, NTSExtensions.DeviationToDistance(10000))
         {
@@ -27,9 +34,9 @@ namespace Trail365
         {
             //1. split input into list of Linked
             var sw1 = System.Diagnostics.Stopwatch.StartNew();
-            var result = fact.GetLineSegmentProposalOrDefault(mapClass, shortLine, settings.TerminateDistance,logger);
+            var result = fact.GetLineSegmentProposalOrDefault(mapClass, shortLine, settings.TerminateDistance, logger);
             sw1.Stop();
-            //logger.LogDebug($"{nameof(CalculateFindings)} single lookup execution: {sw1.Elapsed.ToFormattedDuration()}");
+            logger.LogTrace($"[{nameof(CalculateFindings)}] Single lookup execution: {sw1.Elapsed.ToFormattedDuration()}");
             var rawResults = new List<LineSegmentProposal>();
             if (result != null)
             {
@@ -41,7 +48,7 @@ namespace Trail365
         public static List<LineSegmentProposal> CalculateFindings(FeatureCollection facts, Geometry shortLine, TrackAnalyzerSettings settings, CancellationToken cancellationToken, ILogger logger, Func<IFeature, string> classGetter)
         {
             //1. split input into list of Linked
-            logger.LogDebug($"{nameof(CalculateFindings)}: {facts.Count} facts for lookup");
+            logger.LogDebug($"[{nameof(CalculateFindings)}] {facts.Count} facts for lookup");
             List<Task<LineSegmentProposal>> tasks = new List<Task<LineSegmentProposal>>();
             var sw = System.Diagnostics.Stopwatch.StartNew();
             //determine distance to EVERY fact inside the boundingbox!
@@ -62,10 +69,10 @@ namespace Trail365
                 }, cancellationToken);
                 tasks.Add(singleTask);
             }
-            logger.LogDebug($"{nameof(CalculateFindings)} Tasks ({tasks.Count}) creation: {sw.Elapsed.ToFormattedDuration()}");
+            logger.LogDebug($"[{nameof(CalculateFindings)}] {tasks.Count} tasks created in {sw.Elapsed.ToFormattedDuration()}");
             Task.WaitAll(tasks.ToArray());
             sw.Stop();
-            logger.LogDebug($"{nameof(CalculateFindings)} Tasks execution: {sw.Elapsed.ToFormattedDuration()}");
+            logger.LogDebug($"[{nameof(CalculateFindings)}] Tasks executed in {sw.Elapsed.ToFormattedDuration()}");
             var notNullResults = tasks.Where(t => t.Result != null).Select(t => t.Result).ToList();
             return notNullResults;
         }
@@ -117,14 +124,11 @@ namespace Trail365
             return result;
         }
 
-
-
         public TrackAnalyzer(FeatureCollection mapFacts, double terminateDistance)
         {
             this.MapFacts = mapFacts ?? throw new ArgumentNullException(nameof(mapFacts));
             this.TerminateDistance = terminateDistance;
         }
-
 
         /// <summary>
         /// can be customized (invented for better testing)

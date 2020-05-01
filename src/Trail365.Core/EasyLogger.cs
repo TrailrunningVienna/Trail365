@@ -6,27 +6,24 @@ namespace Trail365
     public class EasyLogger : ILogger
     {
         private readonly Action<LogLevel, string, string> WritleLineDelegate = null;
-
         private readonly string _categoryName;
-
         public EasyLogger(Action<string> writeLineDelegate, string categoryName)
         {
             if (writeLineDelegate == null) throw new ArgumentNullException(nameof(writeLineDelegate));
             _categoryName = categoryName;
             this.WritleLineDelegate = (ll, cat, msg) =>
             {
-                writeLineDelegate($"{_categoryName} {msg}");
+                writeLineDelegate($"{_categoryName} ".TrimStart()+$"{msg}");
             };
         }
 
         public EasyLogger(Action<LogLevel, string, string> writeLineDelegate, string categoryName)
         {
             this.WritleLineDelegate = writeLineDelegate ?? throw new ArgumentNullException(nameof(writeLineDelegate));
-
-            if (string.IsNullOrWhiteSpace(categoryName))
-            {
-                throw new ArgumentNullException(nameof(categoryName));
-            }
+            //if (string.IsNullOrWhiteSpace(categoryName))
+            //{
+            //    throw new ArgumentNullException(nameof(categoryName));
+            //}
             _categoryName = categoryName;
         }
 

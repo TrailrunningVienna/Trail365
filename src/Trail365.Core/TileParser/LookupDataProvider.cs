@@ -1,3 +1,6 @@
+using System;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 using NetTopologySuite.Features;
 using NetTopologySuite.Geometries;
 
@@ -15,5 +18,14 @@ namespace Trail365
         /// <param name="envelop"></param>
         /// <returns></returns>
         public abstract FeatureCollection GetClassifiedMapFeatures(Geometry envelope);
+
+        protected internal ILogger Logger { get; private set; } = NullLogger.Instance;
+
+        public void AssignLogger(ILogger logger)
+        {
+            if (logger == null) throw new ArgumentNullException(nameof(logger));
+            this.Logger = logger;
+        }
+
     }
 }

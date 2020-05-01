@@ -6,7 +6,6 @@ using NetTopologySuite.Geometries;
 using NetTopologySuite.Operation.Distance;
 using Trail365.Internal;
 
-
 namespace Trail365
 {
     public static class NTSExtensions
@@ -52,14 +51,13 @@ namespace Trail365
             return angle;
         }
 
-
         public static double NormalizedAngle(LineSegment segment)
         {
             _ = segment ?? throw new ArgumentNullException(nameof(segment));
             return NormalizedAngle(segment.P0, segment.P1);
         }
 
-        public static LineSegmentProposal GetLineSegmentProposalOrDefault(this Geometry mapGeometry, string mapClass,  Geometry geometry, double terminateDistance, ILogger logger)
+        public static LineSegmentProposal GetLineSegmentProposalOrDefault(this Geometry mapGeometry, string mapClass, Geometry geometry, double terminateDistance, ILogger logger)
         {
             if (mapGeometry == null) throw new ArgumentNullException(nameof(mapGeometry));
             if (geometry == null) throw new ArgumentNullException(nameof(geometry));
@@ -102,7 +100,7 @@ namespace Trail365
 
             if (index < 0)
             {
-                logger.LogWarning("finding not located, to investigate!");
+                logger.LogWarning($"[{nameof(GetLineSegmentProposalOrDefault)}] Finding not located, to investigate!");
                 return null; //To investigate
                 //if (coordinates.Length == 2)
                 //{
@@ -180,8 +178,6 @@ namespace Trail365
                 Classification = mapClass
             };
         }
-
-
 
         public static Tuple<IFeature, double, double> GetDistance(this IFeature feature, Geometry geometry, double terminateDistance)
         {

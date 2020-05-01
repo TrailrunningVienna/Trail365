@@ -6,6 +6,7 @@ using System.Net;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using NetTopologySuite.Features;
 using NetTopologySuite.Geometries;
 using Trail365.TileParser;
@@ -60,15 +61,17 @@ namespace Trail365
         }
 
 
-        public static TileInfo[] ConvertoToTileInfos(Geometry envelope, int zoomLevel)
+        public static TileInfo[] ConvertoToTileInfos(Geometry envelope, int zoomLevel, ILogger logger)
         {
+            _ = envelope ?? throw new ArgumentNullException(nameof(envelope));
+            _ = logger ?? throw new ArgumentNullException(nameof(logger));
+
             List<System.Drawing.Point> involvedTilesAsPoint = new List<System.Drawing.Point>();
 
             foreach (var c in envelope.Coordinates)
             {
                 involvedTilesAsPoint.Add(TileMath.Floor(TileMath.WorldToTilePos(c.X, c.Y, zoomLevel)));
             }
-
             var intermediateList = involvedTilesAsPoint.Distinct().ToList();
             int minX = intermediateList.Select(p => p.X).Min();
             int maxX = intermediateList.Select(p => p.X).Max();
@@ -86,15 +89,15 @@ namespace Trail365
                 }
             }
 
-            var distinctList = intermediateList.Distinct();
-
+            var distinctList = intermediateList.Distinct().ToList();
+            logger.LogDebug($"[{nameof(ConvertoToTileInfos)}] {distinctList.Count} tiles identified on zoomlevel {zoomLevel}");
             return distinctList.Select(pt => new TileInfo() { Column = pt.X, Row = pt.Y, ZoomLevel = zoomLevel }).ToArray();
         }
 
 
         internal async Task<FeatureCollection> InternalGetClassifiedMapFeaturesAsync(Geometry envelope)
         {
-            var tileInfos = ConvertoToTileInfos(envelope, this.ZoomLevel);
+            var tileInfos = ConvertoToTileInfos(envelope, this.ZoomLevel, this.Logger);
 
             FeatureCollection result = new FeatureCollection();
 

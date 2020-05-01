@@ -17,8 +17,8 @@ namespace Trail365
         public override FeatureCollection GetClassification(FeatureCollection input)
         {
             var facts = this.LookupDataProvider.GetClassifiedMapFeatures(input.GetBoundaries().Envelope);
-
             TrackAnalyzer analyzer = new TrackAnalyzer(facts, NTSExtensions.DeviationToDistance(10000));
+            analyzer.AssignLogger(this.Logger);
             var result = analyzer.Analyze(input);
             //merging skipped because we need details for each ShortLine
             return result;
