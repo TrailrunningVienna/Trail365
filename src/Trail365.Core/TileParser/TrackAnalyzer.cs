@@ -106,7 +106,7 @@ namespace Trail365
             foreach (var proposal in proposals)
             {
                 var classification = this.ClassificationFactory(proposal, proposal.LookupKey as LineString);
-                var line = factory.CreateLineString();
+                var line = factory.CreateLineString(proposal.LookupKey.Coordinates);
                 var feature = new Feature(line, attributes: null);
 
                 CoordinateClassifier.ApplyAttribute(feature, classification);
