@@ -73,7 +73,11 @@ namespace Trail365.Internal
             return string.Format("{0:0.##} {1}", rate, unit);
         }
 
-
+        public static string ToFormattedBandwidth(this TimeSpan duration, int bytes)
+        {
+            double rate = bytes / duration.TotalSeconds;
+            return ToFormattedBandwidth(rate);
+        }
         public static string ToFormattedBandwidth(this TimeSpan duration, long bytes)
         {
             double rate = bytes / duration.TotalSeconds;
@@ -156,6 +160,12 @@ namespace Trail365.Internal
         }
 
         public static string ToFormattedFileSize(this long size)
+        {
+            double d = size;
+            return ToFormattedFileSize(d);
+        }
+
+        public static string ToFormattedFileSize(this int size)
         {
             double d = size;
             return ToFormattedFileSize(d);

@@ -11,6 +11,8 @@ using NetTopologySuite.Features;
 using NetTopologySuite.Geometries;
 using Trail365.TileParser;
 using Trail365.TileParser.Contract;
+using System.Diagnostics;
+using Trail365.Internal;
 
 namespace Trail365
 {
@@ -99,11 +101,11 @@ namespace Trail365
         {
             var tileInfos = ConvertoToTileInfos(envelope, this.ZoomLevel, this.Logger);
 
-            FeatureCollection result = new FeatureCollection();
-
             List<Task<FeatureCollection>> tasks = new List<Task<FeatureCollection>>();
-
+            
             ContentDownloader downloader = new ContentDownloader(this.Client);
+
+            Stopwatch sw = Stopwatch.StartNew();
 
             foreach (var ti in tileInfos)
             {
@@ -113,12 +115,12 @@ namespace Trail365
                    this.worker(ti, downloader, fc);
                    return fc;
                });
-                tasks.Add(t);
+               tasks.Add(t);
             }
-
-            //foreach
             await Task.WhenAll(tasks);
-
+            sw.Stop();
+            this.Logger.LogDebug($"[{nameof(InternalGetClassifiedMapFeaturesAsync)}] {tasks.Count} tiles downloaded in {sw.Elapsed.ToFormattedDuration()}");
+            FeatureCollection result = new FeatureCollection();
             //collect ALL features from all collections!
             tasks.ForEach(t =>
             {
@@ -145,10 +147,12 @@ namespace Trail365
                 }
                 return;
             }
-
+            Stopwatch sw1 = Stopwatch.StartNew();
             if (downloader.TryGetContentFromUri(uri, CancellationToken.None, out var task))
             {
                 var unCompressedDownloadData = task.GetAwaiter().GetResult();
+                sw1.Stop();
+                this.Logger.LogTrace($"[{nameof(downloader.TryGetContentFromUri)}] {unCompressedDownloadData.Length.ToFormattedFileSize()} received in {sw1.Elapsed.ToFormattedDuration()} (Rate={sw1.Elapsed.ToFormattedBandwidth(unCompressedDownloadData.Length)})");
                 using (var stream = new MemoryStream(unCompressedDownloadData))
                 {
                     var layerInfos = VectorTileParser.Parse(stream);

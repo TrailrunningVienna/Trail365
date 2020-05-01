@@ -34,7 +34,7 @@ namespace Trail365
         /// <summary>
         /// can be customized (invented for better testing)
         /// </summary>
-        public Func<ClassificationProposal, LineString, CoordinateClassification> ClassificationFactory = (prop, sl) => CoordinateClassification.CreateFromProposal(prop, sl);
+        public Func<ClassificationProposal, LineString, ILogger, CoordinateClassification> ClassificationFactory = (prop, sl, l) => CoordinateClassification.CreateFromProposal(prop, sl, l );
 
 
         public TrackSegement(FeatureCollection facts, double terminateDistance)

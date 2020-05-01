@@ -112,12 +112,10 @@ namespace Trail365
 
             foreach (var proposal in proposals)
             {
-                var classification = this.ClassificationFactory(proposal, proposal.LookupKey as LineString);
+                var classification = this.ClassificationFactory(proposal, proposal.LookupKey as LineString,this.Logger);
                 var line = factory.CreateLineString(proposal.LookupKey.Coordinates);
                 var feature = new Feature(line, attributes: null);
-
                 CoordinateClassifier.ApplyAttribute(feature, classification);
-
                 result.Add(feature);
             }
 
@@ -138,7 +136,7 @@ namespace Trail365
         /// <summary>
         /// can be customized (invented for better testing)
         /// </summary>
-        public Func<ClassificationProposal, LineString, CoordinateClassification> ClassificationFactory = (prop, sl) => CoordinateClassification.CreateFromProposal(prop, sl);
+        public Func<ClassificationProposal, LineString, ILogger, CoordinateClassification > ClassificationFactory = (prop, sl, l) => CoordinateClassification.CreateFromProposal(prop, sl, l);
 
         /// <summary>
         /// 

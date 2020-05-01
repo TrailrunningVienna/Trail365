@@ -48,8 +48,8 @@ namespace Trail365.IntegrationTests
         //[InlineData(11)]
         //[InlineData(12)]
         //[InlineData(13)]
-        //[InlineData(14)]
-        [InlineData(15)]
+        [InlineData(14)]
+        //[InlineData(15)]
         public void ShouldClassifyWanderweg41(int zoomLevel)
         {
             var logger = this.OutputHelper.CreateLogger();
