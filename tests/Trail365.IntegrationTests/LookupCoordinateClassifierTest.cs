@@ -16,20 +16,23 @@ namespace Trail365.IntegrationTests
         }
 
         public static readonly string TileSourceUrl = @"https://trex.blob.core.windows.net/tiles";
+        public static readonly string outputFolder = @"m:\work";
 
-
-        [Fact]
-        public void Shouldxxx()
+        [Theory]
+        [InlineData(10)]
+        [InlineData(11)]
+        [InlineData(12)]
+        [InlineData(13)]
+        [InlineData(14)]
+        [InlineData(15)]
+        public void ShouldClassifyVTRLight(int zoomLevel)
         {
             var logger = this.OutputHelper.CreateLogger();
-
-            //byte[] gpxFileContent = System.IO.File.ReadAllBytes(GpxTracks.Wanderweg41);
             byte[] gpxFileContent = System.IO.File.ReadAllBytes(GpxTracks.VTRLight);
-
             var gpxFileFeatureCollection = TrailExtender.ConvertToFeatureCollection(gpxFileContent);
             var gpxFileBoundaries = gpxFileFeatureCollection.GetBoundaries();
 
-            VectorTileLookupDataProvider provider = new VectorTileLookupDataProvider(TileSourceUrl, "outdoor", 12);
+            VectorTileLookupDataProvider provider = new VectorTileLookupDataProvider(TileSourceUrl, "outdoor", zoomLevel);
             provider.AssignLogger(logger);
 
             CoordinateClassifier classifier = new LookupCoordinateClassifier(provider);
@@ -37,8 +40,34 @@ namespace Trail365.IntegrationTests
 
             FeatureCollection inputData = TrailExtender.ConvertToFeatureCollection(gpxFileContent); //NOT simplified, we need detailed data here
             FeatureCollection classifiedData = classifier.GetClassification(inputData);
-            classifiedData.SerializeFeatureCollectionIntoGeoJson(@"c:\work\classifiedOutput.Wanderweg41.json");
-
+            classifiedData.SerializeFeatureCollectionIntoGeoJson(System.IO.Path.Combine(outputFolder, $"{nameof(ShouldClassifyVTRLight)}_{zoomLevel}.json"));
         }
+
+        [Theory]
+        [InlineData(10)]
+        //[InlineData(11)]
+        //[InlineData(12)]
+        //[InlineData(13)]
+        //[InlineData(14)]
+        [InlineData(15)]
+        public void ShouldClassifyWanderweg41(int zoomLevel)
+        {
+            var logger = this.OutputHelper.CreateLogger();
+            byte[] gpxFileContent = System.IO.File.ReadAllBytes(GpxTracks.Wanderweg41);
+
+            var gpxFileFeatureCollection = TrailExtender.ConvertToFeatureCollection(gpxFileContent);
+            var gpxFileBoundaries = gpxFileFeatureCollection.GetBoundaries();
+
+            VectorTileLookupDataProvider provider = new VectorTileLookupDataProvider(TileSourceUrl, "outdoor", zoomLevel);
+            provider.AssignLogger(logger);
+
+            CoordinateClassifier classifier = new LookupCoordinateClassifier(provider);
+            classifier.AssignLogger(logger);
+
+            FeatureCollection inputData = TrailExtender.ConvertToFeatureCollection(gpxFileContent); //NOT simplified, we need detailed data here
+            FeatureCollection classifiedData = classifier.GetClassification(inputData);
+            classifiedData.SerializeFeatureCollectionIntoGeoJson(System.IO.Path.Combine(outputFolder, $"{nameof(ShouldClassifyWanderweg41)}_{zoomLevel}.json"));
+        }
+
     }
 }
