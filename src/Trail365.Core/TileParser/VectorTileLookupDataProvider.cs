@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -9,10 +10,8 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using NetTopologySuite.Features;
 using NetTopologySuite.Geometries;
-using Trail365.TileParser;
-using Trail365.TileParser.Contract;
-using System.Diagnostics;
 using Trail365.Internal;
+using Trail365.TileParser;
 
 namespace Trail365
 {
@@ -93,7 +92,7 @@ namespace Trail365
 
             var distinctList = intermediateList.Distinct().ToList();
             logger.LogDebug($"[{nameof(ConvertoToTileInfos)}] {distinctList.Count} tiles identified on zoomlevel {zoomLevel}");
-            return distinctList.Select(pt => new TileInfo() { Column = pt.X, Row = pt.Y, ZoomLevel = zoomLevel }).ToArray();
+            return distinctList.Select(pt => new TileInfo(pt.X, pt.Y, zoomLevel)).ToArray();
         }
 
 
@@ -102,7 +101,7 @@ namespace Trail365
             var tileInfos = ConvertoToTileInfos(envelope, this.ZoomLevel, this.Logger);
 
             List<Task<FeatureCollection>> tasks = new List<Task<FeatureCollection>>();
-            
+
             ContentDownloader downloader = new ContentDownloader(this.Client);
 
             Stopwatch sw = Stopwatch.StartNew();
@@ -112,10 +111,10 @@ namespace Trail365
                 Task<FeatureCollection> t = Task.Factory.StartNew<FeatureCollection>(() =>
                {
                    FeatureCollection fc = new FeatureCollection();
-                   this.worker(ti, downloader, fc);
+                   this.Worker(ti, downloader, fc);
                    return fc;
                });
-               tasks.Add(t);
+                tasks.Add(t);
             }
             await Task.WhenAll(tasks);
             sw.Stop();
@@ -135,7 +134,7 @@ namespace Trail365
 
         private readonly System.Collections.Concurrent.ConcurrentDictionary<string, FeatureCollection> Cache = new System.Collections.Concurrent.ConcurrentDictionary<string, FeatureCollection>();
 
-        private void worker(TileInfo ti, ContentDownloader downloader, FeatureCollection result)
+        private void Worker(TileInfo ti, ContentDownloader downloader, FeatureCollection result)
         {
             var uri = CreateTileUri(this.TileUri, this.BaseName, ti);
             string key = uri.ToString().ToLowerInvariant();
@@ -152,21 +151,19 @@ namespace Trail365
             {
                 var unCompressedDownloadData = task.GetAwaiter().GetResult();
                 sw1.Stop();
-                this.Logger.LogTrace($"[{nameof(downloader.TryGetContentFromUri)}] {unCompressedDownloadData.Length.ToFormattedFileSize()} received in {sw1.Elapsed.ToFormattedDuration()} (Rate={sw1.Elapsed.ToFormattedBandwidth(unCompressedDownloadData.Length)})");
+                this.Logger.LogTrace($"[{nameof(downloader.TryGetContentFromUri)}] {unCompressedDownloadData.Length.ToFormattedFileSize()} received in {sw1.Elapsed.ToFormattedDuration()} (Rate={sw1.Elapsed.ToFormattedBandwidth(unCompressedDownloadData.Length)}) from uri '{uri.ToString()}'");
+                //File.WriteAllBytes(@"m:\work\2233-1419.mvt", unCompressedDownloadData);
                 using (var stream = new MemoryStream(unCompressedDownloadData))
                 {
-                    var layerInfos = VectorTileParser.Parse(stream);
-
-                    var li = layerInfos[0];
-                    result.Append(li, ti, f =>
+                    foreach (var feature in VectorTileLayerExtensions.ReadFeatures(stream, ti, excludePoints: true))
                     {
-                        return (f.Geometry.GeometryType != "Point");
-                    });
+                        result.Add(feature);
+                    }
                 }
             }
             else
             {
-                //TODO someone may be empty/missing!
+                this.Logger.LogWarning($"[{nameof(downloader.TryGetContentFromUri)}] tile content reading failed '{uri}'");
             }
             this.Cache.TryAdd(key, result);
         }

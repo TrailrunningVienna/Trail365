@@ -219,7 +219,7 @@ namespace Trail365.TileParser
 
         public static Feature ToGeoJSON(this VectorTileFeature vectortileFeature, int x, int y, int z)
         {
-            return ToGeoJSON(vectortileFeature, TileInfo.Create(x, y, z));
+            return ToGeoJSON(vectortileFeature, TileInfo.CreateTileInfoFromCoordinate(x, y, z));
         }
     }
 }

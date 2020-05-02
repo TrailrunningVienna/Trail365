@@ -1,6 +1,6 @@
+using System;
 using System.IO;
 using System.Linq;
-using System;
 using Trail365.Internal;
 
 namespace Trail365.UnitTests
@@ -33,11 +33,7 @@ namespace Trail365.UnitTests
         /// <summary>
         /// file with 157 KBytes
         /// </summary>
-        public static string OutdoorZoom2File => EnsureFilePath("outdoor_zoom_2.mbtiles");
+        public static string Tile_2233_1419 => EnsureFilePath("outdoor-12/2233-1419.mvt");
 
-        /// <summary>
-        /// File with 1.2 MBytes
-        /// </summary>
-        public static string OutdoorZoom4File => EnsureFilePath("outdoor_zoom_4.mbtiles");
     }
 }

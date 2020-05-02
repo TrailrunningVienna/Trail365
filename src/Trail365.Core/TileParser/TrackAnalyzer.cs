@@ -11,7 +11,7 @@ using Trail365.Internal;
 
 namespace Trail365
 {
-    public sealed class TrackAnalyzer
+    public class TrackAnalyzer
     {
         private readonly FeatureCollection MapFacts;
         public double TerminateDistance { get; private set; }
@@ -57,11 +57,13 @@ namespace Trail365
                 var factGeometry = factFeature.Geometry;
                 var mapClass = classGetter(factFeature);
                 cancellationToken.ThrowIfCancellationRequested();
-                //Guard.Assert(factGeometry.GeometryType == "LineString");
-                if (factGeometry.GeometryType == "MultiLineString")
-                {
-                    System.Diagnostics.Debug.WriteLine("");
-                }
+
+                ////Guard.Assert(factGeometry.GeometryType == "LineString");
+                //if (factGeometry.GeometryType == "MultiLineString")
+                //{
+                //    System.Diagnostics.Debug.WriteLine("");
+                //}
+
                 var singleTask = Task.Factory.StartNew<LineSegmentProposal>(() =>
                 {
                     cancellationToken.ThrowIfCancellationRequested();
@@ -112,7 +114,7 @@ namespace Trail365
 
             foreach (var proposal in proposals)
             {
-                var classification = this.ClassificationFactory(proposal, proposal.LookupKey as LineString,this.Logger);
+                var classification = this.ClassificationFactory(proposal, proposal.LookupKey as LineString, this.Logger);
                 var line = factory.CreateLineString(proposal.LookupKey.Coordinates);
                 var feature = new Feature(line, attributes: null);
                 CoordinateClassifier.ApplyAttribute(feature, classification);
@@ -136,7 +138,7 @@ namespace Trail365
         /// <summary>
         /// can be customized (invented for better testing)
         /// </summary>
-        public Func<ClassificationProposal, LineString, ILogger, CoordinateClassification > ClassificationFactory = (prop, sl, l) => CoordinateClassification.CreateFromProposal(prop, sl, l);
+        public Func<ClassificationProposal, LineString, ILogger, CoordinateClassification> ClassificationFactory = (prop, sl, l) => CoordinateClassification.CreateFromProposal(prop, sl, l);
 
         /// <summary>
         /// 
