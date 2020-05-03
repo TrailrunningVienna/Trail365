@@ -16,7 +16,7 @@ namespace Trail365
             return (System.Convert.ToDouble(deviation) / DeviationFactor);
         }
 
-        internal static readonly int DeviationFactor = 10000000;
+        public const int DeviationFactor = 10000000;
 
         public static int GetDeviation(double distance)
         {
@@ -166,7 +166,8 @@ namespace Trail365
 
             LineSegmentProposal llsOnGeometry = new LineSegmentProposal(geometry)
             {
-                Segement = null
+                Segement = null,
+                NormalizedAngle = NTSExtensions.NormalizedAngle(geometry.Coordinates)
             };
 
             return new LineSegmentProposal(mapGeometry)

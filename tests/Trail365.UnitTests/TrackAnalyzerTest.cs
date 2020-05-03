@@ -1,4 +1,5 @@
 using System.Linq;
+using NetTopologySuite.Algorithm;
 using NetTopologySuite.Features;
 using NetTopologySuite.Geometries;
 using Trail365.Seeds;
@@ -21,6 +22,36 @@ namespace Trail365.UnitTests
             OutputHelper = outputHelper;
         }
 
+        [Theory]
+        [InlineData(1, System.Math.PI, 1)]
+        [InlineData(2, System.Math.PI, 2)]
+        [InlineData(10, System.Math.PI, 4)]
+
+        [InlineData(1, System.Math.PI / 2, 1)]
+        [InlineData(2, System.Math.PI / 2, 2)]
+        [InlineData(10, System.Math.PI / 2, 4)]
+
+
+        [InlineData(1, System.Math.PI / 4, 0)]
+        [InlineData(2, System.Math.PI / 4, 0)]
+        [InlineData(10, System.Math.PI / 4, 0)]
+
+        public void ShouldAnalyze_V_Lines(double terminateDistance, double maxAngle, int expected)
+        {
+            var logger = this.OutputHelper.CreateLogger();
+            FeatureCollection facts = FeatureCollectionBuilder.CreateLineString(LineCoordinates.Positive45DegreeLineFrom0, CoordinateClassifier.OutdoorClassAttributeName, CoordinateClassification.Trail).Build();
+            LineString testLine = LineStringBuilder.CreateLineString(LineCoordinates.Positive315DegreeLineFrom0).Build();
+
+            TrackAnalyzer analyzer = new TrackAnalyzer(facts, terminateDistance).AssignLogger(logger);
+            analyzer.Settings.MaximumAngleDiff = maxAngle;
+
+            FeatureCollection result = analyzer.Analyze(testLine);
+
+            var trailShortLines = result.Where(f => $"{f.Attributes[CoordinateClassifier.OutdoorClassAttributeName]}" == CoordinateClassification.Trail).Count();
+            Assert.Equal(expected, trailShortLines);
+        }
+
+
         [Fact]
         public void ShouldAnalyzeTwoIdenticalLines()
         {
@@ -29,10 +60,16 @@ namespace Trail365.UnitTests
             LineString testLine = LineStringBuilder.CreateLineString(LineCoordinates.Positive45DegreeLineFrom0).Build();
             TrackAnalyzer analyzer = new TrackAnalyzer(facts).AssignLogger(logger);
             FeatureCollection result = analyzer.Analyze(testLine);
+            var trailShortLines = result.Where(f => $"{f.Attributes[CoordinateClassifier.OutdoorClassAttributeName]}" == CoordinateClassification.Trail).Count();
+            Assert.Equal(4, trailShortLines);
+
         }
 
-        [Fact]
-        public void ShouleAnalyzeVTRLight()
+        [Theory]
+        [InlineData(System.Math.PI, (double)10000 / NTSExtensions.DeviationFactor, 90, 120, 0)]
+        [InlineData(System.Math.PI / 4, (double)10000 / NTSExtensions.DeviationFactor, 94, 111, 9)]
+        [InlineData(System.Math.PI / 4, (double)1000 / NTSExtensions.DeviationFactor, 51, 50, 135)]
+        public void ShouleAnalyzeVTRLight(double maxAngle, double maxDistance, int expectedTrails, int expectedPaved, int expectedUnknown)
         {
             var logger = this.OutputHelper.CreateLogger();
 
@@ -52,7 +89,9 @@ namespace Trail365.UnitTests
             Assert.Equal(asphaltFeatures, 5442);
 
             //act: analyze track using facts
-            TrackAnalyzer analyzer = new TrackAnalyzer(facts, NTSExtensions.DeviationToDistance(10000)).AssignLogger(logger);
+            TrackAnalyzer analyzer = new TrackAnalyzer(facts).AssignLogger(logger);
+            analyzer.Settings.MaximumAngleDiff = maxAngle;
+            analyzer.Settings.TerminateDistance = maxDistance;
             var result = analyzer.Analyze(testTrack);
 
             //assert results
@@ -61,9 +100,9 @@ namespace Trail365.UnitTests
             var pavedShortLines = result.Where(f => $"{f.Attributes[CoordinateClassifier.OutdoorClassAttributeName]}" == CoordinateClassification.PavedRoad).Count();
             var unknownShortLines = result.Where(f => $"{f.Attributes[CoordinateClassifier.OutdoorClassAttributeName]}" == CoordinateClassification.Unknown).Count();
 
-            Assert.Equal(91, trailShortLines);
-            Assert.Equal(113, pavedShortLines);
-            Assert.Equal(0, unknownShortLines);
+            Assert.Equal(expectedTrails, trailShortLines);
+            Assert.Equal(expectedPaved, pavedShortLines);
+            Assert.Equal(expectedUnknown, unknownShortLines);
 
         }
     }

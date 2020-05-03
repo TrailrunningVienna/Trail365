@@ -5,17 +5,22 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
+using NetTopologySuite.Algorithm;
 using NetTopologySuite.Features;
 using NetTopologySuite.Geometries;
 using Trail365.Internal;
 
 namespace Trail365
 {
+
+
     public class TrackAnalyzer
     {
-        private readonly FeatureCollection MapFacts;
-        public double TerminateDistance { get; private set; }
+        public TrackAnalyzerSettings Settings { get; private set; } = new TrackAnalyzerSettings() { TerminateDistance = TerminateDistanceDefault };
 
+        private readonly FeatureCollection MapFacts;
+
+        public static readonly double TerminateDistanceDefault = NTSExtensions.DeviationToDistance(10000);
         protected internal ILogger Logger { get; private set; } = NullLogger.Instance;
 
         public TrackAnalyzer AssignLogger(ILogger logger)
@@ -25,7 +30,7 @@ namespace Trail365
             return this;
         }
 
-        public TrackAnalyzer(FeatureCollection mapFacts) : this(mapFacts, NTSExtensions.DeviationToDistance(10000))
+        public TrackAnalyzer(FeatureCollection mapFacts) : this(mapFacts, TerminateDistanceDefault)
         {
 
         }
@@ -101,7 +106,7 @@ namespace Trail365
 
             foreach (var shortLine in shortStrings)
             {
-                var current = this.GetProposal(shortLine, previous);
+                var current = this.GetProposal(shortLine, previous, this.Settings);
                 Guard.AssertNotNull(current, "Each shortline needs a proposal. It may be empty/not classified!");
                 Guard.Assert(current.LookupKey == shortLine);
                 proposals.Add(current);
@@ -127,7 +132,7 @@ namespace Trail365
         public TrackAnalyzer(FeatureCollection mapFacts, double terminateDistance)
         {
             this.MapFacts = mapFacts ?? throw new ArgumentNullException(nameof(mapFacts));
-            this.TerminateDistance = terminateDistance;
+            this.Settings.TerminateDistance = terminateDistance;
         }
 
         /// <summary>
@@ -140,21 +145,21 @@ namespace Trail365
         /// </summary>
         public Func<ClassificationProposal, LineString, ILogger, CoordinateClassification> ClassificationFactory = (prop, sl, l) => CoordinateClassification.CreateFromProposal(prop, sl, l);
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="input">gpx track as LineString (length not restricted, we split inside the method!</param>
-        /// <returns></returns>
-        public IEnumerable<ClassificationProposal> GetClassificationProposals(LineString input)
-        {
-            var splitted = input.CreateShortLineStrings();
-            foreach (var shortLine in splitted)
-            {
-                var proposal = this.GetProposal(shortLine, null);
-                Guard.Assert(proposal.LookupKey == shortLine);
-                yield return proposal;
-            }
-        }
+        ///// <summary>
+        ///// 
+        ///// </summary>
+        ///// <param name="input">gpx track as LineString (length not restricted, we split inside the method!</param>
+        ///// <returns></returns>
+        //public IEnumerable<ClassificationProposal> GetClassificationProposals(LineString input)
+        //{
+        //    var splitted = input.CreateShortLineStrings();
+        //    foreach (var shortLine in splitted)
+        //    {
+        //        var proposal = this.GetProposal(shortLine, null, this.Settings);
+        //        Guard.Assert(proposal.LookupKey == shortLine);
+        //        yield return proposal;
+        //    }
+        //}
 
         private static string GetOutdoorClass(IFeature feature)
         {
@@ -168,10 +173,9 @@ namespace Trail365
         /// <param name="input"></param>
         /// <param name="previousOrDefault"></param>
         /// <returns>there must be always a proposal, also if there are no findings!</returns>
-        public ClassificationProposal GetProposal(Geometry input, ClassificationProposal previousOrDefault)
+        public ClassificationProposal GetProposal(Geometry input, ClassificationProposal previousOrDefault, TrackAnalyzerSettings settings)
         {
             var facts = this.MapFacts;
-            var settings = new TrackAnalyzerSettings() { TerminateDistance = this.TerminateDistance };
             var ct = CancellationToken.None;
 
             if (facts == null) throw new ArgumentNullException(nameof(facts));
@@ -179,7 +183,9 @@ namespace Trail365
 
             List<LineSegmentProposal> findings = null;
 
-            if (previousOrDefault != null)
+            var hasFindingsBeforeFilter = false;
+            var hasFindingsAfterFilter = false;
+            if (previousOrDefault != null && previousOrDefault.LinkedLineSegments.Count > 0)
             {
                 //cheap lookup
                 var candidates = previousOrDefault.LinkedLineSegments.Select(ls => new Tuple<Geometry, string>(ls.Owner, ls.Classification)).Distinct().ToList();
@@ -190,7 +196,21 @@ namespace Trail365
                     findingCollector.AddRange(subFindings);
                 }
 
-                //TODO add quality checks here!
+                hasFindingsBeforeFilter = findingCollector.Count > 0;
+
+                findingCollector = findingCollector.Where(c =>
+                {
+                    var diff = AngleUtility.Diff(c.NormalizedAngle, c.Reference.NormalizedAngle);
+                    return diff < AngleUtility.PiOver4;
+                }).ToList();
+
+                hasFindingsAfterFilter = findingCollector.Count > 0;
+
+                if (hasFindingsAfterFilter != hasFindingsBeforeFilter)
+                {
+                    this.Logger.LogTrace($"Previous: {nameof(hasFindingsBeforeFilter)}={hasFindingsBeforeFilter}, {nameof(hasFindingsAfterFilter)}={hasFindingsAfterFilter}");
+                }
+
                 if (findingCollector.Count > 0)
                 {
                     findings = findingCollector;
@@ -200,13 +220,31 @@ namespace Trail365
             if (findings == null)
             {
                 //expensive lookup
-                findings = CalculateFindings(this.MapFacts, input, settings, ct, this.Logger, GetOutdoorClass);
+                List<LineSegmentProposal> findingCollector = CalculateFindings(this.MapFacts, input, settings, ct, this.Logger, GetOutdoorClass);
+
+                hasFindingsBeforeFilter = findingCollector.Count > 0;
+
+                findingCollector = findingCollector.Where(c =>
+                {
+                    var diff = AngleUtility.Diff(c.NormalizedAngle, c.Reference.NormalizedAngle);
+                    return diff <= settings.MaximumAngleDiff;
+                }).ToList();
+
+                hasFindingsAfterFilter = findingCollector.Count > 0;
+
+                if (hasFindingsAfterFilter != hasFindingsBeforeFilter)
+                {
+                    this.Logger.LogTrace($"Current: {nameof(hasFindingsBeforeFilter)}={hasFindingsBeforeFilter}, {nameof(hasFindingsAfterFilter)}={hasFindingsAfterFilter}");
+                }
+
+                findings = findingCollector;
             }
 
             ClassificationProposal proposal = new ClassificationProposal(input)
             {
                 LinkedLineSegments = findings
             };
+            Guard.AssertNotNull(proposal.LinkedLineSegments, "empty allowed, but not null");
             return proposal;
         }
 
