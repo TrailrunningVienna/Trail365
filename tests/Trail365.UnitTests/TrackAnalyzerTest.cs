@@ -66,9 +66,9 @@ namespace Trail365.UnitTests
         }
 
         [Theory]
-        [InlineData(System.Math.PI, (double)10000 / NTSExtensions.DeviationFactor, 90, 120, 0)]
-        [InlineData(System.Math.PI / 4, (double)10000 / NTSExtensions.DeviationFactor, 94, 111, 9)]
-        [InlineData(System.Math.PI / 4, (double)1000 / NTSExtensions.DeviationFactor, 41, 50, 135)]
+        [InlineData(System.Math.PI, (double)10000 / NTSExtensions.DeviationFactor, 100, 104, 0)]
+        [InlineData(System.Math.PI / 4, (double)10000 / NTSExtensions.DeviationFactor, 95, 108, 4)]
+        [InlineData(System.Math.PI / 4, (double)1000 / NTSExtensions.DeviationFactor, 90, 97, 23)]
         public void ShouleAnalyzeVTRLight(double maxAngle, double maxDistance, int expectedTrails, int expectedPaved, int expectedUnknown)
         {
             var logger = this.OutputHelper.CreateLogger();
@@ -90,6 +90,7 @@ namespace Trail365.UnitTests
 
             //act: analyze track using facts
             TrackAnalyzer analyzer = new TrackAnalyzer(facts).AssignLogger(logger);
+
             analyzer.Settings.MaximumAngleDiff = maxAngle;
             analyzer.Settings.TerminateDistance = maxDistance;
             var result = analyzer.Analyze(testTrack);

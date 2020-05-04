@@ -39,7 +39,7 @@ namespace Trail365
         {
             //1. split input into list of Linked
             var sw1 = System.Diagnostics.Stopwatch.StartNew();
-            var result = fact.GetLineSegmentProposalOrDefault(mapClass, shortLine, settings.TerminateDistance, logger);
+            var result = fact.GetLineSegmentProposalOrDefault(mapClass, shortLine, settings, logger);
             sw1.Stop();
             logger.LogTrace($"[{nameof(CalculateFindings)}] Single lookup execution: {sw1.Elapsed.ToFormattedDuration()}");
             var rawResults = new List<LineSegmentProposal>();
@@ -55,6 +55,7 @@ namespace Trail365
             //1. split input into list of Linked
             logger.LogDebug($"[{nameof(CalculateFindings)}] {facts.Count} facts for lookup");
             List<Task<LineSegmentProposal>> tasks = new List<Task<LineSegmentProposal>>();
+
             var sw = System.Diagnostics.Stopwatch.StartNew();
             //determine distance to EVERY fact inside the boundingbox!
             foreach (var factFeature in facts)
@@ -62,17 +63,10 @@ namespace Trail365
                 var factGeometry = factFeature.Geometry;
                 var mapClass = classGetter(factFeature);
                 cancellationToken.ThrowIfCancellationRequested();
-
-                ////Guard.Assert(factGeometry.GeometryType == "LineString");
-                //if (factGeometry.GeometryType == "MultiLineString")
-                //{
-                //    System.Diagnostics.Debug.WriteLine("");
-                //}
-
                 var singleTask = Task.Factory.StartNew<LineSegmentProposal>(() =>
                 {
                     cancellationToken.ThrowIfCancellationRequested();
-                    return factGeometry.GetLineSegmentProposalOrDefault(mapClass, shortLine, settings.TerminateDistance, logger);
+                    return factGeometry.GetLineSegmentProposalOrDefault(mapClass, shortLine, settings, logger);
                 }, cancellationToken);
                 tasks.Add(singleTask);
             }
@@ -183,33 +177,31 @@ namespace Trail365
 
             List<LineSegmentProposal> findings = null;
 
-            var hasFindingsBeforeFilter = false;
-            var hasFindingsAfterFilter = false;
+            //var hasFindingsBeforeFilter = false;
+            //var hasFindingsAfterFilter = false;
             if (previousOrDefault != null && previousOrDefault.LinkedLineSegments.Count > 0)
             {
                 //cheap lookup
                 var candidates = previousOrDefault.LinkedLineSegments.Select(ls => new Tuple<Geometry, string>(ls.Owner, ls.Classification)).Distinct().ToList();
                 List<LineSegmentProposal> findingCollector = new List<LineSegmentProposal>();
+                var strongSettings = settings.ToStronger();
                 foreach (var candidate in candidates)
                 {
-                    var subFindings = CalculateFindings(candidate.Item1, candidate.Item2, input, settings, ct, this.Logger);
+                    var subFindings = CalculateFindings(candidate.Item1, candidate.Item2, input, strongSettings, ct, this.Logger);
                     findingCollector.AddRange(subFindings);
                 }
 
-                hasFindingsBeforeFilter = findingCollector.Count > 0;
-
-                findingCollector = findingCollector.Where(c =>
-                {
-                    var diff = AngleUtility.Diff(c.NormalizedAngle, c.Reference.NormalizedAngle);
-                    return diff < AngleUtility.PiOver4;
-                }).ToList();
-
-                hasFindingsAfterFilter = findingCollector.Count > 0;
-
-                if (hasFindingsAfterFilter != hasFindingsBeforeFilter)
-                {
-                    this.Logger.LogTrace($"Previous: {nameof(hasFindingsBeforeFilter)}={hasFindingsBeforeFilter}, {nameof(hasFindingsAfterFilter)}={hasFindingsAfterFilter}");
-                }
+                //hasFindingsBeforeFilter = findingCollector.Count > 0;
+                //findingCollector = findingCollector.Where(c =>
+                //{
+                //    var diff = c.GetAngleDiffToReference();
+                //    return diff < AngleUtility.PiOver4;
+                //}).ToList();
+                //hasFindingsAfterFilter = findingCollector.Count > 0;
+                //if (hasFindingsAfterFilter != hasFindingsBeforeFilter)
+                //{
+                //    this.Logger.LogTrace($"Previous: {nameof(hasFindingsBeforeFilter)}={hasFindingsBeforeFilter}, {nameof(hasFindingsAfterFilter)}={hasFindingsAfterFilter}");
+                //}
 
                 if (findingCollector.Count > 0)
                 {
@@ -222,20 +214,17 @@ namespace Trail365
                 //expensive lookup
                 List<LineSegmentProposal> findingCollector = CalculateFindings(this.MapFacts, input, settings, ct, this.Logger, GetOutdoorClass);
 
-                hasFindingsBeforeFilter = findingCollector.Count > 0;
-
-                findingCollector = findingCollector.Where(c =>
-                {
-                    var diff = AngleUtility.Diff(c.NormalizedAngle, c.Reference.NormalizedAngle);
-                    return diff <= settings.MaximumAngleDiff;
-                }).ToList();
-
-                hasFindingsAfterFilter = findingCollector.Count > 0;
-
-                if (hasFindingsAfterFilter != hasFindingsBeforeFilter)
-                {
-                    this.Logger.LogTrace($"Current: {nameof(hasFindingsBeforeFilter)}={hasFindingsBeforeFilter}, {nameof(hasFindingsAfterFilter)}={hasFindingsAfterFilter}");
-                }
+                //hasFindingsBeforeFilter = findingCollector.Count > 0;
+                //findingCollector = findingCollector.Where(c =>
+                //{
+                //    var diff = c.GetAngleDiffToReference();
+                //    return diff <= settings.MaximumAngleDiff;
+                //}).ToList();
+                //hasFindingsAfterFilter = findingCollector.Count > 0;
+                //if (hasFindingsAfterFilter != hasFindingsBeforeFilter)
+                //{
+                //    this.Logger.LogTrace($"Current: {nameof(hasFindingsBeforeFilter)}={hasFindingsBeforeFilter}, {nameof(hasFindingsAfterFilter)}={hasFindingsAfterFilter}");
+                //}
 
                 findings = findingCollector;
             }

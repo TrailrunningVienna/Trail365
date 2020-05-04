@@ -271,6 +271,27 @@ namespace Trail365
             return output;
         }
 
+        public static List<LineString> CreateShortLineStrings(this MultiLineString lineString)
+        {
+            if (lineString == null) throw new ArgumentNullException(nameof(lineString));
+            var output = new List<LineString>();
+            Coordinate lastPoint = null;
+            foreach (var linePoint in lineString.Coordinates)
+            {
+                if (lastPoint == null)
+                {
+                    lastPoint = linePoint;
+                    continue;
+                }
+                LineString next = new LineString(new Coordinate[] { new Coordinate(lastPoint.X, lastPoint.Y), new Coordinate(linePoint.X, linePoint.Y) }); //remove Z Part"
+                output.Add(next);
+                lastPoint = linePoint;
+            }
+            return output;
+        }
+
+
+
         //public static FeatureCollection SplitIntoFeaturePerLineSegment(this FeatureCollection input)
         //{
         //    return null;

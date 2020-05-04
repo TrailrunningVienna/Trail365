@@ -1,10 +1,12 @@
 using System;
+using System.Collections.Generic;
 using Microsoft.Extensions.Logging;
 using NetTopologySuite.Algorithm;
 using NetTopologySuite.Features;
 using NetTopologySuite.Geometries;
 using NetTopologySuite.Operation.Distance;
 using Trail365.Internal;
+using System.Linq;
 
 namespace Trail365
 {
@@ -57,16 +59,19 @@ namespace Trail365
             return NormalizedAngle(segment.P0, segment.P1);
         }
 
-        public static LineSegmentProposal GetLineSegmentProposalOrDefault(this Geometry mapGeometry, string mapClass, Geometry geometry, double terminateDistance, ILogger logger)
+        public static LineSegmentProposal GetLineSegmentProposalOrDefault(this Geometry mapGeometry, string mapClass, Geometry geometry, TrackAnalyzerSettings settings, ILogger logger)
         {
             if (mapGeometry == null) throw new ArgumentNullException(nameof(mapGeometry));
             if (geometry == null) throw new ArgumentNullException(nameof(geometry));
             if (string.IsNullOrEmpty(mapClass)) throw new ArgumentNullException(nameof(mapClass));
             if (logger == null) throw new ArgumentNullException(nameof(logger));
+            if (settings == null) throw new ArgumentNullException(nameof(settings));
+
 
             Guard.Assert(geometry.Coordinates.Length == 2);
 
-            var distOp = new DistanceOp(mapGeometry, geometry, terminateDistance);
+            var distOp = new DistanceOp(mapGeometry, geometry, settings.TerminateDistance);
+
             double distance = distOp.Distance();
             var resultFeature = mapGeometry;
 
@@ -75,11 +80,10 @@ namespace Trail365
                 throw new InvalidOperationException("OOPS");
             }
 
-            if (terminateDistance > Zero)
+            if (settings.TerminateDistance > Zero)
             {
-                if (distance > terminateDistance)
+                if (distance > settings.TerminateDistance)
                 {
-                    //logger.LogTrace($"Out of distance range");
                     return null;
                 }
             }
@@ -88,6 +92,7 @@ namespace Trail365
 
             var locations = distOp.NearestLocations();
             Guard.Assert(locations.Length == 2);
+
             var finding = locations[0];
 
             var coordinates = finding.GeometryComponent.Coordinates;
@@ -98,18 +103,48 @@ namespace Trail365
 
             var index = Array.IndexOf(coordinates, finding.Coordinate);
 
+            if (index < 0 && coordinates.Length == 2)
+            {
+                logger.LogDebug($"[{nameof(GetLineSegmentProposalOrDefault)}] Finding not located but only 2 coordinates involved");
+                index = 0;
+            }
+
             if (index < 0)
             {
+
+                //idea: split mapGeometry and try to identify the neares!
+                List<LineSegmentProposal> props = new List<LineSegmentProposal>();
+                LineString ls1 = mapGeometry as LineString;
+                List<LineString> shortStrings = null;
+                if (ls1 != null)
+                {
+                    shortStrings = ls1.CreateShortLineStrings();
+                }
+                else
+                {
+                    MultiLineString mls = mapGeometry as MultiLineString;
+                    shortStrings = mls.CreateShortLineStrings();
+                }
+
+                Guard.AssertNotNull(shortStrings);
+                foreach (var shortString in shortStrings)
+                {
+                    var prop = GetLineSegmentProposalOrDefault(shortString, mapClass, geometry, settings, logger);
+                    if (prop != null)
+                    {
+                        props.Add(prop);
+                    }
+                }
+
+                if (props.Count > 0)
+                {
+                    var selected = props.OrderBy(p => p.ReferenceDistance.Value).First();
+                    logger.LogDebug($"[{nameof(GetLineSegmentProposalOrDefault)}] Finding not located, exceptional way used");
+                    return selected;
+                }
+
                 logger.LogWarning($"[{nameof(GetLineSegmentProposalOrDefault)}] Finding not located, to investigate!");
-                return null; //To investigate
-                //if (coordinates.Length == 2)
-                //{
-                //    index = 0;
-                //}
-                //else
-                //{
-                //    throw new InvalidOperationException("oops_002");
-                //}
+                return null; 
             }
 
             LineSegment segment1 = null;
@@ -164,10 +199,19 @@ namespace Trail365
                 }
             }
 
+            var geometryNormalizedAngle = NTSExtensions.NormalizedAngle(geometry.Coordinates);
+
+            var diff = LineSegmentProposal.GetAngleDiff(selectedAngle.Value, geometryNormalizedAngle);
+
+            if (diff > settings.MaximumAngleDiff)
+            {
+                return null;
+            }
+
             LineSegmentProposal llsOnGeometry = new LineSegmentProposal(geometry)
             {
                 Segement = null,
-                NormalizedAngle = NTSExtensions.NormalizedAngle(geometry.Coordinates)
+                NormalizedAngle = geometryNormalizedAngle
             };
 
             return new LineSegmentProposal(mapGeometry)
