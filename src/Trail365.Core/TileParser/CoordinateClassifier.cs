@@ -2,7 +2,6 @@ using System;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using NetTopologySuite.Features;
-using NetTopologySuite.Geometries;
 using Trail365.Internal;
 
 namespace Trail365
@@ -48,8 +47,6 @@ namespace Trail365
         }
 
         public abstract FeatureCollection GetClassification(FeatureCollection input);
-
-        //public abstract CoordinateClassification CreateClassification(FeatureCollection facts, Geometry input);
 
     }
 }

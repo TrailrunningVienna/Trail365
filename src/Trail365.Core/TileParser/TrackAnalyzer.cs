@@ -92,15 +92,19 @@ namespace Trail365
 
         internal FeatureCollection Analyze(IEnumerable<LineString> shortStrings, CancellationToken cancellation)
         {
+            this.Logger.LogDebug($"Start track analysis with max deviation={CoordinateClassification.ToDeviation(this.Settings.TerminateDistance)} and max angle diff={CoordinateClassification.ToAngleDiff(this.Settings.MaximumAngleDiff)}");
             if (shortStrings == null) throw new ArgumentNullException(nameof(shortStrings));
 
+            //Idea: collect Proposals using smaller restrictions that are resulting in more proposals
+            //refine proposals into classifications with the stronger settings, but print out the filtered out proposals for tracing.
+
+            var weakSettings = this.Settings.ToWeaker();
+
             List<ClassificationProposal> proposals = new List<ClassificationProposal>();
-
             ClassificationProposal previous = null;
-
             foreach (var shortLine in shortStrings)
             {
-                var current = this.GetProposal(shortLine, previous, this.Settings);
+                var current = this.GetProposal(shortLine, previous, weakSettings);
                 Guard.AssertNotNull(current, "Each shortline needs a proposal. It may be empty/not classified!");
                 Guard.Assert(current.LookupKey == shortLine);
                 proposals.Add(current);
@@ -111,9 +115,14 @@ namespace Trail365
 
             GeometryFactory factory = new GeometryFactory();
 
+            this.ClassificationFactory = (prop, sl) =>
+            {
+                return CoordinateClassification.CreateFromProposal(prop, sl, this.Settings, this.Logger);
+            };
+
             foreach (var proposal in proposals)
             {
-                var classification = this.ClassificationFactory(proposal, proposal.LookupKey as LineString, this.Logger);
+                var classification = this.ClassificationFactory(proposal, proposal.LookupKey as LineString);
                 var line = factory.CreateLineString(proposal.LookupKey.Coordinates);
                 var feature = new Feature(line, attributes: null);
                 CoordinateClassifier.ApplyAttribute(feature, classification);
@@ -137,7 +146,7 @@ namespace Trail365
         /// <summary>
         /// can be customized (invented for better testing)
         /// </summary>
-        public Func<ClassificationProposal, LineString, ILogger, CoordinateClassification> ClassificationFactory = (prop, sl, l) => CoordinateClassification.CreateFromProposal(prop, sl, l);
+        public Func<ClassificationProposal, LineString, CoordinateClassification> ClassificationFactory { get; set; }
 
         ///// <summary>
         ///// 
@@ -170,6 +179,7 @@ namespace Trail365
         public ClassificationProposal GetProposal(Geometry input, ClassificationProposal previousOrDefault, TrackAnalyzerSettings settings)
         {
             var facts = this.MapFacts;
+
             var ct = CancellationToken.None;
 
             if (facts == null) throw new ArgumentNullException(nameof(facts));
@@ -177,31 +187,19 @@ namespace Trail365
 
             List<LineSegmentProposal> findings = null;
 
-            //var hasFindingsBeforeFilter = false;
-            //var hasFindingsAfterFilter = false;
-            if (previousOrDefault != null && previousOrDefault.LinkedLineSegments.Count > 0)
+            if (previousOrDefault != null && previousOrDefault.Proposals.Count > 0)
             {
+
                 //cheap lookup
-                var candidates = previousOrDefault.LinkedLineSegments.Select(ls => new Tuple<Geometry, string>(ls.Owner, ls.Classification)).Distinct().ToList();
+                var candidates = previousOrDefault.Proposals.Select(ls => new Tuple<Geometry, string>(ls.Owner, ls.Classification)).Distinct().ToList();
                 List<LineSegmentProposal> findingCollector = new List<LineSegmentProposal>();
-                var strongSettings = settings.ToStronger();
+
+                var strongSettings = settings.ToStronger(); //use stronger settings if we reduce the search on the current fact!
                 foreach (var candidate in candidates)
                 {
                     var subFindings = CalculateFindings(candidate.Item1, candidate.Item2, input, strongSettings, ct, this.Logger);
                     findingCollector.AddRange(subFindings);
                 }
-
-                //hasFindingsBeforeFilter = findingCollector.Count > 0;
-                //findingCollector = findingCollector.Where(c =>
-                //{
-                //    var diff = c.GetAngleDiffToReference();
-                //    return diff < AngleUtility.PiOver4;
-                //}).ToList();
-                //hasFindingsAfterFilter = findingCollector.Count > 0;
-                //if (hasFindingsAfterFilter != hasFindingsBeforeFilter)
-                //{
-                //    this.Logger.LogTrace($"Previous: {nameof(hasFindingsBeforeFilter)}={hasFindingsBeforeFilter}, {nameof(hasFindingsAfterFilter)}={hasFindingsAfterFilter}");
-                //}
 
                 if (findingCollector.Count > 0)
                 {
@@ -213,27 +211,10 @@ namespace Trail365
             {
                 //expensive lookup
                 List<LineSegmentProposal> findingCollector = CalculateFindings(this.MapFacts, input, settings, ct, this.Logger, GetOutdoorClass);
-
-                //hasFindingsBeforeFilter = findingCollector.Count > 0;
-                //findingCollector = findingCollector.Where(c =>
-                //{
-                //    var diff = c.GetAngleDiffToReference();
-                //    return diff <= settings.MaximumAngleDiff;
-                //}).ToList();
-                //hasFindingsAfterFilter = findingCollector.Count > 0;
-                //if (hasFindingsAfterFilter != hasFindingsBeforeFilter)
-                //{
-                //    this.Logger.LogTrace($"Current: {nameof(hasFindingsBeforeFilter)}={hasFindingsBeforeFilter}, {nameof(hasFindingsAfterFilter)}={hasFindingsAfterFilter}");
-                //}
-
                 findings = findingCollector;
             }
 
-            ClassificationProposal proposal = new ClassificationProposal(input)
-            {
-                LinkedLineSegments = findings
-            };
-            Guard.AssertNotNull(proposal.LinkedLineSegments, "empty allowed, but not null");
+            ClassificationProposal proposal = new ClassificationProposal(input, findings);
             return proposal;
         }
 

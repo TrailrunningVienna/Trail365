@@ -1,5 +1,4 @@
 using System.Linq;
-using NetTopologySuite.Algorithm;
 using NetTopologySuite.Features;
 using NetTopologySuite.Geometries;
 using Trail365.Seeds;

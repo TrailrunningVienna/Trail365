@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using NetTopologySuite.Algorithm;
 using NetTopologySuite.Features;
 using NetTopologySuite.Geometries;
 using Trail365.Internal;
@@ -18,8 +19,9 @@ namespace Trail365
         {
             var facts = this.LookupDataProvider.GetClassifiedMapFeatures(input.GetBoundaries().Envelope);
             TrackAnalyzer analyzer = new TrackAnalyzer(facts);
-            analyzer.Settings.TerminateDistance = NTSExtensions.DeviationToDistance(500);
-            analyzer.Settings.MaximumAngleDiff = Math.PI / 7;
+            analyzer.Settings.TerminateDistance = NTSExtensions.DeviationToDistance(2000);
+            analyzer.Settings.MaximumAngleDiff = AngleUtility.PiOver4;
+
             analyzer.AssignLogger(this.Logger);
             var result = analyzer.Analyze(input);
             //merging skipped because we need details for each ShortLine
