@@ -3,7 +3,7 @@
 ## Issues
 Issues currently are managed in this [Github repository](https://github.com/TrailrunningVienna/Trail365-Home)
 
-## Books, Ideas, Sources
+## Books, Ideas, Sources...
 
 ### General
 - [Solution Architecture](https://github.com/ardalis/CleanArchitecture)
